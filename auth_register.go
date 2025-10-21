@@ -36,6 +36,10 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase strin
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusConflict {
+		return ErrAccountAlreadyExists
+	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return errors.Errorf("register failed: %s", resp.Status)
 	}
