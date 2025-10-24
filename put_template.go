@@ -28,17 +28,13 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		return nil, ErrUnauthorized
 	}
 
-	// Get diary to access encryption keys
-	diaryData, err := c.getDiary(ctx, diaryID)
+	// Get encryption keys
+	key, err := c.getActiveDiaryKey(ctx, diaryID)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to get diary")
+		return nil, errors.Wrap(err, "failed to get active diary key")
 	}
 
-	if len(diaryData.EncryptionKeys) == 0 {
-		return nil, errors.New("no encryption keys found in diary")
-	}
-
-	diaryKeyID := diaryData.EncryptionKeys[0].Id
+	diaryKeyID := key.Id
 
 	// Generate entity key for template encryption
 	entityKey, err := generateSymmetricKey()
@@ -59,9 +55,8 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 	}
 
 	// Decrypt diary key
-	encryptedDiaryKeyValue := diaryData.EncryptionKeys[0].Value
 	decryptedDiaryKey, err := decryptWithPrivateKey(
-		encryptedDiaryKeyValue,
+		key.Value,
 		c.credentials.EncryptionPrivateKey,
 		c.credentials.EncryptionPublicKey,
 	)

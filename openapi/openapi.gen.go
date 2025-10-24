@@ -13,6 +13,12 @@ const (
 	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
+// Defines values for DiaryKeyStatus.
+const (
+	Active   DiaryKeyStatus = "active"
+	Rotating DiaryKeyStatus = "rotating"
+)
+
 // Defines values for ResponseErrorCode.
 const (
 	ResponseErrorCodeAccountAlreadyExists ResponseErrorCode = "ACCOUNT_ALREADY_EXISTS"
@@ -100,8 +106,14 @@ type DiaryEncryption struct {
 
 // DiaryEncryptionKey Encryption key for diary content access
 type DiaryEncryptionKey struct {
+	// CreatedAt When the key was created
+	CreatedAt time.Time `json:"created_at"`
+
 	// Id Unique identifier for a diary encryption key
 	Id DiaryKeyID `json:"id"`
+
+	// Status Status of the encryption key
+	Status DiaryKeyStatus `json:"status"`
 
 	// Value Encrypted key data (<base64_encoded>)
 	Value []byte `json:"value"`
@@ -112,6 +124,9 @@ type DiaryID = string
 
 // DiaryKeyID Unique identifier for a diary encryption key
 type DiaryKeyID = string
+
+// DiaryKeyStatus Status of the encryption key
+type DiaryKeyStatus string
 
 // EncryptedData Container for encrypted data with nonce
 type EncryptedData struct {
@@ -174,6 +189,12 @@ type GetDiariesResponse struct {
 
 	// NextPageToken Token for retrieving the next page of results (null when no more pages)
 	NextPageToken mo.Option[string] `json:"next_page_token"`
+}
+
+// GetDiaryKeysResponse Response containing diary encryption keys
+type GetDiaryKeysResponse struct {
+	// Keys List of encryption keys sorted by creation date (newest first)
+	Keys []DiaryEncryptionKey `json:"keys"`
 }
 
 // GetDiaryResponse defines model for GetDiaryResponse.
