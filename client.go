@@ -15,6 +15,7 @@ type Client struct {
 	credentials *Credentials
 	httpClient  *http.Client
 	authToken   string
+	userAgent   string
 }
 
 func NewClient(opts ...clientOption) *Client {
@@ -28,6 +29,7 @@ func NewClient(opts ...clientOption) *Client {
 		httpClient: &http.Client{
 			Timeout: clientOptions.timeout,
 		},
+		userAgent: buildUserAgent(),
 	}
 
 	return &client
@@ -52,6 +54,7 @@ func (c *Client) newRequest(ctx context.Context, method, url string, body interf
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", c.userAgent)
 
 	return req, nil
 }
