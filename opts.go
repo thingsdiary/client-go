@@ -9,7 +9,7 @@ type options struct {
 
 func defaultOptions() *options {
 	return &options{
-		baseURL: "https://cloud.thingsdiary.io",
+		baseURL: "https://cloud.thingsdiary.io/api",
 		timeout: 5 * time.Second,
 	}
 }

@@ -42,7 +42,7 @@ func (c *Client) login(ctx context.Context, login, password string) (*openapi.Lo
 		Password: password,
 	}
 
-	url := fmt.Sprintf("%s/api/v1/auth/login", c.baseURL)
+	url := fmt.Sprintf("%s/v1/auth/login", c.baseURL)
 	req, err := c.newRequest(ctx, http.MethodPost, url, body)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (c *Client) loginVerify(ctx context.Context, challengeID string, signedNonc
 		SignedNonce: signedNonce,
 	}
 
-	url := fmt.Sprintf("%s/api/v1/auth/login/verify", c.baseURL)
+	url := fmt.Sprintf("%s/v1/auth/login/verify", c.baseURL)
 	req, err := c.newRequest(ctx, http.MethodPost, url, body)
 	if err != nil {
 		return nil, err

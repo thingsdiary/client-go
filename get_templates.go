@@ -52,7 +52,7 @@ func (c *Client) GetTemplates(ctx context.Context, diaryID string) ([]*Template,
 }
 
 func (c *Client) getTemplates(ctx context.Context, diaryID string) ([]*openapi.Template, error) {
-	var url = fmt.Sprintf("%s/api/v1/diaries/%s/templates", c.baseURL, diaryID)
+	var url = fmt.Sprintf("%s/v1/diaries/%s/templates", c.baseURL, diaryID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

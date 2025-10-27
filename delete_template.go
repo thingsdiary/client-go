@@ -13,7 +13,7 @@ func (c *Client) DeleteTemplate(ctx context.Context, diaryID string, templateID 
 		return ErrUnauthorized
 	}
 
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/templates/%s", c.baseURL, diaryID, templateID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/templates/%s", c.baseURL, diaryID, templateID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, url, nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to create request")

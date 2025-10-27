@@ -89,7 +89,7 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/templates/%s", c.baseURL, diaryID, templateID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/templates/%s", c.baseURL, diaryID, templateID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

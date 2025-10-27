@@ -85,7 +85,7 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		return nil, errors.Wrap(err, "failed to marshal request")
 	}
 
-	url := fmt.Sprintf("%s/api/v1/diaries", c.baseURL)
+	url := fmt.Sprintf("%s/v1/diaries", c.baseURL)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodPost, url, request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

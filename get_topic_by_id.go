@@ -43,7 +43,7 @@ func (c *Client) GetTopicByID(ctx context.Context, diaryID, topicID string) (*To
 }
 
 func (c *Client) getTopic(ctx context.Context, diaryID, topicID string) (*openapi.Topic, error) {
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/topics/%s", c.baseURL, diaryID, topicID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/topics/%s", c.baseURL, diaryID, topicID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

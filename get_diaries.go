@@ -34,7 +34,7 @@ func (c *Client) GetDiaries(ctx context.Context) ([]*Diary, error) {
 }
 
 func (c *Client) getDiaries(ctx context.Context) ([]*openapi.Diary, error) {
-	var url = fmt.Sprintf("%s/api/v1/diaries", c.baseURL)
+	var url = fmt.Sprintf("%s/v1/diaries", c.baseURL)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

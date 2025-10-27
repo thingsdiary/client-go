@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Client) Logout(ctx context.Context) error {
-	url := fmt.Sprintf("%s/api/v1/auth/logout", c.baseURL)
+	url := fmt.Sprintf("%s/v1/auth/logout", c.baseURL)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodPost, url, nil)
 	if err != nil {
 		return err

@@ -23,7 +23,7 @@ func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string
 		p = params[0]
 	}
 
-	urlStr := fmt.Sprintf("%s/api/v1/diaries/%s/topics/%s", c.baseURL, diaryID, topicID)
+	urlStr := fmt.Sprintf("%s/v1/diaries/%s/topics/%s", c.baseURL, diaryID, topicID)
 	u, err := url.Parse(urlStr)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse URL")

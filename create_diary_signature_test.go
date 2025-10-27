@@ -59,7 +59,7 @@ func (s *ClientSuite) TestCreateDiary_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries", s.client.baseURL)
+		url := fmt.Sprintf("%s/v1/diaries", s.client.baseURL)
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPost, url, request)
 		require.NoError(t, err)
 
@@ -98,7 +98,7 @@ func (s *ClientSuite) TestCreateDiary_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries", s.client.baseURL)
+		url := fmt.Sprintf("%s/v1/diaries", s.client.baseURL)
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPost, url, request)
 		require.NoError(t, err)
 
@@ -137,7 +137,7 @@ func (s *ClientSuite) TestCreateDiary_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries", s.client.baseURL)
+		url := fmt.Sprintf("%s/v1/diaries", s.client.baseURL)
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPost, url, request)
 		require.NoError(t, err)
 

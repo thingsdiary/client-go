@@ -13,7 +13,7 @@ import (
 
 func (c *Client) getActiveDiaryKey(ctx context.Context, diaryID string) (*openapi.DiaryEncryptionKey, error) {
 	// TODO: Implement client-side caching for keys (TTL ~5min)
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/keys", c.baseURL, diaryID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/keys", c.baseURL, diaryID)
 
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {

@@ -13,7 +13,7 @@ func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string
 		return ErrUnauthorized
 	}
 
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, url, nil)
 	if err != nil {
 		return errors.Wrap(err, "failed to create request")
@@ -39,4 +39,3 @@ func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string
 
 	return nil
 }
-

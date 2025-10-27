@@ -127,7 +127,7 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")
