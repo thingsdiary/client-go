@@ -52,7 +52,7 @@ func (c *Client) GetTopics(ctx context.Context, diaryID string) ([]*Topic, error
 }
 
 func (c *Client) getTopics(ctx context.Context, diaryID string) ([]*openapi.Topic, error) {
-	var url = fmt.Sprintf("%s/api/v1/diaries/%s/topics", c.baseURL, diaryID)
+	var url = fmt.Sprintf("%s/v1/diaries/%s/topics", c.baseURL, diaryID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

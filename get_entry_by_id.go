@@ -48,7 +48,7 @@ func (c *Client) GetEntryByID(ctx context.Context, diaryID, entryID string) (*En
 }
 
 func (c *Client) getEntry(ctx context.Context, diaryID, entryID string) (*openapi.Entry, error) {
-	url := fmt.Sprintf("%s/api/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
+	url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create request")

@@ -24,7 +24,7 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase strin
 		EncryptionPublicKey: creds.EncryptionPublicKey,
 	}
 
-	url := fmt.Sprintf("%s/api/v1/auth/register", c.baseURL)
+	url := fmt.Sprintf("%s/v1/auth/register", c.baseURL)
 	req, err := c.newRequest(ctx, http.MethodPost, url, body)
 	if err != nil {
 		return err

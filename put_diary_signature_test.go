@@ -73,7 +73,7 @@ func (s *ClientSuite) TestPutDiary_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries/%s", s.client.baseURL, diary.ID)
+		url := fmt.Sprintf("%s/v1/diaries/%s", s.client.baseURL, diary.ID)
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 		require.NoError(t, err)
 
@@ -119,7 +119,7 @@ func (s *ClientSuite) TestPutDiary_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries/%s", s.client.baseURL, diary.ID)
+		url := fmt.Sprintf("%s/v1/diaries/%s", s.client.baseURL, diary.ID)
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 		require.NoError(t, err)
 
@@ -165,7 +165,7 @@ func (s *ClientSuite) TestPutDiary_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries/%s", s.client.baseURL, diary.ID)
+		url := fmt.Sprintf("%s/v1/diaries/%s", s.client.baseURL, diary.ID)
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 		require.NoError(t, err)
 

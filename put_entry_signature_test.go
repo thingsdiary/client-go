@@ -91,7 +91,7 @@ func (s *ClientSuite) TestPutEntry_SignatureVerification() {
 		// _, err := json.Marshal(request)
 		// require.NoError(t, err)
 
-		url := fmt.Sprintf("%s/api/v1/diaries/%s/entries/%s", s.client.baseURL, diary.ID, uuid.NewString())
+		url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", s.client.baseURL, diary.ID, uuid.NewString())
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 		require.NoError(t, err)
 
@@ -147,7 +147,7 @@ func (s *ClientSuite) TestPutEntry_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries/%s/entries/%s", s.client.baseURL, diary.ID, uuid.NewString())
+		url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", s.client.baseURL, diary.ID, uuid.NewString())
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 		require.NoError(t, err)
 
@@ -203,7 +203,7 @@ func (s *ClientSuite) TestPutEntry_SignatureVerification() {
 			},
 		}
 
-		url := fmt.Sprintf("%s/api/v1/diaries/%s/entries/%s", s.client.baseURL, diary.ID, uuid.NewString())
+		url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", s.client.baseURL, diary.ID, uuid.NewString())
 		req, err := s.client.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
 		require.NoError(t, err)
 
