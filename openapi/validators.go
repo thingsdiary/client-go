@@ -5,7 +5,6 @@ import (
 	"crypto/ed25519"
 	"errors"
 	"fmt"
-	"strings"
 
 	"filippo.io/edwards25519"
 )
@@ -33,14 +32,6 @@ func validateVersion(version uint64) error {
 }
 
 func (r *RegisterRequest) Validate() error {
-	if strings.TrimSpace(r.Login) == "" {
-		return errors.New("login must not be empty")
-	}
-
-	if strings.TrimSpace(r.Password) == "" {
-		return errors.New("password must not be empty")
-	}
-
 	if !isValidEncryptionPublicKey(r.EncryptionPublicKey) {
 		return errors.New("invalid Curve25519 encryption public key")
 	}
@@ -98,14 +89,6 @@ func isValidSignaturePublicKey(val []byte) bool {
 }
 
 func (r *LoginRequest) Validate() error {
-	if r.Login == "" {
-		return errors.New("login is required")
-	}
-
-	if r.Password == "" {
-		return errors.New("password is required")
-	}
-
 	return nil
 }
 

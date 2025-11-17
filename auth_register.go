@@ -40,6 +40,24 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase strin
 		return ErrAccountAlreadyExists
 	}
 
+	if resp.StatusCode == http.StatusBadRequest {
+		var errResp openapi.ErrorResponse
+
+		if err := json.NewDecoder(resp.Body).Decode(&errResp); err != nil {
+			return errors.Errorf("register failed: %s", resp.Status)
+		}
+
+		if errResp.ErrorCode == openapi.ResponseErrorCodeInvalidLogin {
+			return ErrInvalidLogin
+		}
+
+		if errResp.ErrorCode == openapi.ResponseErrorCodeInvalidPassword {
+			return ErrInvalidPassword
+		}
+
+		return errors.Errorf("register failed: %s", resp.Status)
+	}
+
 	if resp.StatusCode != http.StatusCreated {
 		return errors.Errorf("register failed: %s", resp.Status)
 	}

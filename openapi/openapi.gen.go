@@ -31,6 +31,8 @@ const (
 	ResponseErrorCodeForbidden            ResponseErrorCode = "FORBIDDEN"
 	ResponseErrorCodeInternalServerError  ResponseErrorCode = "INTERNAL_SERVER_ERROR"
 	ResponseErrorCodeInvalidCredentials   ResponseErrorCode = "INVALID_CREDENTIALS"
+	ResponseErrorCodeInvalidLogin         ResponseErrorCode = "INVALID_LOGIN"
+	ResponseErrorCodeInvalidPassword      ResponseErrorCode = "INVALID_PASSWORD"
 	ResponseErrorCodeInvalidSignature     ResponseErrorCode = "INVALID_SIGNATURE"
 	ResponseErrorCodeRateLimitExceeded    ResponseErrorCode = "RATE_LIMIT_EXCEEDED"
 	ResponseErrorCodeTemplateNotFound     ResponseErrorCode = "TEMPLATE_NOT_FOUND"
