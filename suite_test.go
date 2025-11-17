@@ -30,5 +30,5 @@ func (s *ClientSuite) SetupTest() {
 
 	s.seedPhrase = fmt.Sprint(words)
 
-	s.client = NewClient(WithBaseURL("http://localhost:8080/api"))
+	s.client = NewClient(WithBaseURL("http://localhost:8081/api"))
 }
