@@ -1,12 +1,9 @@
 package openapi
 
 import (
-	"crypto/ecdh"
 	"crypto/ed25519"
 	"errors"
 	"fmt"
-
-	"filippo.io/edwards25519"
 )
 
 // Version validation constants
@@ -32,63 +29,17 @@ func validateVersion(version uint64) error {
 }
 
 func (r *RegisterRequest) Validate() error {
-	if !isValidEncryptionPublicKey(r.EncryptionPublicKey) {
-		return errors.New("invalid Curve25519 encryption public key")
-	}
-
-	if !isValidSignaturePublicKey(r.SignaturePublicKey) {
-		return errors.New("invalid Ed25519 signature public key")
-	}
-
+	// All validation happens on the server:
+	// - Login format (email)
+	// - Password strength (min 8 chars)
+	// - Encryption key (Curve25519 public key)
+	// - Signature key (Ed25519 public key)
 	return nil
 }
 
-func isValidEncryptionPublicKey(val []byte) bool {
-	if len(val) != 32 {
-		return false
-	}
-
-	// Check for all zeros (identity point - valid but insecure)
-	allZeros := true
-	for _, b := range val {
-		if b != 0 {
-			allZeros = false
-			break
-		}
-	}
-	if allZeros {
-		return false
-	}
-
-	// Try to create an X25519 public key to validate it's a valid point on the curve
-	_, err := ecdh.X25519().NewPublicKey(val)
-	return err == nil
-}
-
-func isValidSignaturePublicKey(val []byte) bool {
-	if len(val) != ed25519.PublicKeySize {
-		return false
-	}
-
-	// Check for all zeros (identity point - valid but insecure)
-	allZeros := true
-	for _, b := range val {
-		if b != 0 {
-			allZeros = false
-			break
-		}
-	}
-	if allZeros {
-		return false
-	}
-
-	// Validate it's a valid point on the Edwards25519 curve
-	point := new(edwards25519.Point)
-	_, err := point.SetBytes(val)
-	return err == nil
-}
-
 func (r *LoginRequest) Validate() error {
+	// All validation happens on the server
+	// Server returns only INVALID_CREDENTIALS for security (no details exposed)
 	return nil
 }
 
