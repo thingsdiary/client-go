@@ -13,6 +13,21 @@ const (
 	BearerAuthScopes = "BearerAuth.Scopes"
 )
 
+// Defines values for DiaryChangeEntityType.
+const (
+	DiaryChangeEntityTypeDiary    DiaryChangeEntityType = "diary"
+	DiaryChangeEntityTypeEntry    DiaryChangeEntityType = "entry"
+	DiaryChangeEntityTypeTemplate DiaryChangeEntityType = "template"
+	DiaryChangeEntityTypeTopic    DiaryChangeEntityType = "topic"
+)
+
+// Defines values for DiaryChangeOperation.
+const (
+	Created     DiaryChangeOperation = "created"
+	SoftDeleted DiaryChangeOperation = "soft_deleted"
+	Updated     DiaryChangeOperation = "updated"
+)
+
 // Defines values for DiaryKeyStatus.
 const (
 	Active   DiaryKeyStatus = "active"
@@ -91,6 +106,30 @@ type Diary struct {
 	// Prevents conflicts during concurrent editing and supports offline scenarios.
 	Version uint64 `json:"version"`
 }
+
+// DiaryChange A change record in the diary changes log
+type DiaryChange struct {
+	// CreatedAt Timestamp when the change was created
+	CreatedAt time.Time `json:"created_at"`
+
+	// EntityId ID of the entity that was changed
+	EntityId string `json:"entity_id"`
+
+	// EntityType Type of entity that was changed (diary, entry, topic, template)
+	EntityType DiaryChangeEntityType `json:"entity_type"`
+
+	// Id Unique identifier for the change (deterministic UUID)
+	Id string `json:"id"`
+
+	// Operation Type of operation (created, updated, soft_deleted)
+	Operation DiaryChangeOperation `json:"operation"`
+}
+
+// DiaryChangeEntityType Type of entity that was changed (diary, entry, topic, template)
+type DiaryChangeEntityType string
+
+// DiaryChangeOperation Type of operation (created, updated, soft_deleted)
+type DiaryChangeOperation string
 
 // DiaryEncryption Encryption metadata for diary content
 type DiaryEncryption struct {
@@ -186,6 +225,15 @@ type ErrorResponse struct {
 type GetDiariesResponse struct {
 	// Diaries Array of diary objects
 	Diaries []*Diary `json:"diaries"`
+
+	// NextPageToken Token for retrieving the next page of results (null when no more pages)
+	NextPageToken mo.Option[string] `json:"next_page_token"`
+}
+
+// GetDiaryChangesResponse defines model for GetDiaryChangesResponse.
+type GetDiaryChangesResponse struct {
+	// Changes Array of change objects
+	Changes []*DiaryChange `json:"changes"`
 
 	// NextPageToken Token for retrieving the next page of results (null when no more pages)
 	NextPageToken mo.Option[string] `json:"next_page_token"`
@@ -497,6 +545,18 @@ type PutDiaryParams struct {
 	// XSignature Ed25519 signature of the request body, base64 encoded.
 	// Generated using the account's private signing key.
 	XSignature XSignature `json:"X-Signature"`
+}
+
+// GetDiaryChangesParams defines parameters for GetDiaryChanges.
+type GetDiaryChangesParams struct {
+	// NextPageToken Token for pagination to retrieve the next page of results
+	NextPageToken *string `form:"next_page_token,omitempty" json:"next_page_token,omitempty"`
+
+	// Since Filter changes after this timestamp (RFC3339 format)
+	Since *time.Time `form:"since,omitempty" json:"since,omitempty"`
+
+	// Limit Maximum number of changes to return (1-500, default 100)
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
 // GetEntriesParams defines parameters for GetEntries.

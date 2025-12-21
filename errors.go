@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrUnauthorized         = errors.New("unauthorized")
 	ErrForbidden            = errors.New("forbidden: insufficient permissions to perform action")
+	ErrBadRequest           = errors.New("bad request")
 	ErrInvalidCredentials   = errors.New("invalid credentials")
 	ErrAccountAlreadyExists = errors.New("account already exists")
 	ErrInvalidChallenge     = errors.New("invalid challenge")
