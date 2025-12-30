@@ -13,6 +13,6 @@ func (s *ClientSuite) TestLogin_Register() {
 	ctx := context.Background()
 
 	var login = fmt.Sprintf("test-login-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 }

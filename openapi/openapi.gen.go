@@ -310,6 +310,9 @@ type LoginResponse struct {
 	// ChallengeId Unique identifier for the authentication challenge
 	ChallengeId string `json:"challenge_id"`
 
+	// KdfSalt Salt for PBKDF2 key derivation
+	KdfSalt string `json:"kdf_salt"`
+
 	// Nonce Random nonce for challenge signing (<base64_encoded>)
 	Nonce []byte `json:"nonce"`
 }
@@ -426,6 +429,9 @@ type PutTopicResponse struct {
 type RegisterRequest struct {
 	// EncryptionPublicKey Public key for data encryption (<base64_encoded>)
 	EncryptionPublicKey []byte `json:"encryption_public_key"`
+
+	// KdfSalt Salt for PBKDF2 key derivation (32 ASCII chars)
+	KdfSalt string `json:"kdf_salt"`
 
 	// Login Unique login identifier (email or username)
 	Login string `json:"login"`
@@ -552,7 +558,9 @@ type GetDiaryChangesParams struct {
 	// NextPageToken Token for pagination to retrieve the next page of results
 	NextPageToken *string `form:"next_page_token,omitempty" json:"next_page_token,omitempty"`
 
-	// Since Filter changes after this timestamp (RFC3339 format)
+	// Since Filter changes after this timestamp. Supported formats:
+	// - RFC3339: 2024-01-01T10:00:00Z
+	// - RFC3339Nano: 2024-01-01T10:00:00.123456789Z (JS Date.toISOString())
 	Since *time.Time `form:"since,omitempty" json:"since,omitempty"`
 
 	// Limit Maximum number of changes to return (1-500, default 100)

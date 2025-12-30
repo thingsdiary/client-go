@@ -15,7 +15,7 @@ func (s *ClientSuite) TestLogout_Success() {
 	var login = fmt.Sprintf("test-logout-%d@thingsdiary.io", time.Now().UnixMilli())
 
 	// Arrange: Register and authenticate user
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -52,7 +52,7 @@ func (s *ClientSuite) TestLogout_DoubleLogout() {
 	var login = fmt.Sprintf("test-double-logout-%d@thingsdiary.io", time.Now().UnixMilli())
 
 	// Arrange: Register and authenticate user
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -77,7 +77,7 @@ func (s *ClientSuite) TestLogout_ClearsCredentials() {
 	var login = fmt.Sprintf("test-logout-clear-%d@thingsdiary.io", time.Now().UnixMilli())
 
 	// Arrange: Register and authenticate user
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

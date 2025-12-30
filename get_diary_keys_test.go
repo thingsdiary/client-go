@@ -15,7 +15,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_Success() {
 
 	// Register and authenticate
 	var login = fmt.Sprintf("test-login-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -46,7 +46,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_NotFound() {
 
 	// Register and authenticate
 	var login = fmt.Sprintf("test-login-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -65,7 +65,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_AfterDeletion() {
 
 	// Register and authenticate
 	var login = fmt.Sprintf("test-login-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

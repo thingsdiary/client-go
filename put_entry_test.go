@@ -17,7 +17,7 @@ func (s *ClientSuite) TestEntry_PutEntry() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-entry-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -79,7 +79,7 @@ func (s *ClientSuite) TestEntry_PutEntry_WithTopic() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-entry-topic-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -126,7 +126,7 @@ func (s *ClientSuite) TestEntry_PutEntry_NotFound() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-entry-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -168,7 +168,7 @@ func (s *ClientSuite) TestEntry_PutEntry_EmptyContent() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-entry-empty-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -204,7 +204,7 @@ func (s *ClientSuite) TestEntry_PutEntry_TopicNotFound() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-entry-topic-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

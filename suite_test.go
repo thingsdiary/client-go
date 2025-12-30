@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -13,6 +14,7 @@ type ClientSuite struct {
 	client *Client
 
 	seedPhrase string
+	kdfSalt    string
 }
 
 func TestClientSuite(t *testing.T) {
@@ -30,5 +32,17 @@ func (s *ClientSuite) SetupTest() {
 
 	s.seedPhrase = fmt.Sprint(words)
 
-	s.client = NewClient(WithBaseURL("http://localhost:8081/api"))
+	kdfSalt, err := GenerateKdfSalt()
+	if err != nil {
+		s.T().Fatalf("failed to generate kdf salt: %v", err)
+	}
+
+	s.kdfSalt = kdfSalt
+
+	baseURL := "http://localhost:8081/api"
+	if envURL := os.Getenv("BASE_URL"); envURL != "" {
+		baseURL = envURL
+	}
+
+	s.client = NewClient(WithBaseURL(baseURL))
 }

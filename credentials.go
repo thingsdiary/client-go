@@ -2,10 +2,17 @@ package client
 
 import (
 	"crypto/ed25519"
+	"crypto/rand"
 	"crypto/sha256"
 
 	"golang.org/x/crypto/curve25519"
 	"golang.org/x/crypto/pbkdf2"
+)
+
+const (
+	KdfSaltLength   = 32
+	KdfIterations   = 650_000
+	kdfSaltAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 )
 
 type Credentials struct {
@@ -16,11 +23,8 @@ type Credentials struct {
 	SigningPrivateKey []byte
 }
 
-func NewCredentials(seedPhrase string) (*Credentials, error) {
-	// todo: do not hardcode client secret
-	salt := []byte("my-app-context")
-
-	seed := pbkdf2.Key([]byte(seedPhrase), salt, 100_000, 32, sha256.New)
+func NewCredentials(seedPhrase, salt string) (*Credentials, error) {
+	seed := pbkdf2.Key([]byte(seedPhrase), []byte(salt), KdfIterations, 32, sha256.New)
 
 	var privateKey [32]byte
 	copy(privateKey[:], seed[:32])
@@ -40,4 +44,18 @@ func NewCredentials(seedPhrase string) (*Credentials, error) {
 	}
 
 	return &creds, nil
+}
+
+func GenerateKdfSalt() (string, error) {
+	bytes := make([]byte, KdfSaltLength)
+	if _, err := rand.Read(bytes); err != nil {
+		return "", err
+	}
+
+	result := make([]byte, KdfSaltLength)
+	for i, b := range bytes {
+		result[i] = kdfSaltAlphabet[int(b)%len(kdfSaltAlphabet)]
+	}
+
+	return string(result), nil
 }

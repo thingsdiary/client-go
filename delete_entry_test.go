@@ -16,7 +16,7 @@ func (s *ClientSuite) TestEntry_DeleteEntry() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-delete-entry-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -52,7 +52,7 @@ func (s *ClientSuite) TestEntry_DeleteEntry_NotFound() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-delete-entry-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
