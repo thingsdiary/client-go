@@ -18,7 +18,7 @@ func (c *Client) Authenticate(ctx context.Context, login, password, seedPhrase s
 		return errors.Wrap(err, "login failed")
 	}
 
-	credentials, err := NewCredentials(seedPhrase)
+	credentials, err := NewCredentials(seedPhrase, loginResult.KdfSalt)
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,6 @@ func (c *Client) Authenticate(ctx context.Context, login, password, seedPhrase s
 		return errors.Wrap(err, "login failed")
 	}
 
-	// Only set credentials and token after successful authentication
 	c.credentials = credentials
 	c.authToken = verifyResult.Token
 

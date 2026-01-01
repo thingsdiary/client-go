@@ -11,8 +11,8 @@ import (
 	"github.com/thingsdiary/client-go/openapi"
 )
 
-func (c *Client) Register(ctx context.Context, login, password, seedPhrase string) error {
-	creds, err := NewCredentials(seedPhrase)
+func (c *Client) Register(ctx context.Context, login, password, seedPhrase, kdfSalt string) error {
+	creds, err := NewCredentials(seedPhrase, kdfSalt)
 	if err != nil {
 		return err
 	}
@@ -22,6 +22,7 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase strin
 		Password:            password,
 		SignaturePublicKey:  creds.SigningPublicKey,
 		EncryptionPublicKey: creds.EncryptionPublicKey,
+		KdfSalt:             kdfSalt,
 	}
 
 	url := fmt.Sprintf("%s/v1/auth/register", c.baseURL)

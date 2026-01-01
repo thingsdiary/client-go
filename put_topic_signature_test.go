@@ -23,7 +23,7 @@ func (s *ClientSuite) TestPutTopic_SignatureVerification() {
 	t.Run("valid_signature_success", func(t *testing.T) {
 		// Arrange: Register and authenticate user
 		var login = fmt.Sprintf("test-put-topic-sig-valid-%d@thingsdiary.io", time.Now().UnixMilli())
-		err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+		err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 		require.NoError(t, err)
 
 		err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -55,7 +55,7 @@ func (s *ClientSuite) TestPutTopic_SignatureVerification() {
 	t.Run("missing_signature_header", func(t *testing.T) {
 		// Arrange: Register and authenticate user
 		var login = fmt.Sprintf("test-put-topic-sig-missing-%d@thingsdiary.io", time.Now().UnixMilli())
-		err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+		err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 		require.NoError(t, err)
 
 		err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -106,7 +106,7 @@ func (s *ClientSuite) TestPutTopic_SignatureVerification() {
 	t.Run("invalid_base64_signature", func(t *testing.T) {
 		// Arrange: Register and authenticate user
 		var login = fmt.Sprintf("test-put-topic-sig-invalid-b64-%d@thingsdiary.io", time.Now().UnixMilli())
-		err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+		err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 		require.NoError(t, err)
 
 		err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -157,7 +157,7 @@ func (s *ClientSuite) TestPutTopic_SignatureVerification() {
 	t.Run("invalid_signature_content", func(t *testing.T) {
 		// Arrange: Register and authenticate user
 		var login = fmt.Sprintf("test-put-topic-sig-invalid-%d@thingsdiary.io", time.Now().UnixMilli())
-		err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+		err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 		require.NoError(t, err)
 
 		err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

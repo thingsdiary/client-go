@@ -16,7 +16,7 @@ func (s *ClientSuite) TestTopic_DeleteTopic() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-delete-topic-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -56,7 +56,7 @@ func (s *ClientSuite) TestTopic_DeleteTopic_NotFound() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-delete-topic-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

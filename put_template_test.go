@@ -16,7 +16,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-template-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -64,7 +64,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate_NotFound() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-template-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -104,7 +104,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate_EmptyFields() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-template-empty-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

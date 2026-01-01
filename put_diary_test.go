@@ -16,7 +16,7 @@ func (s *ClientSuite) TestDiary_PutDiary() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-diary-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -63,7 +63,7 @@ func (s *ClientSuite) TestDiary_PutDiary_NotFound() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-diary-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -103,7 +103,7 @@ func (s *ClientSuite) TestDiary_PutDiary_PartialUpdate() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-diary-partial-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -139,7 +139,7 @@ func (s *ClientSuite) TestDiary_PutDiary_EmptyFields() {
 
 	// Arrange: Register and authenticate user
 	var login = fmt.Sprintf("test-put-diary-empty-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)

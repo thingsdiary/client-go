@@ -16,7 +16,7 @@ func (s *ClientSuite) TestEntry_GetByID() {
 	ctx := context.Background()
 
 	var login = fmt.Sprintf("test-get-entry-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -65,7 +65,7 @@ func (s *ClientSuite) TestEntry_GetByID_NotFound() {
 	ctx := context.Background()
 
 	var login = fmt.Sprintf("test-get-entry-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -91,7 +91,7 @@ func (s *ClientSuite) TestEntry_GetByID_DiaryNotFound() {
 	ctx := context.Background()
 
 	var login = fmt.Sprintf("test-get-entry-diary-not-found-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
@@ -120,7 +120,7 @@ func (s *ClientSuite) TestEntry_GetByID_WithTopic() {
 	ctx := context.Background()
 
 	var login = fmt.Sprintf("test-get-entry-with-topic-%d@thingsdiary.io", time.Now().UnixMilli())
-	err := s.client.Register(ctx, login, "password-123", s.seedPhrase)
+	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
 	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
