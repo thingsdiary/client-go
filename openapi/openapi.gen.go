@@ -24,6 +24,7 @@ const (
 // Defines values for DiaryChangeOperation.
 const (
 	Created     DiaryChangeOperation = "created"
+	Removed     DiaryChangeOperation = "removed"
 	SoftDeleted DiaryChangeOperation = "soft_deleted"
 	Updated     DiaryChangeOperation = "updated"
 )
@@ -42,6 +43,7 @@ const (
 	ResponseErrorCodeDiaryKeyNotFound     ResponseErrorCode = "DIARY_KEY_NOT_FOUND"
 	ResponseErrorCodeDiaryLimitExceeded   ResponseErrorCode = "DIARY_LIMIT_EXCEEDED"
 	ResponseErrorCodeDiaryNotFound        ResponseErrorCode = "DIARY_NOT_FOUND"
+	ResponseErrorCodeEntityRemoved        ResponseErrorCode = "ENTITY_REMOVED"
 	ResponseErrorCodeEntryNotFound        ResponseErrorCode = "ENTRY_NOT_FOUND"
 	ResponseErrorCodeForbidden            ResponseErrorCode = "FORBIDDEN"
 	ResponseErrorCodeInternalServerError  ResponseErrorCode = "INTERNAL_SERVER_ERROR"
@@ -604,6 +606,10 @@ type DeleteTopicParams struct {
 	// DeleteEntries If true, deletes all entries in the topic. If false or omitted, entries are unlinked from the topic but preserved.
 	// Only accepts strict lowercase "true" or "false". Any other value (including "1", "TRUE", "yes") will be treated as false.
 	DeleteEntries *bool `form:"delete_entries,omitempty" json:"delete_entries,omitempty"`
+
+	// Soft If true (default), performs a soft delete.
+	// If false, performs a hard removal.
+	Soft *bool `form:"soft,omitempty" json:"soft,omitempty"`
 }
 
 // PutTopicParams defines parameters for PutTopic.
