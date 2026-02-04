@@ -43,6 +43,7 @@ const (
 	ResponseErrorCodeDiaryKeyNotFound     ResponseErrorCode = "DIARY_KEY_NOT_FOUND"
 	ResponseErrorCodeDiaryLimitExceeded   ResponseErrorCode = "DIARY_LIMIT_EXCEEDED"
 	ResponseErrorCodeDiaryNotFound        ResponseErrorCode = "DIARY_NOT_FOUND"
+	ResponseErrorCodeEntityNotDeleted     ResponseErrorCode = "ENTITY_NOT_DELETED"
 	ResponseErrorCodeEntityRemoved        ResponseErrorCode = "ENTITY_REMOVED"
 	ResponseErrorCodeEntryNotFound        ResponseErrorCode = "ENTRY_NOT_FOUND"
 	ResponseErrorCodeForbidden            ResponseErrorCode = "FORBIDDEN"
