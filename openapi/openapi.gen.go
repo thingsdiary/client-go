@@ -123,14 +123,14 @@ type DiaryChange struct {
 	// Id Unique identifier for the change (deterministic UUID)
 	Id string `json:"id"`
 
-	// Operation Type of operation (created, updated, soft_deleted)
+	// Operation Type of operation (created, updated, soft_deleted, removed)
 	Operation DiaryChangeOperation `json:"operation"`
 }
 
 // DiaryChangeEntityType Type of entity that was changed (diary, entry, topic, template)
 type DiaryChangeEntityType string
 
-// DiaryChangeOperation Type of operation (created, updated, soft_deleted)
+// DiaryChangeOperation Type of operation (created, updated, soft_deleted, removed)
 type DiaryChangeOperation string
 
 // DiaryEncryption Encryption metadata for diary content
@@ -575,6 +575,13 @@ type GetEntriesParams struct {
 	NextPageToken *string `form:"next_page_token,omitempty" json:"next_page_token,omitempty"`
 }
 
+// DeleteEntryParams defines parameters for DeleteEntry.
+type DeleteEntryParams struct {
+	// Soft If true (default), performs a soft delete.
+	// If false, performs a hard removal.
+	Soft *bool `form:"soft,omitempty" json:"soft,omitempty"`
+}
+
 // PutEntryParams defines parameters for PutEntry.
 type PutEntryParams struct {
 	// XSignature Ed25519 signature of the request body, base64 encoded.
@@ -586,6 +593,13 @@ type PutEntryParams struct {
 type GetTemplatesParams struct {
 	// NextPageToken Token for pagination to retrieve the next page of results
 	NextPageToken *string `form:"next_page_token,omitempty" json:"next_page_token,omitempty"`
+}
+
+// DeleteTemplateParams defines parameters for DeleteTemplate.
+type DeleteTemplateParams struct {
+	// Soft If true (default), performs a soft delete.
+	// If false, performs a hard removal.
+	Soft *bool `form:"soft,omitempty" json:"soft,omitempty"`
 }
 
 // PutTemplateParams defines parameters for PutTemplate.
