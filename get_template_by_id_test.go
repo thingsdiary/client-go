@@ -18,7 +18,7 @@ func (s *ClientSuite) TestTemplate_GetByID_NotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary first
@@ -44,7 +44,7 @@ func (s *ClientSuite) TestTemplate_GetByID_DiaryNotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Try to get template from non-existent diary
@@ -73,7 +73,7 @@ func (s *ClientSuite) TestTemplate_GetByID_AfterCreation() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary first

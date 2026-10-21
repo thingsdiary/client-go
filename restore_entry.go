@@ -2,26 +2,35 @@ package client
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
-
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
-func (c *Client) RestoreEntry(ctx context.Context, diaryID string, entryID string) (*Entry, error) {
+func (c *Client) RestoreEntry(ctx context.Context, diaryID, entryID string) (*Entry, error) {
 	if c.credentials == nil {
 		return nil, ErrUnauthorized
 	}
 
-	key, err := c.getActiveDiaryKey(ctx, diaryID)
+	keys, err := c.getDiaryKeys(ctx, diaryID)
 	if err != nil {
 		return nil, err
 	}
 
+	req := &v1.RestoreEntryRequest{
+		DiaryId: diaryID,
+		EntryId: entryID,
+	}
+
+	response := &v1.RestoreEntryResponse{}
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.restore", req, response); err != nil {
+		return nil, err
+	}
+
+	key, err := diaryKeyByID(keys, response.GetEntry().GetEncryption().GetDiaryKeyId())
+	if err != nil {
+		return nil, err
+	}
 	diaryKey, err := decryptWithPrivateKey(
 		key.Value,
 		c.credentials.EncryptionPrivateKey,
@@ -31,30 +40,5 @@ func (c *Client) RestoreEntry(ctx context.Context, diaryID string, entryID strin
 		return nil, errors.Wrap(err, "failed to decrypt diary key")
 	}
 
-	url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s/restore", c.baseURL, diaryID, entryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodPost, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
-	}
-	req.Header.Set(
-		"X-Signature",
-		base64.StdEncoding.EncodeToString(signBytes(nil, c.credentials.SigningPrivateKey)),
-	)
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if err := restoreResponseError(resp, ErrEntryNotFound); err != nil {
-		return nil, err
-	}
-
-	var apiResponse openapi.GetEntryResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	return c.decryptEntry(&apiResponse.Entry, diaryKey)
+	return entryFromProto(response.GetEntry(), diaryKey)
 }

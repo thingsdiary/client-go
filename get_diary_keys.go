@@ -2,52 +2,47 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
-
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
-func (c *Client) getActiveDiaryKey(ctx context.Context, diaryID string) (*openapi.DiaryEncryptionKey, error) {
-	// TODO: Implement client-side caching for keys (TTL ~5min)
-	url := fmt.Sprintf("%s/v1/diaries/%s/keys", c.baseURL, diaryID)
-
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
+func (c *Client) getActiveDiaryKey(ctx context.Context, diaryID string) (*v1.DiaryEncryptionKey, error) {
+	keys, err := c.getDiaryKeys(ctx, diaryID)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+		return nil, err
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
-	}
-
-	if resp.StatusCode == http.StatusForbidden {
-		return nil, ErrForbidden
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %s", resp.Status)
-	}
-
-	var apiResponse openapi.GetDiaryKeysResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	for i := range apiResponse.Keys {
-		if apiResponse.Keys[i].Status == openapi.Active {
-			return &apiResponse.Keys[i], nil
+	for _, key := range keys {
+		if key != nil && key.Status == v1.DiaryKeyStatus_DIARY_KEY_STATUS_ACTIVE {
+			return key, nil
 		}
 	}
 
 	return nil, errors.New("no active encryption key found")
+}
+
+func (c *Client) getDiaryKeys(ctx context.Context, diaryID string) ([]*v1.DiaryEncryptionKey, error) {
+	// TODO: Implement client-side caching for keys (TTL ~5min)
+	req := &v1.ListDiaryKeysRequest{
+		DiaryId: diaryID,
+	}
+
+	response := &v1.ListDiaryKeysResponse{}
+
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary_key.list", req, response); err != nil {
+		return nil, err
+	}
+
+	return response.Keys, nil
+}
+
+func diaryKeyByID(keys []*v1.DiaryEncryptionKey, keyID string) (*v1.DiaryEncryptionKey, error) {
+	for _, key := range keys {
+		if key != nil && key.Id == keyID {
+			return key, nil
+		}
+	}
+
+	return nil, errors.Errorf("encryption key %q not found", keyID)
 }

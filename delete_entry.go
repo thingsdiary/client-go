@@ -2,16 +2,15 @@ package client
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
-	"strconv"
 
-	"github.com/pkg/errors"
+	"github.com/samber/mo"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
+// DeleteEntryParams controls how an entry is deleted.
 type DeleteEntryParams struct {
-	Soft *bool
+	// Soft defaults to true. Use mo.Some(false) to make the entry permanently removed.
+	Soft mo.Option[bool]
 }
 
 func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string, params ...DeleteEntryParams) error {
@@ -20,47 +19,19 @@ func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string
 	}
 
 	var p DeleteEntryParams
+
 	if len(params) > 0 {
 		p = params[0]
 	}
 
-	urlStr := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse URL")
+	req := &v1.DeleteEntryRequest{
+		DiaryId: diaryID,
+		EntryId: entryID,
+		Soft:    protoBool(p.Soft.OrElse(true)),
 	}
 
-	if p.Soft != nil {
-		q := u.Query()
-		q.Set("soft", strconv.FormatBool(*p.Soft))
-		u.RawQuery = q.Encode()
-	}
-
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, u.String(), nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to create request")
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return ErrEntryNotFound
-	}
-
-	if resp.StatusCode == http.StatusForbidden {
-		return ErrForbidden
-	}
-
-	if resp.StatusCode == http.StatusGone {
-		return ErrEntityRemoved
-	}
-
-	if resp.StatusCode != http.StatusNoContent {
-		return errors.Errorf("unexpected status code: %s", resp.Status)
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.delete", req, &v1.DeleteEntryResponse{}); err != nil {
+		return err
 	}
 
 	return nil

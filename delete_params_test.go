@@ -2,78 +2,100 @@ package client
 
 import (
 	"context"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 
+	"github.com/centrifugal/centrifuge-go"
+	"github.com/samber/mo"
 	"github.com/stretchr/testify/require"
+	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
-func TestClient_DeleteEntity_HardDeleteQuery(t *testing.T) {
-	hardDelete := false
-
+func TestClientDeleteEntityHardDeleteRPC(t *testing.T) {
 	tests := []struct {
-		name     string
-		wantPath string
-		call     func(client *Client) error
+		name   string
+		method string
+		call   func(client *Client) error
+		check  func(t *testing.T, payload []byte)
 	}{
 		{
-			name:     "entry",
-			wantPath: "/v1/diaries/diary-1/entries/entry-1",
+			name:   "entry",
+			method: "io.thingsdiary.v1.entry.delete",
 			call: func(client *Client) error {
 				return client.DeleteEntry(
 					context.Background(),
 					"diary-1",
 					"entry-1",
-					DeleteEntryParams{Soft: &hardDelete},
+					DeleteEntryParams{Soft: mo.Some(false)},
 				)
+			},
+			check: func(t *testing.T, payload []byte) {
+				t.Helper()
+
+				var request v1.DeleteEntryRequest
+				require.NoError(t, proto.Unmarshal(payload, &request))
+				require.NotNil(t, request.Soft)
+				require.False(t, request.GetSoft())
 			},
 		},
 		{
-			name:     "topic",
-			wantPath: "/v1/diaries/diary-1/topics/topic-1",
+			name:   "topic",
+			method: "io.thingsdiary.v1.topic.delete",
 			call: func(client *Client) error {
 				return client.DeleteTopic(
 					context.Background(),
 					"diary-1",
 					"topic-1",
-					DeleteTopicParams{Soft: &hardDelete},
+					DeleteTopicParams{Soft: mo.Some(false)},
 				)
+			},
+			check: func(t *testing.T, payload []byte) {
+				t.Helper()
+
+				var request v1.DeleteTopicRequest
+				require.NoError(t, proto.Unmarshal(payload, &request))
+				require.NotNil(t, request.Soft)
+				require.False(t, request.GetSoft())
 			},
 		},
 		{
-			name:     "template",
-			wantPath: "/v1/diaries/diary-1/templates/template-1",
+			name:   "template",
+			method: "io.thingsdiary.v1.template.delete",
 			call: func(client *Client) error {
 				return client.DeleteTemplate(
 					context.Background(),
 					"diary-1",
 					"template-1",
-					DeleteTemplateParams{Soft: &hardDelete},
+					DeleteTemplateParams{Soft: mo.Some(false)},
 				)
+			},
+			check: func(t *testing.T, payload []byte) {
+				t.Helper()
+
+				var request v1.DeleteTemplateRequest
+				require.NoError(t, proto.Unmarshal(payload, &request))
+				require.NotNil(t, request.Soft)
+				require.False(t, request.GetSoft())
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			// arrange
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				require.Equal(t, http.MethodDelete, r.Method)
-				require.Equal(t, test.wantPath, r.URL.Path)
-				require.Equal(t, "false", r.URL.Query().Get("soft"))
-				w.WriteHeader(http.StatusNoContent)
-			}))
-			t.Cleanup(server.Close)
+			client := NewClient()
+			client.credentials = &Credentials{SigningPrivateKey: testSigningPrivateKey()}
+			client.conn = &mockRealtimeConn{
+				state: centrifuge.StateConnected,
+				rpc: func(_ context.Context, method string, data []byte) (centrifuge.RPCResult, error) {
+					require.Equal(t, test.method, method)
+					test.check(t, rpcPayload(t, method, data))
 
-			client := NewClient(WithBaseURL(server.URL))
-			client.credentials = &Credentials{}
-			client.authToken = "token"
+					return centrifuge.RPCResult{}, nil
+				},
+			}
 
-			// act
 			err := test.call(client)
 
-			// assert
 			require.NoError(t, err)
 		})
 	}

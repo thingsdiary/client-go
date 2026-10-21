@@ -17,7 +17,7 @@ func (s *ClientSuite) TestDiary_Create() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	diary, err := s.client.CreateDiary(ctx, CreateDiaryParams{

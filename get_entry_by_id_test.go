@@ -19,7 +19,7 @@ func (s *ClientSuite) TestEntry_GetByID() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary first
@@ -68,7 +68,7 @@ func (s *ClientSuite) TestEntry_GetByID_NotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary first
@@ -94,7 +94,7 @@ func (s *ClientSuite) TestEntry_GetByID_DiaryNotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Try to get entry from non-existent diary
@@ -123,7 +123,7 @@ func (s *ClientSuite) TestEntry_GetByID_WithTopic() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary

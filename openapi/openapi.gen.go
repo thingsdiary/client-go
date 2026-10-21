@@ -624,6 +624,14 @@ type PutTopicResponse struct {
 	Topic Topic `json:"topic"`
 }
 
+// RealtimeTokenResponse Response containing a short-lived realtime authentication token
+type RealtimeTokenResponse struct {
+	// Token JWT authentication token for realtime access
+	//
+	// Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+	Token string `json:"token"`
+}
+
 // RegisterRequest Request to register a new user account
 type RegisterRequest struct {
 	// EncryptionPublicKey Public key for data encryption (<base64_encoded>)
@@ -636,7 +644,7 @@ type RegisterRequest struct {
 	// Example: Kx7ZpN2mQwErTyUiOpAsDfGhJkLzXc
 	KdfSalt string `json:"kdf_salt"`
 
-	// Login Unique login identifier (email or username)
+	// Login Unique email address used as the account login
 	//
 	// Example: newuser@example.com
 	Login string `json:"login"`

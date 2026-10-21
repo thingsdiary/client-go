@@ -20,7 +20,7 @@ func (s *ClientSuite) TestEntry_GetEntries() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary
@@ -111,7 +111,7 @@ func (s *ClientSuite) TestEntry_GetEntries_EmptyList() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary (without entries)
@@ -155,7 +155,7 @@ func (s *ClientSuite) TestEntry_GetEntries_DiaryNotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	nonExistentDiaryID := uuid.NewString()

@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-
 	"github.com/thingsdiary/client-go/openapi"
 )
 

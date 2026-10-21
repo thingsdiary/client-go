@@ -1,6 +1,7 @@
 package client
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -44,5 +45,25 @@ func (s *ClientSuite) SetupTest() {
 		baseURL = envURL
 	}
 
-	s.client = NewClient(WithBaseURL(baseURL))
+	realtimeURL := "ws://127.0.0.1:8000/connection/websocket"
+	if envURL := os.Getenv("REALTIME_URL"); envURL != "" {
+		realtimeURL = envURL
+	}
+
+	s.client = NewClient(
+		WithBaseURL(baseURL),
+		WithRealtimeURL(realtimeURL),
+	)
+}
+
+func (s *ClientSuite) TearDownTest() {
+	s.client.Close()
+}
+
+func (s *ClientSuite) authenticate(ctx context.Context, login, password string) error {
+	if err := s.client.Authenticate(ctx, login, password, s.seedPhrase); err != nil {
+		return err
+	}
+
+	return s.client.Connect(ctx)
 }

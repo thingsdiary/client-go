@@ -2,70 +2,36 @@ package client
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
-	"strconv"
 
-	"github.com/pkg/errors"
+	"github.com/samber/mo"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
+// DeleteTemplateParams controls how a template is deleted.
 type DeleteTemplateParams struct {
-	Soft *bool
+	// Soft defaults to true. Use mo.Some(false) to make the template permanently removed.
+	Soft mo.Option[bool]
 }
 
-func (c *Client) DeleteTemplate(
-	ctx context.Context,
-	diaryID string,
-	templateID string,
-	params ...DeleteTemplateParams,
-) error {
+func (c *Client) DeleteTemplate(ctx context.Context, diaryID string, templateID string, params ...DeleteTemplateParams) error {
 	if c.credentials == nil {
 		return ErrUnauthorized
 	}
 
 	var p DeleteTemplateParams
+
 	if len(params) > 0 {
 		p = params[0]
 	}
 
-	urlStr := fmt.Sprintf("%s/v1/diaries/%s/templates/%s", c.baseURL, diaryID, templateID)
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse URL")
+	req := &v1.DeleteTemplateRequest{
+		DiaryId:    diaryID,
+		TemplateId: templateID,
+		Soft:       protoBool(p.Soft.OrElse(true)),
 	}
 
-	if p.Soft != nil {
-		q := u.Query()
-		q.Set("soft", strconv.FormatBool(*p.Soft))
-		u.RawQuery = q.Encode()
-	}
-
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, u.String(), nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to create request")
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return ErrTemplateNotFound
-	}
-
-	if resp.StatusCode == http.StatusForbidden {
-		return ErrForbidden
-	}
-
-	if resp.StatusCode == http.StatusGone {
-		return ErrEntityRemoved
-	}
-
-	if resp.StatusCode != http.StatusNoContent {
-		return errors.Errorf("unexpected status code: %s", resp.Status)
+	if err := c.rpc(ctx, "io.thingsdiary.v1.template.delete", req, &v1.DeleteTemplateResponse{}); err != nil {
+		return err
 	}
 
 	return nil

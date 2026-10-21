@@ -2,17 +2,16 @@ package client
 
 import (
 	"context"
-	"fmt"
-	"net/http"
-	"net/url"
-	"strconv"
 
-	"github.com/pkg/errors"
+	"github.com/samber/mo"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
+// DeleteTopicParams controls how a topic and its entries are deleted.
 type DeleteTopicParams struct {
 	DeleteEntries bool
-	Soft          *bool
+	// Soft defaults to true. Use mo.Some(false) to make the topic permanently removed.
+	Soft mo.Option[bool]
 }
 
 func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string, params ...DeleteTopicParams) error {
@@ -21,50 +20,20 @@ func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string
 	}
 
 	var p DeleteTopicParams
+
 	if len(params) > 0 {
 		p = params[0]
 	}
 
-	urlStr := fmt.Sprintf("%s/v1/diaries/%s/topics/%s", c.baseURL, diaryID, topicID)
-	u, err := url.Parse(urlStr)
-	if err != nil {
-		return errors.Wrap(err, "failed to parse URL")
+	req := &v1.DeleteTopicRequest{
+		DiaryId:       diaryID,
+		TopicId:       topicID,
+		Soft:          protoBool(p.Soft.OrElse(true)),
+		DeleteEntries: p.DeleteEntries,
 	}
 
-	q := url.Values{}
-	if p.DeleteEntries {
-		q.Set("delete_entries", "true")
-	}
-	if p.Soft != nil {
-		q.Set("soft", strconv.FormatBool(*p.Soft))
-	}
-	u.RawQuery = q.Encode()
-
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, u.String(), nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to create request")
-	}
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return ErrTopicNotFound
-	}
-
-	if resp.StatusCode == http.StatusForbidden {
-		return ErrForbidden
-	}
-
-	if resp.StatusCode == http.StatusGone {
-		return ErrEntityRemoved
-	}
-
-	if resp.StatusCode != http.StatusNoContent {
-		return errors.Errorf("unexpected status code: %s", resp.Status)
+	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.delete", req, &v1.DeleteTopicResponse{}); err != nil {
+		return err
 	}
 
 	return nil

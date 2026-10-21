@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
-
 	"github.com/thingsdiary/client-go/openapi"
 )
 
@@ -39,6 +38,9 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase, kdfS
 
 	if resp.StatusCode == http.StatusConflict {
 		return ErrAccountAlreadyExists
+	}
+	if resp.StatusCode == http.StatusBadRequest {
+		return ErrBadRequest
 	}
 
 	if resp.StatusCode != http.StatusCreated {
