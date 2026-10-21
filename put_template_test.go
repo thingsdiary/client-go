@@ -19,7 +19,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary first
@@ -67,7 +67,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate_NotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Act: Try to create template in non-existent diary
@@ -107,7 +107,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate_EmptyFields() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create diary first

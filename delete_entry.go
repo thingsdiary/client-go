@@ -2,39 +2,34 @@ package client
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 
-	"github.com/pkg/errors"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
-func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string) error {
+type DeleteEntryParams struct {
+	Soft *bool
+}
+
+func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string, params ...DeleteEntryParams) error {
 	if c.credentials == nil {
 		return ErrUnauthorized
 	}
 
-	url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, url, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to create request")
+	var p DeleteEntryParams
+
+	if len(params) > 0 {
+		p = params[0]
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return ErrEntryNotFound
+	req := &v1.DeleteEntryRequest{
+		DiaryId: diaryID,
+		EntryId: entryID,
+		Soft:    protoBool(deleteSoftValue(p.Soft)),
 	}
 
-	if resp.StatusCode == http.StatusForbidden {
-		return ErrForbidden
-	}
-
-	if resp.StatusCode != http.StatusNoContent {
-		return errors.Errorf("unexpected status code: %s", resp.Status)
+	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.delete", req, nil); err != nil {
+		return err
 	}
 
 	return nil

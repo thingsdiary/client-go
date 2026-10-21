@@ -2,15 +2,12 @@ package client
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
 	"github.com/samber/mo"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 // PutEntryParams contains parameters for creating/updating an entry
@@ -97,134 +94,41 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 		return nil, errors.Wrap(err, "failed to encrypt entity key")
 	}
 
-	// Convert TopicID if present
-	var topicID mo.Option[openapi.TopicID]
-	if params.TopicID.IsPresent() {
-		topicID = mo.Some(openapi.TopicID(params.TopicID.MustGet()))
+	encryption := &v1.Encryption{
+		DiaryKeyId:        diaryKeyID,
+		EncryptedKeyNonce: keyNonce,
+		EncryptedKeyData:  encryptedEntityKey,
 	}
 
-	// Create request
-	request := openapi.PutEntryRequest{
-		Version: NewVersion(),
-		TopicId: topicID,
-		Encryption: openapi.DiaryEncryption{
-			DiaryKeyId:        diaryKeyID,
-			EncryptedKeyNonce: keyNonce,
-			EncryptedKeyData:  encryptedEntityKey,
-		},
-		Details: openapi.EncryptedData{
-			Nonce: detailsNonce,
-			Data:  encryptedDetails,
-		},
-		Preview: openapi.EncryptedData{
-			Nonce: previewNonce,
-			Data:  encryptedPreview,
-		},
-	}
+	details := &v1.EncryptedData{Nonce: detailsNonce, Data: encryptedDetails}
+	preview := &v1.EncryptedData{Nonce: previewNonce, Data: encryptedPreview}
 
-	// Validate request before sending
-	if err := request.Validate(); err != nil {
+	if err := validateProtoEncryption(encryption); err != nil {
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	url := fmt.Sprintf("%s/v1/diaries/%s/entries/%s", c.baseURL, diaryID, entryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+	if err := validateProtoEncryptedData(details, "details"); err != nil {
+		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	requestJSON, err := json.Marshal(request)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to marshal request")
+	if err := validateProtoEncryptedData(preview, "preview"); err != nil {
+		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	signature := signBytes(requestJSON, c.credentials.SigningPrivateKey)
-	req.Header.Set("X-Signature", base64.StdEncoding.EncodeToString(signature))
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
+	req := &v1.PutEntryRequest{
+		DiaryId:    diaryID,
+		EntryId:    entryID,
+		Version:    NewVersion(),
+		TopicId:    protoString(params.TopicID),
+		Encryption: encryption,
+		Details:    details,
+		Preview:    preview,
 	}
 
-	if resp.StatusCode == http.StatusForbidden {
-		return nil, ErrForbidden
+	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.put", req, nil); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusBadRequest {
-		var errorResp openapi.ErrorResponse
-		if err := json.NewDecoder(resp.Body).Decode(&errorResp); err == nil {
-			if errorResp.ErrorCode == openapi.ResponseErrorCodeTopicNotFound {
-				return nil, errors.Wrap(ErrTopicNotFound, "could not put entry")
-			}
-		}
-
-		return nil, errors.Errorf("bad request: %s", resp.Status)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %s", resp.Status)
-	}
-
-	var apiResponse openapi.PutEntryResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	// Decrypt and return entry
-	return c.decryptEntry(&apiResponse.Entry, decryptedDiaryKey)
-}
-
-// decryptEntry decrypts an encrypted entry to plaintext
-func (c *Client) decryptEntry(apiEntry *openapi.Entry, diaryKey []byte) (*Entry, error) {
-	// Decrypt entity key
-	decryptedEntityKey, err := decryptWithSymmetricKey(
-		apiEntry.Encryption.EncryptedKeyNonce,
-		apiEntry.Encryption.EncryptedKeyData,
-		diaryKey,
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to decrypt entity key")
-	}
-
-	// Decrypt entry details
-	decryptedDetailsBytes, err := decryptWithSymmetricKey(
-		apiEntry.Details.Nonce,
-		apiEntry.Details.Data,
-		decryptedEntityKey,
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to decrypt entry details")
-	}
-
-	var entryDetails EntryDetails
-	if err := json.Unmarshal(decryptedDetailsBytes, &entryDetails); err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal entry details")
-	}
-
-	// Convert TopicID
-	var topicID mo.Option[string]
-	if apiEntry.TopicId.IsPresent() {
-		topicID = mo.Some(string(apiEntry.TopicId.MustGet()))
-	}
-
-	entry := Entry{
-		ID:            apiEntry.Id,
-		DiaryID:       string(apiEntry.DiaryId),
-		Content:       entryDetails.Content,
-		TopicID:       topicID,
-		Archived:      entryDetails.Archived,
-		Bookmarked:    entryDetails.Bookmarked,
-		PreviewHidden: entryDetails.PreviewHidden,
-		CreatedAt:     apiEntry.CreatedAt,
-		UpdatedAt:     apiEntry.UpdatedAt,
-		DeletedAt:     apiEntry.DeletedAt,
-		Version:       apiEntry.Version,
-	}
-
-	return &entry, nil
+	return c.GetEntryByID(ctx, diaryID, entryID)
 }

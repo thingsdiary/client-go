@@ -6,16 +6,23 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"sync"
 
 	"github.com/pkg/errors"
+
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 type Client struct {
 	baseURL     string
+	realtimeURL string
 	credentials *Credentials
 	httpClient  *http.Client
 	authToken   string
 	userAgent   string
+	realtimeMu  sync.RWMutex
+	conn        realtimeConn
+	events      chan *v1.Event
 }
 
 func NewClient(opts ...clientOption) *Client {
@@ -23,9 +30,13 @@ func NewClient(opts ...clientOption) *Client {
 	for _, opt := range opts {
 		opt(clientOptions)
 	}
+	if clientOptions.realtimeURL == "" {
+		clientOptions.realtimeURL = realtimeURLFromBaseURL(clientOptions.baseURL)
+	}
 
 	client := Client{
-		baseURL: clientOptions.baseURL,
+		baseURL:     clientOptions.baseURL,
+		realtimeURL: clientOptions.realtimeURL,
 		httpClient: &http.Client{
 			Timeout: clientOptions.timeout,
 		},
@@ -62,7 +73,7 @@ func (c *Client) newRequest(ctx context.Context, method, url string, body interf
 // newAuthenticatedRequest creates an HTTP request with authentication headers
 func (c *Client) newAuthenticatedRequest(ctx context.Context, method, url string, body interface{}) (*http.Request, error) {
 	if c.authToken == "" {
-		return nil, errors.New("not authenticated")
+		return nil, ErrUnauthorized
 	}
 
 	req, err := c.newRequest(ctx, method, url, body)

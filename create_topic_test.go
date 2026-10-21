@@ -19,7 +19,7 @@ func (s *ClientSuite) TestTopic_CreateTopic() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	createdDiary, err := s.client.CreateDiary(ctx, CreateDiaryParams{
@@ -59,7 +59,7 @@ func (s *ClientSuite) TestTopic_CreateTopic_EmptyFields() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	createdDiary, err := s.client.CreateDiary(ctx, CreateDiaryParams{
@@ -95,7 +95,7 @@ func (s *ClientSuite) TestTopic_CreateTopic_DiaryNotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	nonExistentDiaryID := uuid.NewString()

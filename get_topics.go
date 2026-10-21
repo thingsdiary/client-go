@@ -2,13 +2,10 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (c *Client) GetTopics(ctx context.Context, diaryID string) ([]*Topic, error) {
@@ -33,14 +30,14 @@ func (c *Client) GetTopics(ctx context.Context, diaryID string) ([]*Topic, error
 	}
 
 	// Get topics data
-	topicsData, err := c.getTopics(ctx, diaryID)
+	response, err := c.getTopics(ctx, diaryID)
 	if err != nil {
 		return nil, err
 	}
 
-	topics := make([]*Topic, 0, len(topicsData))
-	for _, topicData := range topicsData {
-		topic, err := c.decryptTopic(topicData, decryptedDiaryKey)
+	topics := make([]*Topic, 0, len(response.Topics))
+	for _, value := range response.Topics {
+		topic, err := topicFromProto(value, decryptedDiaryKey)
 		if err != nil {
 			return nil, err
 		}
@@ -51,35 +48,16 @@ func (c *Client) GetTopics(ctx context.Context, diaryID string) ([]*Topic, error
 	return topics, nil
 }
 
-func (c *Client) getTopics(ctx context.Context, diaryID string) ([]*openapi.Topic, error) {
-	var url = fmt.Sprintf("%s/v1/diaries/%s/topics", c.baseURL, diaryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+func (c *Client) getTopics(ctx context.Context, diaryID string) (*v1.ListTopicsResponse, error) {
+	req := &v1.ListTopicsRequest{
+		DiaryId: diaryID,
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
+	response := &v1.ListTopicsResponse{}
 
-	if resp.StatusCode == http.StatusUnauthorized {
-		return nil, ErrUnauthorized
+	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.list", req, response); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	var apiResponse openapi.GetTopicsResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	return apiResponse.Topics, nil
+	return response, nil
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 // Diary represents a plaintext diary that users work with
@@ -25,42 +25,32 @@ type DiaryDetails struct {
 	Description string `json:"description"`
 }
 
-// decryptDiary decrypts a diary using the provided credentials
-func (c *Client) decryptDiary(diaryData *openapi.Diary) (*Diary, error) {
-	if c.credentials == nil {
-		return nil, ErrUnauthorized
+func diaryFromProto(value *v1.Diary, privateKey, publicKey []byte) (*Diary, error) {
+	if value == nil {
+		return nil, errors.New("diary is required")
 	}
 
-	if len(diaryData.EncryptionKeys) == 0 {
+	if len(value.EncryptionKeys) == 0 {
 		return nil, errors.New("no encryption keys found in response")
 	}
 
-	encryptedDiaryKeyValue := diaryData.EncryptionKeys[0].Value
 	decryptedDiaryKey, err := decryptWithPrivateKey(
-		encryptedDiaryKeyValue,
-		c.credentials.EncryptionPrivateKey,
-		c.credentials.EncryptionPublicKey,
+		value.EncryptionKeys[0].Value,
+		privateKey,
+		publicKey,
 	)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to decrypt diary key")
 	}
 
-	decryptedEntityKey, err := decryptWithSymmetricKey(
-		diaryData.Encryption.EncryptedKeyNonce,
-		diaryData.Encryption.EncryptedKeyData,
+	decryptedContentBytes, err := decryptProtoDetails(
+		value.Encryption,
+		value.Details,
 		decryptedDiaryKey,
+		"diary content",
 	)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to decrypt entity key")
-	}
-
-	decryptedContentBytes, err := decryptWithSymmetricKey(
-		diaryData.Details.Nonce,
-		diaryData.Details.Data,
-		decryptedEntityKey,
-	)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to decrypt diary content")
+		return nil, err
 	}
 
 	var decryptedDiaryDetails DiaryDetails
@@ -69,12 +59,12 @@ func (c *Client) decryptDiary(diaryData *openapi.Diary) (*Diary, error) {
 	}
 
 	diary := &Diary{
-		ID:          diaryData.Id,
+		ID:          value.Id,
 		Title:       decryptedDiaryDetails.Title,
 		Description: decryptedDiaryDetails.Description,
-		CreatedAt:   diaryData.CreatedAt,
-		UpdatedAt:   diaryData.UpdatedAt,
-		Version:     diaryData.Version,
+		CreatedAt:   protoTime(value.CreatedAt),
+		UpdatedAt:   protoTime(value.UpdatedAt),
+		Version:     value.Version,
 	}
 
 	return diary, nil

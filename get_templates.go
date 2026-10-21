@@ -2,13 +2,10 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (c *Client) GetTemplates(ctx context.Context, diaryID string) ([]*Template, error) {
@@ -33,14 +30,14 @@ func (c *Client) GetTemplates(ctx context.Context, diaryID string) ([]*Template,
 	}
 
 	// Get templates data
-	templatesData, err := c.getTemplates(ctx, diaryID)
+	response, err := c.getTemplates(ctx, diaryID)
 	if err != nil {
 		return nil, err
 	}
 
-	templates := make([]*Template, 0, len(templatesData))
-	for _, templateData := range templatesData {
-		template, err := c.decryptTemplate(templateData, decryptedDiaryKey)
+	templates := make([]*Template, 0, len(response.Templates))
+	for _, value := range response.Templates {
+		template, err := templateFromProto(value, decryptedDiaryKey)
 		if err != nil {
 			return nil, err
 		}
@@ -51,35 +48,16 @@ func (c *Client) GetTemplates(ctx context.Context, diaryID string) ([]*Template,
 	return templates, nil
 }
 
-func (c *Client) getTemplates(ctx context.Context, diaryID string) ([]*openapi.Template, error) {
-	var url = fmt.Sprintf("%s/v1/diaries/%s/templates", c.baseURL, diaryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+func (c *Client) getTemplates(ctx context.Context, diaryID string) (*v1.ListTemplatesResponse, error) {
+	req := &v1.ListTemplatesRequest{
+		DiaryId: diaryID,
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
+	response := &v1.ListTemplatesResponse{}
 
-	if resp.StatusCode == http.StatusUnauthorized {
-		return nil, ErrUnauthorized
+	if err := c.rpc(ctx, "io.thingsdiary.v1.template.list", req, response); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	var apiResponse openapi.GetTemplatesResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	return apiResponse.Templates, nil
+	return response, nil
 }

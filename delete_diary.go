@@ -2,10 +2,8 @@ package client
 
 import (
 	"context"
-	"fmt"
-	"net/http"
 
-	"github.com/pkg/errors"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (c *Client) DeleteDiary(ctx context.Context, diaryID string) error {
@@ -13,28 +11,13 @@ func (c *Client) DeleteDiary(ctx context.Context, diaryID string) error {
 		return ErrUnauthorized
 	}
 
-	url := fmt.Sprintf("%s/v1/diaries/%s", c.baseURL, diaryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, url, nil)
-	if err != nil {
-		return errors.Wrap(err, "failed to create request")
+	req := &v1.DeleteDiaryRequest{
+		DiaryId: diaryID,
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return ErrDiaryNotFound
-	}
-
-	if resp.StatusCode == http.StatusForbidden {
-		return ErrForbidden
-	}
-
-	if resp.StatusCode != http.StatusNoContent {
-		return errors.Errorf("unexpected status code: %s", resp.Status)
+	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.delete", req, nil); err != nil {
+		return err
 	}
 
 	return nil

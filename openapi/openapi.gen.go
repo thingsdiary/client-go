@@ -428,6 +428,12 @@ type PutTopicResponse struct {
 	Topic Topic `json:"topic"`
 }
 
+// RealtimeTokenResponse Response containing a short-lived realtime authentication token
+type RealtimeTokenResponse struct {
+	// Token JWT authentication token for realtime access
+	Token string `json:"token"`
+}
+
 // RegisterRequest Request to register a new user account
 type RegisterRequest struct {
 	// EncryptionPublicKey Public key for data encryption (<base64_encoded>)

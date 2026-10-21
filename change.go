@@ -8,6 +8,7 @@ const (
 	ChangeOperationCreated     ChangeOperation = "created"
 	ChangeOperationUpdated     ChangeOperation = "updated"
 	ChangeOperationSoftDeleted ChangeOperation = "soft_deleted"
+	ChangeOperationRemoved     ChangeOperation = "removed"
 )
 
 type ChangeEntityType string

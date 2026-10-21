@@ -2,14 +2,11 @@ package client
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 // PutTemplateParams contains parameters for creating/updating a template
@@ -70,62 +67,34 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		return nil, errors.Wrap(err, "failed to encrypt entity key")
 	}
 
-	// Create request
-	request := openapi.PutTemplateRequest{
-		Version: NewVersion(),
-		Encryption: openapi.DiaryEncryption{
-			DiaryKeyId:        diaryKeyID,
-			EncryptedKeyNonce: keyNonce,
-			EncryptedKeyData:  encryptedEntityKey,
-		},
-		Details: openapi.EncryptedData{
-			Nonce: detailsNonce,
-			Data:  encryptedDetails,
-		},
+	encryption := &v1.Encryption{
+		DiaryKeyId:        diaryKeyID,
+		EncryptedKeyNonce: keyNonce,
+		EncryptedKeyData:  encryptedEntityKey,
 	}
 
-	// Validate request before sending
-	if err := request.Validate(); err != nil {
+	details := &v1.EncryptedData{Nonce: detailsNonce, Data: encryptedDetails}
+
+	if err := validateProtoEncryption(encryption); err != nil {
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	url := fmt.Sprintf("%s/v1/diaries/%s/templates/%s", c.baseURL, diaryID, templateID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodPut, url, request)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+	if err := validateProtoEncryptedData(details, "details"); err != nil {
+		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	requestJSON, err := json.Marshal(request)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to marshal request")
+	req := &v1.PutTemplateRequest{
+		DiaryId:    diaryID,
+		TemplateId: templateID,
+		Version:    NewVersion(),
+		Encryption: encryption,
+		Details:    details,
 	}
 
-	signature := signBytes(requestJSON, c.credentials.SigningPrivateKey)
-	req.Header.Set("X-Signature", base64.StdEncoding.EncodeToString(signature))
-
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
+	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
+	if err := c.rpc(ctx, "io.thingsdiary.v1.template.put", req, nil); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusForbidden {
-		return nil, ErrForbidden
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %s", resp.Status)
-	}
-
-	var apiResponse openapi.PutTemplateResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	// Decrypt and return template
-	return c.decryptTemplate(&apiResponse.Template, decryptedDiaryKey)
+	return c.GetTemplateByID(ctx, diaryID, templateID)
 }

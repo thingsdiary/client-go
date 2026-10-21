@@ -2,50 +2,27 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
-func (c *Client) getActiveDiaryKey(ctx context.Context, diaryID string) (*openapi.DiaryEncryptionKey, error) {
+func (c *Client) getActiveDiaryKey(ctx context.Context, diaryID string) (*v1.DiaryEncryptionKey, error) {
 	// TODO: Implement client-side caching for keys (TTL ~5min)
-	url := fmt.Sprintf("%s/v1/diaries/%s/keys", c.baseURL, diaryID)
-
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+	req := &v1.ListDiaryKeysRequest{
+		DiaryId: diaryID,
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
+	response := &v1.ListDiaryKeysResponse{}
 
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary_key.list", req, response); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusForbidden {
-		return nil, ErrForbidden
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %s", resp.Status)
-	}
-
-	var apiResponse openapi.GetDiaryKeysResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	for i := range apiResponse.Keys {
-		if apiResponse.Keys[i].Status == openapi.Active {
-			return &apiResponse.Keys[i], nil
+	for _, key := range response.Keys {
+		if key != nil && key.Status == v1.DiaryKeyStatus_DIARY_KEY_STATUS_ACTIVE {
+			return key, nil
 		}
 	}
 

@@ -2,13 +2,8 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
-	"github.com/pkg/errors"
-
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (c *Client) GetDiaries(ctx context.Context) ([]*Diary, error) {
@@ -16,14 +11,18 @@ func (c *Client) GetDiaries(ctx context.Context) ([]*Diary, error) {
 		return nil, ErrUnauthorized
 	}
 
-	diariesData, err := c.getDiaries(ctx)
+	response, err := c.getDiaries(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	diaries := make([]*Diary, 0, len(diariesData))
-	for _, diaryData := range diariesData {
-		diary, err := c.decryptDiary(diaryData)
+	diaries := make([]*Diary, 0, len(response.Diaries))
+	for _, value := range response.Diaries {
+		diary, err := diaryFromProto(
+			value,
+			c.credentials.EncryptionPrivateKey,
+			c.credentials.EncryptionPublicKey,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -33,31 +32,14 @@ func (c *Client) GetDiaries(ctx context.Context) ([]*Diary, error) {
 	return diaries, nil
 }
 
-func (c *Client) getDiaries(ctx context.Context) ([]*openapi.Diary, error) {
-	var url = fmt.Sprintf("%s/v1/diaries", c.baseURL)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+func (c *Client) getDiaries(ctx context.Context) (*v1.ListDiariesResponse, error) {
+	req := &v1.ListDiariesRequest{}
+
+	response := &v1.ListDiariesResponse{}
+
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.list", req, response); err != nil {
+		return nil, err
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusUnauthorized {
-		return nil, ErrUnauthorized
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	var apiResponse openapi.GetDiariesResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	return apiResponse.Diaries, nil
+	return response, nil
 }

@@ -40,9 +40,8 @@ func (s *ClientSuite) TestLogout_NotAuthenticated() {
 	// Act: Try to logout without authentication
 	err := s.client.Logout(ctx)
 
-	// Assert: Should fail with "not authenticated" error
-	require.Error(t, err)
-	require.Contains(t, err.Error(), "not authenticated")
+	// Assert: Should fail with an unauthorized error.
+	require.ErrorIs(t, err, ErrUnauthorized)
 }
 
 func (s *ClientSuite) TestLogout_DoubleLogout() {
@@ -65,9 +64,8 @@ func (s *ClientSuite) TestLogout_DoubleLogout() {
 	// Act: Second logout attempt
 	err = s.client.Logout(ctx)
 
-	// Assert: Second logout should fail
-	require.Error(t, err)
-	require.Contains(t, err.Error(), "not authenticated")
+	// Assert: Second logout should fail.
+	require.ErrorIs(t, err, ErrUnauthorized)
 }
 
 func (s *ClientSuite) TestLogout_ClearsCredentials() {

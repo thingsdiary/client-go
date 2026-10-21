@@ -22,7 +22,7 @@ func (c *Client) Logout(ctx context.Context) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusUnauthorized {
-		return errors.New("unauthorized")
+		return ErrUnauthorized
 	}
 
 	if resp.StatusCode != http.StatusNoContent {

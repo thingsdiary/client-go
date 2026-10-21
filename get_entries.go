@@ -2,13 +2,10 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
 	"github.com/pkg/errors"
 
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (c *Client) GetEntries(ctx context.Context, diaryID string) ([]*Entry, error) {
@@ -33,14 +30,14 @@ func (c *Client) GetEntries(ctx context.Context, diaryID string) ([]*Entry, erro
 	}
 
 	// Get entries data
-	entriesData, err := c.getEntries(ctx, diaryID)
+	response, err := c.getEntries(ctx, diaryID)
 	if err != nil {
 		return nil, err
 	}
 
-	entries := make([]*Entry, 0, len(entriesData))
-	for _, entryData := range entriesData {
-		entry, err := c.decryptEntry(entryData, decryptedDiaryKey)
+	entries := make([]*Entry, 0, len(response.Entries))
+	for _, value := range response.Entries {
+		entry, err := entryFromProto(value, decryptedDiaryKey)
 		if err != nil {
 			return nil, err
 		}
@@ -51,35 +48,16 @@ func (c *Client) GetEntries(ctx context.Context, diaryID string) ([]*Entry, erro
 	return entries, nil
 }
 
-func (c *Client) getEntries(ctx context.Context, diaryID string) ([]*openapi.Entry, error) {
-	var url = fmt.Sprintf("%s/v1/diaries/%s/entries", c.baseURL, diaryID)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+func (c *Client) getEntries(ctx context.Context, diaryID string) (*v1.ListEntriesResponse, error) {
+	req := &v1.ListEntriesRequest{
+		DiaryId: diaryID,
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
+	response := &v1.ListEntriesResponse{}
 
-	if resp.StatusCode == http.StatusUnauthorized {
-		return nil, ErrUnauthorized
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.list", req, response); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	var apiResponse openapi.GetEntriesResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	return apiResponse.Entries, nil
+	return response, nil
 }

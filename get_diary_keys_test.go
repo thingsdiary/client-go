@@ -7,6 +7,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (s *ClientSuite) TestGetActiveDiaryKey_Success() {
@@ -18,7 +20,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_Success() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create a diary
@@ -37,7 +39,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_Success() {
 	// Verify key structure
 	assert.NotEmpty(t, key.Id)
 	assert.NotEmpty(t, key.Value)
-	assert.Equal(t, "active", string(key.Status))
+	assert.Equal(t, v1.DiaryKeyStatus_DIARY_KEY_STATUS_ACTIVE, key.Status)
 }
 
 func (s *ClientSuite) TestGetActiveDiaryKey_NotFound() {
@@ -49,7 +51,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_NotFound() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Try to get keys for non-existent diary (with invalid UUID)
@@ -68,7 +70,7 @@ func (s *ClientSuite) TestGetActiveDiaryKey_AfterDeletion() {
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
 
-	err = s.client.Authenticate(ctx, login, "password-123", s.seedPhrase)
+	err = s.authenticate(ctx, login, "password-123")
 	require.NoError(t, err)
 
 	// Create a diary

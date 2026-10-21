@@ -2,13 +2,8 @@ package client
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
 
-	"github.com/pkg/errors"
-
-	"github.com/thingsdiary/client-go/openapi"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func (c *Client) GetDiaryByID(ctx context.Context, id string) (*Diary, error) {
@@ -16,39 +11,28 @@ func (c *Client) GetDiaryByID(ctx context.Context, id string) (*Diary, error) {
 		return nil, ErrUnauthorized
 	}
 
-	diaryData, err := c.getDiary(ctx, id)
+	diary, err := c.getDiary(ctx, id)
 	if err != nil {
 		return nil, err
 	}
 
-	return c.decryptDiary(diaryData)
+	return diaryFromProto(
+		diary,
+		c.credentials.EncryptionPrivateKey,
+		c.credentials.EncryptionPublicKey,
+	)
 }
 
-func (c *Client) getDiary(ctx context.Context, id string) (*openapi.Diary, error) {
-	var url = fmt.Sprintf("%s/v1/diaries/%s", c.baseURL, id)
-	req, err := c.newAuthenticatedRequest(ctx, http.MethodGet, url, nil)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to create request")
+func (c *Client) getDiary(ctx context.Context, id string) (*v1.Diary, error) {
+	req := &v1.GetDiaryRequest{
+		DiaryId: id,
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to execute request")
-	}
-	defer resp.Body.Close()
+	response := &v1.GetDiaryResponse{}
 
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, ErrDiaryNotFound
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.get", req, response); err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
-	}
-
-	var apiResponse openapi.GetDiaryResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		return nil, errors.Wrap(err, "failed to decode response")
-	}
-
-	return &apiResponse.Diary, nil
+	return response.Diary, nil
 }
