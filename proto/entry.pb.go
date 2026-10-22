@@ -347,7 +347,7 @@ func (x *ListEntriesResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutEntryRequest returns EntryChanged.
+// PutEntryRequest returns Entry.
 type PutEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -440,7 +440,7 @@ func (x *PutEntryRequest) GetPreview() *EncryptedData {
 	return nil
 }
 
-// DeleteEntryRequest returns EntryDeleted.
+// DeleteEntryRequest returns an empty response.
 type DeleteEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -501,7 +501,7 @@ func (x *DeleteEntryRequest) GetSoft() bool {
 	return false
 }
 
-// RestoreEntryRequest returns EntryRestored.
+// RestoreEntryRequest returns Entry.
 type RestoreEntryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`

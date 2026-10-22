@@ -125,9 +125,10 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 		Preview:    preview,
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.put", req, nil); err != nil {
+	response := &v1.Entry{}
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.put", req, response); err != nil {
 		return nil, err
 	}
 
-	return c.GetEntryByID(ctx, diaryID, entryID)
+	return entryFromProto(response, decryptedDiaryKey)
 }

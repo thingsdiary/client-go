@@ -100,9 +100,10 @@ func (c *Client) PutTopic(ctx context.Context, diaryID, topicID string, params P
 		DefaultTemplateId: protoString(params.DefaultTemplateID),
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.put", req, nil); err != nil {
+	response := &v1.Topic{}
+	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.put", req, response); err != nil {
 		return nil, err
 	}
 
-	return c.GetTopicByID(ctx, diaryID, topicID)
+	return topicFromProto(response, decryptedDiaryKey)
 }

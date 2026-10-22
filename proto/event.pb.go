@@ -22,7 +22,8 @@ const (
 )
 
 type Event struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	OperationId string                 `protobuf:"bytes,1,opt,name=operation_id,json=operationId,proto3" json:"operation_id,omitempty"`
 	// Types that are valid to be assigned to Payload:
 	//
 	//	*Event_DiaryCreated
@@ -70,6 +71,13 @@ func (x *Event) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Event.ProtoReflect.Descriptor instead.
 func (*Event) Descriptor() ([]byte, []int) {
 	return file_event_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Event) GetOperationId() string {
+	if x != nil {
+		return x.OperationId
+	}
+	return ""
 }
 
 func (x *Event) GetPayload() isEvent_Payload {
@@ -192,51 +200,51 @@ type isEvent_Payload interface {
 }
 
 type Event_DiaryCreated struct {
-	DiaryCreated *DiaryCreated `protobuf:"bytes,1,opt,name=diary_created,json=diaryCreated,proto3,oneof"`
+	DiaryCreated *DiaryCreated `protobuf:"bytes,2,opt,name=diary_created,json=diaryCreated,proto3,oneof"`
 }
 
 type Event_DiaryChanged struct {
-	DiaryChanged *DiaryChanged `protobuf:"bytes,2,opt,name=diary_changed,json=diaryChanged,proto3,oneof"`
+	DiaryChanged *DiaryChanged `protobuf:"bytes,3,opt,name=diary_changed,json=diaryChanged,proto3,oneof"`
 }
 
 type Event_DiaryDeleted struct {
-	DiaryDeleted *DiaryDeleted `protobuf:"bytes,3,opt,name=diary_deleted,json=diaryDeleted,proto3,oneof"`
+	DiaryDeleted *DiaryDeleted `protobuf:"bytes,4,opt,name=diary_deleted,json=diaryDeleted,proto3,oneof"`
 }
 
 type Event_EntryChanged struct {
-	EntryChanged *EntryChanged `protobuf:"bytes,4,opt,name=entry_changed,json=entryChanged,proto3,oneof"`
+	EntryChanged *EntryChanged `protobuf:"bytes,5,opt,name=entry_changed,json=entryChanged,proto3,oneof"`
 }
 
 type Event_EntryDeleted struct {
-	EntryDeleted *EntryDeleted `protobuf:"bytes,5,opt,name=entry_deleted,json=entryDeleted,proto3,oneof"`
+	EntryDeleted *EntryDeleted `protobuf:"bytes,6,opt,name=entry_deleted,json=entryDeleted,proto3,oneof"`
 }
 
 type Event_EntryRestored struct {
-	EntryRestored *EntryRestored `protobuf:"bytes,6,opt,name=entry_restored,json=entryRestored,proto3,oneof"`
+	EntryRestored *EntryRestored `protobuf:"bytes,7,opt,name=entry_restored,json=entryRestored,proto3,oneof"`
 }
 
 type Event_TopicChanged struct {
-	TopicChanged *TopicChanged `protobuf:"bytes,7,opt,name=topic_changed,json=topicChanged,proto3,oneof"`
+	TopicChanged *TopicChanged `protobuf:"bytes,8,opt,name=topic_changed,json=topicChanged,proto3,oneof"`
 }
 
 type Event_TopicDeleted struct {
-	TopicDeleted *TopicDeleted `protobuf:"bytes,8,opt,name=topic_deleted,json=topicDeleted,proto3,oneof"`
+	TopicDeleted *TopicDeleted `protobuf:"bytes,9,opt,name=topic_deleted,json=topicDeleted,proto3,oneof"`
 }
 
 type Event_TopicRestored struct {
-	TopicRestored *TopicRestored `protobuf:"bytes,9,opt,name=topic_restored,json=topicRestored,proto3,oneof"`
+	TopicRestored *TopicRestored `protobuf:"bytes,10,opt,name=topic_restored,json=topicRestored,proto3,oneof"`
 }
 
 type Event_TemplateChanged struct {
-	TemplateChanged *TemplateChanged `protobuf:"bytes,10,opt,name=template_changed,json=templateChanged,proto3,oneof"`
+	TemplateChanged *TemplateChanged `protobuf:"bytes,11,opt,name=template_changed,json=templateChanged,proto3,oneof"`
 }
 
 type Event_TemplateDeleted struct {
-	TemplateDeleted *TemplateDeleted `protobuf:"bytes,11,opt,name=template_deleted,json=templateDeleted,proto3,oneof"`
+	TemplateDeleted *TemplateDeleted `protobuf:"bytes,12,opt,name=template_deleted,json=templateDeleted,proto3,oneof"`
 }
 
 type Event_TemplateRestored struct {
-	TemplateRestored *TemplateRestored `protobuf:"bytes,12,opt,name=template_restored,json=templateRestored,proto3,oneof"`
+	TemplateRestored *TemplateRestored `protobuf:"bytes,13,opt,name=template_restored,json=templateRestored,proto3,oneof"`
 }
 
 func (*Event_DiaryCreated) isEvent_Payload() {}
@@ -267,21 +275,22 @@ var File_event_proto protoreflect.FileDescriptor
 
 const file_event_proto_rawDesc = "" +
 	"\n" +
-	"\vevent.proto\x12\x11io.thingsdiary.v1\x1a\vdiary.proto\x1a\ventry.proto\x1a\x0etemplate.proto\x1a\vtopic.proto\"\x96\a\n" +
-	"\x05Event\x12F\n" +
-	"\rdiary_created\x18\x01 \x01(\v2\x1f.io.thingsdiary.v1.DiaryCreatedH\x00R\fdiaryCreated\x12F\n" +
-	"\rdiary_changed\x18\x02 \x01(\v2\x1f.io.thingsdiary.v1.DiaryChangedH\x00R\fdiaryChanged\x12F\n" +
-	"\rdiary_deleted\x18\x03 \x01(\v2\x1f.io.thingsdiary.v1.DiaryDeletedH\x00R\fdiaryDeleted\x12F\n" +
-	"\rentry_changed\x18\x04 \x01(\v2\x1f.io.thingsdiary.v1.EntryChangedH\x00R\fentryChanged\x12F\n" +
-	"\rentry_deleted\x18\x05 \x01(\v2\x1f.io.thingsdiary.v1.EntryDeletedH\x00R\fentryDeleted\x12I\n" +
-	"\x0eentry_restored\x18\x06 \x01(\v2 .io.thingsdiary.v1.EntryRestoredH\x00R\rentryRestored\x12F\n" +
-	"\rtopic_changed\x18\a \x01(\v2\x1f.io.thingsdiary.v1.TopicChangedH\x00R\ftopicChanged\x12F\n" +
-	"\rtopic_deleted\x18\b \x01(\v2\x1f.io.thingsdiary.v1.TopicDeletedH\x00R\ftopicDeleted\x12I\n" +
-	"\x0etopic_restored\x18\t \x01(\v2 .io.thingsdiary.v1.TopicRestoredH\x00R\rtopicRestored\x12O\n" +
-	"\x10template_changed\x18\n" +
-	" \x01(\v2\".io.thingsdiary.v1.TemplateChangedH\x00R\x0ftemplateChanged\x12O\n" +
-	"\x10template_deleted\x18\v \x01(\v2\".io.thingsdiary.v1.TemplateDeletedH\x00R\x0ftemplateDeleted\x12R\n" +
-	"\x11template_restored\x18\f \x01(\v2#.io.thingsdiary.v1.TemplateRestoredH\x00R\x10templateRestoredB\t\n" +
+	"\vevent.proto\x12\x11io.thingsdiary.v1\x1a\vdiary.proto\x1a\ventry.proto\x1a\x0etemplate.proto\x1a\vtopic.proto\"\xb9\a\n" +
+	"\x05Event\x12!\n" +
+	"\foperation_id\x18\x01 \x01(\tR\voperationId\x12F\n" +
+	"\rdiary_created\x18\x02 \x01(\v2\x1f.io.thingsdiary.v1.DiaryCreatedH\x00R\fdiaryCreated\x12F\n" +
+	"\rdiary_changed\x18\x03 \x01(\v2\x1f.io.thingsdiary.v1.DiaryChangedH\x00R\fdiaryChanged\x12F\n" +
+	"\rdiary_deleted\x18\x04 \x01(\v2\x1f.io.thingsdiary.v1.DiaryDeletedH\x00R\fdiaryDeleted\x12F\n" +
+	"\rentry_changed\x18\x05 \x01(\v2\x1f.io.thingsdiary.v1.EntryChangedH\x00R\fentryChanged\x12F\n" +
+	"\rentry_deleted\x18\x06 \x01(\v2\x1f.io.thingsdiary.v1.EntryDeletedH\x00R\fentryDeleted\x12I\n" +
+	"\x0eentry_restored\x18\a \x01(\v2 .io.thingsdiary.v1.EntryRestoredH\x00R\rentryRestored\x12F\n" +
+	"\rtopic_changed\x18\b \x01(\v2\x1f.io.thingsdiary.v1.TopicChangedH\x00R\ftopicChanged\x12F\n" +
+	"\rtopic_deleted\x18\t \x01(\v2\x1f.io.thingsdiary.v1.TopicDeletedH\x00R\ftopicDeleted\x12I\n" +
+	"\x0etopic_restored\x18\n" +
+	" \x01(\v2 .io.thingsdiary.v1.TopicRestoredH\x00R\rtopicRestored\x12O\n" +
+	"\x10template_changed\x18\v \x01(\v2\".io.thingsdiary.v1.TemplateChangedH\x00R\x0ftemplateChanged\x12O\n" +
+	"\x10template_deleted\x18\f \x01(\v2\".io.thingsdiary.v1.TemplateDeletedH\x00R\x0ftemplateDeleted\x12R\n" +
+	"\x11template_restored\x18\r \x01(\v2#.io.thingsdiary.v1.TemplateRestoredH\x00R\x10templateRestoredB\t\n" +
 	"\apayloadBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (

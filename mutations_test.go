@@ -20,13 +20,13 @@ var (
 	_ func(*Client, context.Context, string, PutDiaryParams) (*Diary, error)               = (*Client).PutDiary
 	_ func(*Client, context.Context, string, CreateEntryParams) (*Entry, error)            = (*Client).CreateEntry
 	_ func(*Client, context.Context, string, string, PutEntryParams) (*Entry, error)       = (*Client).PutEntry
-	_ func(*Client, context.Context, string, string) error                                 = (*Client).RestoreEntry
+	_ func(*Client, context.Context, string, string) (*Entry, error)                       = (*Client).RestoreEntry
 	_ func(*Client, context.Context, string, CreateTopicParams) (*Topic, error)            = (*Client).CreateTopic
 	_ func(*Client, context.Context, string, string, PutTopicParams) (*Topic, error)       = (*Client).PutTopic
-	_ func(*Client, context.Context, string, string) error                                 = (*Client).RestoreTopic
+	_ func(*Client, context.Context, string, string) (*Topic, error)                       = (*Client).RestoreTopic
 	_ func(*Client, context.Context, string, CreateTemplateParams) (*Template, error)      = (*Client).CreateTemplate
 	_ func(*Client, context.Context, string, string, PutTemplateParams) (*Template, error) = (*Client).PutTemplate
-	_ func(*Client, context.Context, string, string) error                                 = (*Client).RestoreTemplate
+	_ func(*Client, context.Context, string, string) (*Template, error)                    = (*Client).RestoreTemplate
 )
 
 func TestMutationsRequireCredentials(t *testing.T) {
@@ -68,7 +68,8 @@ func TestMutationsRequireCredentials(t *testing.T) {
 		{
 			name: "restore entry",
 			call: func() error {
-				return c.RestoreEntry(ctx, "diary-1", "entry-1")
+				_, err := c.RestoreEntry(ctx, "diary-1", "entry-1")
+				return err
 			},
 		},
 		{
@@ -88,7 +89,8 @@ func TestMutationsRequireCredentials(t *testing.T) {
 		{
 			name: "restore topic",
 			call: func() error {
-				return c.RestoreTopic(ctx, "diary-1", "topic-1")
+				_, err := c.RestoreTopic(ctx, "diary-1", "topic-1")
+				return err
 			},
 		},
 		{
@@ -108,7 +110,8 @@ func TestMutationsRequireCredentials(t *testing.T) {
 		{
 			name: "restore template",
 			call: func() error {
-				return c.RestoreTemplate(ctx, "diary-1", "template-1")
+				_, err := c.RestoreTemplate(ctx, "diary-1", "template-1")
+				return err
 			},
 		},
 	}
@@ -134,36 +137,29 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 	var method string
 	var req v1.CreateDiaryRequest
 	c.conn = &mockRealtimeConn{state: centrifuge.StateConnected, rpc: func(_ context.Context, gotMethod string, data []byte) (centrifuge.RPCResult, error) {
-		switch gotMethod {
-		case "io.thingsdiary.v1.diary.create":
-			method = gotMethod
-			require.NoError(t, proto.Unmarshal(rpcPayload(t, gotMethod, data), &req))
-			return centrifuge.RPCResult{}, nil
-		case "io.thingsdiary.v1.diary.list":
-			now := timestamppb.Now()
-			response := &v1.ListDiariesResponse{Diaries: []*v1.Diary{{
-				Id:        "diary-1",
-				Version:   1,
-				CreatedAt: now,
-				UpdatedAt: now,
-				EncryptionKeys: []*v1.DiaryEncryptionKey{{
-					Id:    "key-1",
-					Value: req.EncryptedDiaryKey,
-				}},
-				Encryption: &v1.Encryption{
-					DiaryKeyId:        "key-1",
-					EncryptedKeyNonce: req.EncryptedKeyNonce,
-					EncryptedKeyData:  req.EncryptedKeyData,
-				},
-				Details: req.Details,
-			}}}
-			encoded, err := proto.Marshal(response)
-			require.NoError(t, err)
-			return centrifuge.RPCResult{Data: encoded}, nil
-		default:
-			require.Failf(t, "unexpected RPC method", "method: %s", gotMethod)
-			return centrifuge.RPCResult{}, nil
+		require.Equal(t, "io.thingsdiary.v1.diary.create", gotMethod)
+		method = gotMethod
+		require.NoError(t, proto.Unmarshal(rpcPayload(t, gotMethod, data), &req))
+		now := timestamppb.Now()
+		response := &v1.Diary{
+			Id:        "diary-1",
+			Version:   1,
+			CreatedAt: now,
+			UpdatedAt: now,
+			EncryptionKeys: []*v1.DiaryEncryptionKey{{
+				Id:    "key-1",
+				Value: req.EncryptedDiaryKey,
+			}},
+			Encryption: &v1.Encryption{
+				DiaryKeyId:        "key-1",
+				EncryptedKeyNonce: req.EncryptedKeyNonce,
+				EncryptedKeyData:  req.EncryptedKeyData,
+			},
+			Details: req.Details,
 		}
+		encoded, err := proto.Marshal(response)
+		require.NoError(t, err)
+		return centrifuge.RPCResult{Data: encoded}, nil
 	}}
 
 	_, err = c.CreateDiary(context.Background(), CreateDiaryParams{

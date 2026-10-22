@@ -331,7 +331,7 @@ func (x *ListTemplatesResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutTemplateRequest returns TemplateChanged.
+// PutTemplateRequest returns Template.
 type PutTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -408,7 +408,7 @@ func (x *PutTemplateRequest) GetDetails() *EncryptedData {
 	return nil
 }
 
-// DeleteTemplateRequest returns TemplateDeleted.
+// DeleteTemplateRequest returns an empty response.
 type DeleteTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -469,7 +469,7 @@ func (x *DeleteTemplateRequest) GetSoft() bool {
 	return false
 }
 
-// RestoreTemplateRequest returns TemplateRestored.
+// RestoreTemplateRequest returns Template.
 type RestoreTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`

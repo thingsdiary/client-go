@@ -72,24 +72,14 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		},
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.create", req, nil); err != nil {
+	response := &v1.Diary{}
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.create", req, response); err != nil {
 		return nil, err
 	}
 
-	diaries, err := c.GetDiaries(ctx)
-	if err != nil {
-		return nil, err
-	}
-	if len(diaries) == 0 {
-		return nil, errors.New("created diary was not returned by list")
-	}
-
-	created := diaries[0]
-	for _, diary := range diaries[1:] {
-		if diary.CreatedAt.After(created.CreatedAt) {
-			created = diary
-		}
-	}
-
-	return created, nil
+	return diaryFromProto(
+		response,
+		c.credentials.EncryptionPrivateKey,
+		c.credentials.EncryptionPublicKey,
+	)
 }

@@ -115,7 +115,7 @@ func (x *Diary) GetDetails() *EncryptedData {
 }
 
 // Centrifugo methods: io.thingsdiary.v1.diary.{create,get,list,put,delete}.
-// CreateDiaryRequest returns DiaryCreated.
+// CreateDiaryRequest returns Diary.
 type CreateDiaryRequest struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	EncryptedDiaryKey []byte                 `protobuf:"bytes,1,opt,name=encrypted_diary_key,json=encryptedDiaryKey,proto3" json:"encrypted_diary_key,omitempty"`
@@ -428,7 +428,7 @@ func (x *ListDiariesResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutDiaryRequest returns DiaryChanged.
+// PutDiaryRequest returns Diary.
 type PutDiaryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -557,7 +557,7 @@ func (x *DiaryChanged) GetDiary() *Diary {
 	return nil
 }
 
-// DeleteDiaryRequest returns DiaryDeleted.
+// DeleteDiaryRequest returns an empty response.
 type DeleteDiaryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`

@@ -339,7 +339,7 @@ func (x *ListTopicsResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutTopicRequest returns TopicChanged.
+// PutTopicRequest returns Topic.
 type PutTopicRequest struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId           string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -424,7 +424,7 @@ func (x *PutTopicRequest) GetDefaultTemplateId() string {
 	return ""
 }
 
-// DeleteTopicRequest returns TopicDeleted.
+// DeleteTopicRequest returns an empty response.
 type DeleteTopicRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -493,7 +493,7 @@ func (x *DeleteTopicRequest) GetDeleteEntries() bool {
 	return false
 }
 
-// RestoreTopicRequest returns TopicRestored.
+// RestoreTopicRequest returns Topic.
 type RestoreTopicRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`

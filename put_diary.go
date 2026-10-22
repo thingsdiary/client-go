@@ -90,9 +90,14 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 		Details:    details,
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.put", req, nil); err != nil {
+	response := &v1.Diary{}
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.put", req, response); err != nil {
 		return nil, err
 	}
 
-	return c.GetDiaryByID(ctx, diaryID)
+	return diaryFromProto(
+		response,
+		c.credentials.EncryptionPrivateKey,
+		c.credentials.EncryptionPublicKey,
+	)
 }
