@@ -378,7 +378,7 @@ func TestRegisterRequest_Validate(t *testing.T) {
 	}{
 		{
 			name:             "valid request",
-			login:            "testuser",
+			login:            "test@example.com",
 			password:         "testpassword",
 			encryptionPubKey: encPublicKey[:],
 			signaturePubKey:  signPublicKey,
@@ -403,8 +403,17 @@ func TestRegisterRequest_Validate(t *testing.T) {
 			errorMsg:         "login must not be empty",
 		},
 		{
-			name:             "empty password",
+			name:             "invalid email",
 			login:            "testuser",
+			password:         "testpassword",
+			encryptionPubKey: encPublicKey[:],
+			signaturePubKey:  signPublicKey,
+			expectError:      true,
+			errorMsg:         "login must be a valid email address",
+		},
+		{
+			name:             "empty password",
+			login:            "test@example.com",
 			password:         "",
 			encryptionPubKey: encPublicKey[:],
 			signaturePubKey:  signPublicKey,
@@ -413,7 +422,7 @@ func TestRegisterRequest_Validate(t *testing.T) {
 		},
 		{
 			name:             "whitespace only password",
-			login:            "testuser",
+			login:            "test@example.com",
 			password:         "   ",
 			encryptionPubKey: encPublicKey[:],
 			signaturePubKey:  signPublicKey,
@@ -421,8 +430,17 @@ func TestRegisterRequest_Validate(t *testing.T) {
 			errorMsg:         "password must not be empty",
 		},
 		{
+			name:             "short password",
+			login:            "test@example.com",
+			password:         "qwerty",
+			encryptionPubKey: encPublicKey[:],
+			signaturePubKey:  signPublicKey,
+			expectError:      true,
+			errorMsg:         "password must be at least 8 characters long",
+		},
+		{
 			name:             "invalid encryption key - wrong length",
-			login:            "testuser",
+			login:            "test@example.com",
 			password:         "testpassword",
 			encryptionPubKey: []byte("short"),
 			signaturePubKey:  signPublicKey,
@@ -431,7 +449,7 @@ func TestRegisterRequest_Validate(t *testing.T) {
 		},
 		{
 			name:             "invalid encryption key - all zeros",
-			login:            "testuser",
+			login:            "test@example.com",
 			password:         "testpassword",
 			encryptionPubKey: make([]byte, 32),
 			signaturePubKey:  signPublicKey,
@@ -440,7 +458,7 @@ func TestRegisterRequest_Validate(t *testing.T) {
 		},
 		{
 			name:             "invalid signature key - wrong length",
-			login:            "testuser",
+			login:            "test@example.com",
 			password:         "testpassword",
 			encryptionPubKey: encPublicKey[:],
 			signaturePubKey:  []byte("short"),
@@ -449,7 +467,7 @@ func TestRegisterRequest_Validate(t *testing.T) {
 		},
 		{
 			name:             "invalid signature key - random bytes",
-			login:            "testuser",
+			login:            "test@example.com",
 			password:         "testpassword",
 			encryptionPubKey: encPublicKey[:],
 			signaturePubKey:  make([]byte, 32),

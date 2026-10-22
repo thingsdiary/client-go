@@ -5,6 +5,7 @@ import (
 	"crypto/ed25519"
 	"errors"
 	"fmt"
+	"net/mail"
 	"strings"
 
 	"filippo.io/edwards25519"
@@ -33,12 +34,22 @@ func validateVersion(version uint64) error {
 }
 
 func (r *RegisterRequest) Validate() error {
-	if strings.TrimSpace(r.Login) == "" {
+	login := strings.TrimSpace(r.Login)
+	if login == "" {
 		return errors.New("login must not be empty")
 	}
 
-	if strings.TrimSpace(r.Password) == "" {
+	if _, err := mail.ParseAddress(login); err != nil {
+		return errors.New("login must be a valid email address")
+	}
+
+	password := strings.TrimSpace(r.Password)
+	if password == "" {
 		return errors.New("password must not be empty")
+	}
+
+	if len(password) < 8 {
+		return errors.New("password must be at least 8 characters long")
 	}
 
 	if !isValidEncryptionPublicKey(r.EncryptionPublicKey) {

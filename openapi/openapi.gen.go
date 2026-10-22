@@ -442,7 +442,7 @@ type RegisterRequest struct {
 	// KdfSalt Salt for PBKDF2 key derivation (32 ASCII chars)
 	KdfSalt string `json:"kdf_salt"`
 
-	// Login Unique login identifier (email or username)
+	// Login Unique email address used as the account login
 	Login string `json:"login"`
 
 	// Password User password for authentication
