@@ -6,9 +6,11 @@ import (
 	v1 "github.com/thingsdiary/client-go/proto"
 )
 
+// DeleteTopicParams controls how a topic and its entries are deleted.
 type DeleteTopicParams struct {
 	DeleteEntries bool
-	Soft          *bool
+	// Soft defaults to true. Set it to false to make the topic permanently removed.
+	Soft *bool
 }
 
 func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string, params ...DeleteTopicParams) error {

@@ -6,7 +6,9 @@ import (
 	v1 "github.com/thingsdiary/client-go/proto"
 )
 
+// DeleteEntryParams controls how an entry is deleted.
 type DeleteEntryParams struct {
+	// Soft defaults to true. Set it to false to make the entry permanently removed.
 	Soft *bool
 }
 

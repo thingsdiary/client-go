@@ -6,7 +6,9 @@ import (
 	v1 "github.com/thingsdiary/client-go/proto"
 )
 
+// DeleteTemplateParams controls how a template is deleted.
 type DeleteTemplateParams struct {
+	// Soft defaults to true. Set it to false to make the template permanently removed.
 	Soft *bool
 }
 

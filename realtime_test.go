@@ -129,9 +129,129 @@ func TestMapRealtimeRPCFailedPreconditionToRemoved(t *testing.T) {
 }
 
 func TestDeleteSoftValueDefaultsToSoftAndHonorsHardDelete(t *testing.T) {
+	softTrue := true
 	softFalse := false
 	require.True(t, deleteSoftValue(nil))
+	require.True(t, deleteSoftValue(&softTrue))
 	require.False(t, deleteSoftValue(&softFalse))
+}
+
+func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
+	hardDelete := false
+
+	tests := []struct {
+		name       string
+		method     string
+		call       func(*Client) error
+		assertData func(*testing.T, []byte)
+	}{
+		{
+			name:   "entry defaults to soft delete",
+			method: "io.thingsdiary.v1.entry.delete",
+			call: func(c *Client) error {
+				return c.DeleteEntry(context.Background(), "diary-1", "entry-1")
+			},
+			assertData: func(t *testing.T, data []byte) {
+				var req v1.DeleteEntryRequest
+				require.NoError(t, proto.Unmarshal(data, &req))
+				require.Equal(t, "diary-1", req.GetDiaryId())
+				require.Equal(t, "entry-1", req.GetEntryId())
+				require.NotNil(t, req.Soft)
+				require.True(t, req.GetSoft())
+			},
+		},
+		{
+			name:   "entry supports hard delete",
+			method: "io.thingsdiary.v1.entry.delete",
+			call: func(c *Client) error {
+				return c.DeleteEntry(context.Background(), "diary-1", "entry-1", DeleteEntryParams{Soft: &hardDelete})
+			},
+			assertData: func(t *testing.T, data []byte) {
+				var req v1.DeleteEntryRequest
+				require.NoError(t, proto.Unmarshal(data, &req))
+				require.NotNil(t, req.Soft)
+				require.False(t, req.GetSoft())
+			},
+		},
+		{
+			name:   "topic defaults to soft delete",
+			method: "io.thingsdiary.v1.topic.delete",
+			call: func(c *Client) error {
+				return c.DeleteTopic(context.Background(), "diary-1", "topic-1")
+			},
+			assertData: func(t *testing.T, data []byte) {
+				var req v1.DeleteTopicRequest
+				require.NoError(t, proto.Unmarshal(data, &req))
+				require.Equal(t, "diary-1", req.GetDiaryId())
+				require.Equal(t, "topic-1", req.GetTopicId())
+				require.NotNil(t, req.Soft)
+				require.True(t, req.GetSoft())
+				require.False(t, req.GetDeleteEntries())
+			},
+		},
+		{
+			name:   "topic supports hard delete and entry deletion",
+			method: "io.thingsdiary.v1.topic.delete",
+			call: func(c *Client) error {
+				return c.DeleteTopic(context.Background(), "diary-1", "topic-1", DeleteTopicParams{
+					DeleteEntries: true,
+					Soft:          &hardDelete,
+				})
+			},
+			assertData: func(t *testing.T, data []byte) {
+				var req v1.DeleteTopicRequest
+				require.NoError(t, proto.Unmarshal(data, &req))
+				require.NotNil(t, req.Soft)
+				require.False(t, req.GetSoft())
+				require.True(t, req.GetDeleteEntries())
+			},
+		},
+		{
+			name:   "template defaults to soft delete",
+			method: "io.thingsdiary.v1.template.delete",
+			call: func(c *Client) error {
+				return c.DeleteTemplate(context.Background(), "diary-1", "template-1")
+			},
+			assertData: func(t *testing.T, data []byte) {
+				var req v1.DeleteTemplateRequest
+				require.NoError(t, proto.Unmarshal(data, &req))
+				require.Equal(t, "diary-1", req.GetDiaryId())
+				require.Equal(t, "template-1", req.GetTemplateId())
+				require.NotNil(t, req.Soft)
+				require.True(t, req.GetSoft())
+			},
+		},
+		{
+			name:   "template supports hard delete",
+			method: "io.thingsdiary.v1.template.delete",
+			call: func(c *Client) error {
+				return c.DeleteTemplate(context.Background(), "diary-1", "template-1", DeleteTemplateParams{Soft: &hardDelete})
+			},
+			assertData: func(t *testing.T, data []byte) {
+				var req v1.DeleteTemplateRequest
+				require.NoError(t, proto.Unmarshal(data, &req))
+				require.NotNil(t, req.Soft)
+				require.False(t, req.GetSoft())
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c := NewClient()
+			c.credentials = &Credentials{}
+			c.conn = &mockRealtimeConn{
+				state: centrifuge.StateConnected,
+				rpc: func(_ context.Context, method string, data []byte) (centrifuge.RPCResult, error) {
+					require.Equal(t, test.method, method)
+					test.assertData(t, data)
+					return centrifuge.RPCResult{}, nil
+				},
+			}
+
+			require.NoError(t, test.call(c))
+		})
+	}
 }
 
 func TestCloseFinishesEvents(t *testing.T) {
