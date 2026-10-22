@@ -141,21 +141,23 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 		method = gotMethod
 		require.NoError(t, proto.Unmarshal(rpcPayload(t, gotMethod, data), &req))
 		now := timestamppb.Now()
-		response := &v1.Diary{
-			Id:        "diary-1",
-			Version:   1,
-			CreatedAt: now,
-			UpdatedAt: now,
-			EncryptionKeys: []*v1.DiaryEncryptionKey{{
-				Id:    "key-1",
-				Value: req.EncryptedDiaryKey,
-			}},
-			Encryption: &v1.Encryption{
-				DiaryKeyId:        "key-1",
-				EncryptedKeyNonce: req.EncryptedKeyNonce,
-				EncryptedKeyData:  req.EncryptedKeyData,
+		response := &v1.CreateDiaryResponse{
+			Diary: &v1.Diary{
+				Id:        "diary-1",
+				Version:   1,
+				CreatedAt: now,
+				UpdatedAt: now,
+				EncryptionKeys: []*v1.DiaryEncryptionKey{{
+					Id:    "key-1",
+					Value: req.EncryptedDiaryKey,
+				}},
+				Encryption: &v1.Encryption{
+					DiaryKeyId:        "key-1",
+					EncryptedKeyNonce: req.EncryptedKeyNonce,
+					EncryptedKeyData:  req.EncryptedKeyData,
+				},
+				Details: req.Details,
 			},
-			Details: req.Details,
 		}
 		encoded, err := proto.Marshal(response)
 		require.NoError(t, err)

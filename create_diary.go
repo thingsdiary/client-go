@@ -72,13 +72,13 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		},
 	}
 
-	response := &v1.Diary{}
+	response := &v1.CreateDiaryResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.create", req, response); err != nil {
 		return nil, err
 	}
 
 	return diaryFromProto(
-		response,
+		response.GetDiary(),
 		c.credentials.EncryptionPrivateKey,
 		c.credentials.EncryptionPublicKey,
 	)

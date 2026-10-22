@@ -339,7 +339,6 @@ func (x *ListTopicsResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutTopicRequest returns Topic.
 type PutTopicRequest struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId           string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -424,7 +423,50 @@ func (x *PutTopicRequest) GetDefaultTemplateId() string {
 	return ""
 }
 
-// DeleteTopicRequest returns an empty response.
+type PutTopicResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Topic         *Topic                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutTopicResponse) Reset() {
+	*x = PutTopicResponse{}
+	mi := &file_topic_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutTopicResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutTopicResponse) ProtoMessage() {}
+
+func (x *PutTopicResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_topic_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutTopicResponse.ProtoReflect.Descriptor instead.
+func (*PutTopicResponse) Descriptor() ([]byte, []int) {
+	return file_topic_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PutTopicResponse) GetTopic() *Topic {
+	if x != nil {
+		return x.Topic
+	}
+	return nil
+}
+
 type DeleteTopicRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -437,7 +479,7 @@ type DeleteTopicRequest struct {
 
 func (x *DeleteTopicRequest) Reset() {
 	*x = DeleteTopicRequest{}
-	mi := &file_topic_proto_msgTypes[6]
+	mi := &file_topic_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -449,7 +491,7 @@ func (x *DeleteTopicRequest) String() string {
 func (*DeleteTopicRequest) ProtoMessage() {}
 
 func (x *DeleteTopicRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_topic_proto_msgTypes[6]
+	mi := &file_topic_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -462,7 +504,7 @@ func (x *DeleteTopicRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTopicRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTopicRequest) Descriptor() ([]byte, []int) {
-	return file_topic_proto_rawDescGZIP(), []int{6}
+	return file_topic_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteTopicRequest) GetDiaryId() string {
@@ -493,7 +535,42 @@ func (x *DeleteTopicRequest) GetDeleteEntries() bool {
 	return false
 }
 
-// RestoreTopicRequest returns Topic.
+type DeleteTopicResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTopicResponse) Reset() {
+	*x = DeleteTopicResponse{}
+	mi := &file_topic_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTopicResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTopicResponse) ProtoMessage() {}
+
+func (x *DeleteTopicResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_topic_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTopicResponse.ProtoReflect.Descriptor instead.
+func (*DeleteTopicResponse) Descriptor() ([]byte, []int) {
+	return file_topic_proto_rawDescGZIP(), []int{8}
+}
+
 type RestoreTopicRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -504,7 +581,7 @@ type RestoreTopicRequest struct {
 
 func (x *RestoreTopicRequest) Reset() {
 	*x = RestoreTopicRequest{}
-	mi := &file_topic_proto_msgTypes[7]
+	mi := &file_topic_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -516,7 +593,7 @@ func (x *RestoreTopicRequest) String() string {
 func (*RestoreTopicRequest) ProtoMessage() {}
 
 func (x *RestoreTopicRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_topic_proto_msgTypes[7]
+	mi := &file_topic_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -529,7 +606,7 @@ func (x *RestoreTopicRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreTopicRequest.ProtoReflect.Descriptor instead.
 func (*RestoreTopicRequest) Descriptor() ([]byte, []int) {
-	return file_topic_proto_rawDescGZIP(), []int{7}
+	return file_topic_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RestoreTopicRequest) GetDiaryId() string {
@@ -546,6 +623,50 @@ func (x *RestoreTopicRequest) GetTopicId() string {
 	return ""
 }
 
+type RestoreTopicResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Topic         *Topic                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestoreTopicResponse) Reset() {
+	*x = RestoreTopicResponse{}
+	mi := &file_topic_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreTopicResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreTopicResponse) ProtoMessage() {}
+
+func (x *RestoreTopicResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_topic_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestoreTopicResponse.ProtoReflect.Descriptor instead.
+func (*RestoreTopicResponse) Descriptor() ([]byte, []int) {
+	return file_topic_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *RestoreTopicResponse) GetTopic() *Topic {
+	if x != nil {
+		return x.Topic
+	}
+	return nil
+}
+
 type TopicChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -557,7 +678,7 @@ type TopicChanged struct {
 
 func (x *TopicChanged) Reset() {
 	*x = TopicChanged{}
-	mi := &file_topic_proto_msgTypes[8]
+	mi := &file_topic_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -569,7 +690,7 @@ func (x *TopicChanged) String() string {
 func (*TopicChanged) ProtoMessage() {}
 
 func (x *TopicChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_topic_proto_msgTypes[8]
+	mi := &file_topic_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -582,7 +703,7 @@ func (x *TopicChanged) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TopicChanged.ProtoReflect.Descriptor instead.
 func (*TopicChanged) Descriptor() ([]byte, []int) {
-	return file_topic_proto_rawDescGZIP(), []int{8}
+	return file_topic_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *TopicChanged) GetEventId() string {
@@ -617,7 +738,7 @@ type TopicDeleted struct {
 
 func (x *TopicDeleted) Reset() {
 	*x = TopicDeleted{}
-	mi := &file_topic_proto_msgTypes[9]
+	mi := &file_topic_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -629,7 +750,7 @@ func (x *TopicDeleted) String() string {
 func (*TopicDeleted) ProtoMessage() {}
 
 func (x *TopicDeleted) ProtoReflect() protoreflect.Message {
-	mi := &file_topic_proto_msgTypes[9]
+	mi := &file_topic_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -642,7 +763,7 @@ func (x *TopicDeleted) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TopicDeleted.ProtoReflect.Descriptor instead.
 func (*TopicDeleted) Descriptor() ([]byte, []int) {
-	return file_topic_proto_rawDescGZIP(), []int{9}
+	return file_topic_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *TopicDeleted) GetEventId() string {
@@ -677,7 +798,7 @@ type TopicRestored struct {
 
 func (x *TopicRestored) Reset() {
 	*x = TopicRestored{}
-	mi := &file_topic_proto_msgTypes[10]
+	mi := &file_topic_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -689,7 +810,7 @@ func (x *TopicRestored) String() string {
 func (*TopicRestored) ProtoMessage() {}
 
 func (x *TopicRestored) ProtoReflect() protoreflect.Message {
-	mi := &file_topic_proto_msgTypes[10]
+	mi := &file_topic_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -702,7 +823,7 @@ func (x *TopicRestored) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TopicRestored.ProtoReflect.Descriptor instead.
 func (*TopicRestored) Descriptor() ([]byte, []int) {
-	return file_topic_proto_rawDescGZIP(), []int{10}
+	return file_topic_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *TopicRestored) GetEventId() string {
@@ -770,16 +891,21 @@ const file_topic_proto_rawDesc = "" +
 	"encryption\x12:\n" +
 	"\adetails\x18\x05 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x123\n" +
 	"\x13default_template_id\x18\x06 \x01(\tH\x00R\x11defaultTemplateId\x88\x01\x01B\x16\n" +
-	"\x14_default_template_id\"\x93\x01\n" +
+	"\x14_default_template_id\"B\n" +
+	"\x10PutTopicResponse\x12.\n" +
+	"\x05topic\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"\x93\x01\n" +
 	"\x12DeleteTopicRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
 	"\btopic_id\x18\x02 \x01(\tR\atopicId\x12\x17\n" +
 	"\x04soft\x18\x03 \x01(\bH\x00R\x04soft\x88\x01\x01\x12%\n" +
 	"\x0edelete_entries\x18\x04 \x01(\bR\rdeleteEntriesB\a\n" +
-	"\x05_soft\"K\n" +
+	"\x05_soft\"\x15\n" +
+	"\x13DeleteTopicResponse\"K\n" +
 	"\x13RestoreTopicRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\btopic_id\x18\x02 \x01(\tR\atopicId\"\x96\x01\n" +
+	"\btopic_id\x18\x02 \x01(\tR\atopicId\"F\n" +
+	"\x14RestoreTopicResponse\x12.\n" +
+	"\x05topic\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"\x96\x01\n" +
 	"\fTopicChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -808,7 +934,7 @@ func file_topic_proto_rawDescGZIP() []byte {
 	return file_topic_proto_rawDescData
 }
 
-var file_topic_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_topic_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_topic_proto_goTypes = []any{
 	(*Topic)(nil),                 // 0: io.thingsdiary.v1.Topic
 	(*GetTopicRequest)(nil),       // 1: io.thingsdiary.v1.GetTopicRequest
@@ -816,41 +942,46 @@ var file_topic_proto_goTypes = []any{
 	(*ListTopicsRequest)(nil),     // 3: io.thingsdiary.v1.ListTopicsRequest
 	(*ListTopicsResponse)(nil),    // 4: io.thingsdiary.v1.ListTopicsResponse
 	(*PutTopicRequest)(nil),       // 5: io.thingsdiary.v1.PutTopicRequest
-	(*DeleteTopicRequest)(nil),    // 6: io.thingsdiary.v1.DeleteTopicRequest
-	(*RestoreTopicRequest)(nil),   // 7: io.thingsdiary.v1.RestoreTopicRequest
-	(*TopicChanged)(nil),          // 8: io.thingsdiary.v1.TopicChanged
-	(*TopicDeleted)(nil),          // 9: io.thingsdiary.v1.TopicDeleted
-	(*TopicRestored)(nil),         // 10: io.thingsdiary.v1.TopicRestored
-	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
-	(*Encryption)(nil),            // 12: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 13: io.thingsdiary.v1.EncryptedData
-	(*Page)(nil),                  // 14: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),              // 15: io.thingsdiary.v1.PageInfo
+	(*PutTopicResponse)(nil),      // 6: io.thingsdiary.v1.PutTopicResponse
+	(*DeleteTopicRequest)(nil),    // 7: io.thingsdiary.v1.DeleteTopicRequest
+	(*DeleteTopicResponse)(nil),   // 8: io.thingsdiary.v1.DeleteTopicResponse
+	(*RestoreTopicRequest)(nil),   // 9: io.thingsdiary.v1.RestoreTopicRequest
+	(*RestoreTopicResponse)(nil),  // 10: io.thingsdiary.v1.RestoreTopicResponse
+	(*TopicChanged)(nil),          // 11: io.thingsdiary.v1.TopicChanged
+	(*TopicDeleted)(nil),          // 12: io.thingsdiary.v1.TopicDeleted
+	(*TopicRestored)(nil),         // 13: io.thingsdiary.v1.TopicRestored
+	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
+	(*Encryption)(nil),            // 15: io.thingsdiary.v1.Encryption
+	(*EncryptedData)(nil),         // 16: io.thingsdiary.v1.EncryptedData
+	(*Page)(nil),                  // 17: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),              // 18: io.thingsdiary.v1.PageInfo
 }
 var file_topic_proto_depIdxs = []int32{
-	11, // 0: io.thingsdiary.v1.Topic.created_at:type_name -> google.protobuf.Timestamp
-	11, // 1: io.thingsdiary.v1.Topic.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 2: io.thingsdiary.v1.Topic.deleted_at:type_name -> google.protobuf.Timestamp
-	12, // 3: io.thingsdiary.v1.Topic.encryption:type_name -> io.thingsdiary.v1.Encryption
-	13, // 4: io.thingsdiary.v1.Topic.details:type_name -> io.thingsdiary.v1.EncryptedData
-	11, // 5: io.thingsdiary.v1.Topic.removed_at:type_name -> google.protobuf.Timestamp
+	14, // 0: io.thingsdiary.v1.Topic.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: io.thingsdiary.v1.Topic.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 2: io.thingsdiary.v1.Topic.deleted_at:type_name -> google.protobuf.Timestamp
+	15, // 3: io.thingsdiary.v1.Topic.encryption:type_name -> io.thingsdiary.v1.Encryption
+	16, // 4: io.thingsdiary.v1.Topic.details:type_name -> io.thingsdiary.v1.EncryptedData
+	14, // 5: io.thingsdiary.v1.Topic.removed_at:type_name -> google.protobuf.Timestamp
 	0,  // 6: io.thingsdiary.v1.GetTopicResponse.topic:type_name -> io.thingsdiary.v1.Topic
-	14, // 7: io.thingsdiary.v1.ListTopicsRequest.page:type_name -> io.thingsdiary.v1.Page
+	17, // 7: io.thingsdiary.v1.ListTopicsRequest.page:type_name -> io.thingsdiary.v1.Page
 	0,  // 8: io.thingsdiary.v1.ListTopicsResponse.topics:type_name -> io.thingsdiary.v1.Topic
-	15, // 9: io.thingsdiary.v1.ListTopicsResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	12, // 10: io.thingsdiary.v1.PutTopicRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	13, // 11: io.thingsdiary.v1.PutTopicRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	11, // 12: io.thingsdiary.v1.TopicChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 13: io.thingsdiary.v1.TopicChanged.topic:type_name -> io.thingsdiary.v1.Topic
-	11, // 14: io.thingsdiary.v1.TopicDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 15: io.thingsdiary.v1.TopicDeleted.topic:type_name -> io.thingsdiary.v1.Topic
-	11, // 16: io.thingsdiary.v1.TopicRestored.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 17: io.thingsdiary.v1.TopicRestored.topic:type_name -> io.thingsdiary.v1.Topic
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	18, // 9: io.thingsdiary.v1.ListTopicsResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	15, // 10: io.thingsdiary.v1.PutTopicRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
+	16, // 11: io.thingsdiary.v1.PutTopicRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	0,  // 12: io.thingsdiary.v1.PutTopicResponse.topic:type_name -> io.thingsdiary.v1.Topic
+	0,  // 13: io.thingsdiary.v1.RestoreTopicResponse.topic:type_name -> io.thingsdiary.v1.Topic
+	14, // 14: io.thingsdiary.v1.TopicChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 15: io.thingsdiary.v1.TopicChanged.topic:type_name -> io.thingsdiary.v1.Topic
+	14, // 16: io.thingsdiary.v1.TopicDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 17: io.thingsdiary.v1.TopicDeleted.topic:type_name -> io.thingsdiary.v1.Topic
+	14, // 18: io.thingsdiary.v1.TopicRestored.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 19: io.thingsdiary.v1.TopicRestored.topic:type_name -> io.thingsdiary.v1.Topic
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_topic_proto_init() }
@@ -862,14 +993,14 @@ func file_topic_proto_init() {
 	file_pagination_proto_init()
 	file_topic_proto_msgTypes[0].OneofWrappers = []any{}
 	file_topic_proto_msgTypes[5].OneofWrappers = []any{}
-	file_topic_proto_msgTypes[6].OneofWrappers = []any{}
+	file_topic_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_topic_proto_rawDesc), len(file_topic_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -91,10 +91,10 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		Details:    details,
 	}
 
-	response := &v1.Template{}
+	response := &v1.PutTemplateResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.template.put", req, response); err != nil {
 		return nil, err
 	}
 
-	return templateFromProto(response, decryptedDiaryKey)
+	return templateFromProto(response.GetTemplate(), decryptedDiaryKey)
 }

@@ -23,12 +23,12 @@ func (c *Client) RestoreTopic(ctx context.Context, diaryID, topicID string) (*To
 		TopicId: topicID,
 	}
 
-	response := &v1.Topic{}
+	response := &v1.RestoreTopicResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.restore", req, response); err != nil {
 		return nil, err
 	}
 
-	key, err := diaryKeyByID(keys, response.GetEncryption().GetDiaryKeyId())
+	key, err := diaryKeyByID(keys, response.GetTopic().GetEncryption().GetDiaryKeyId())
 	if err != nil {
 		return nil, err
 	}
@@ -41,5 +41,5 @@ func (c *Client) RestoreTopic(ctx context.Context, diaryID, topicID string) (*To
 		return nil, errors.Wrap(err, "failed to decrypt diary key")
 	}
 
-	return topicFromProto(response, diaryKey)
+	return topicFromProto(response.GetTopic(), diaryKey)
 }

@@ -23,12 +23,12 @@ func (c *Client) RestoreTemplate(ctx context.Context, diaryID, templateID string
 		TemplateId: templateID,
 	}
 
-	response := &v1.Template{}
+	response := &v1.RestoreTemplateResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.template.restore", req, response); err != nil {
 		return nil, err
 	}
 
-	key, err := diaryKeyByID(keys, response.GetEncryption().GetDiaryKeyId())
+	key, err := diaryKeyByID(keys, response.GetTemplate().GetEncryption().GetDiaryKeyId())
 	if err != nil {
 		return nil, err
 	}
@@ -41,5 +41,5 @@ func (c *Client) RestoreTemplate(ctx context.Context, diaryID, templateID string
 		return nil, errors.Wrap(err, "failed to decrypt diary key")
 	}
 
-	return templateFromProto(response, diaryKey)
+	return templateFromProto(response.GetTemplate(), diaryKey)
 }

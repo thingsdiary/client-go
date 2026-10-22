@@ -29,7 +29,7 @@ func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string
 		Soft:    protoBool(deleteSoftValue(p.Soft)),
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.delete", req, nil); err != nil {
+	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.delete", req, &v1.DeleteEntryResponse{}); err != nil {
 		return err
 	}
 

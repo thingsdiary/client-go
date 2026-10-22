@@ -115,7 +115,6 @@ func (x *Diary) GetDetails() *EncryptedData {
 }
 
 // Centrifugo methods: io.thingsdiary.v1.diary.{create,get,list,put,delete}.
-// CreateDiaryRequest returns Diary.
 type CreateDiaryRequest struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	EncryptedDiaryKey []byte                 `protobuf:"bytes,1,opt,name=encrypted_diary_key,json=encryptedDiaryKey,proto3" json:"encrypted_diary_key,omitempty"`
@@ -184,6 +183,50 @@ func (x *CreateDiaryRequest) GetDetails() *EncryptedData {
 	return nil
 }
 
+type CreateDiaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Diary         *Diary                 `protobuf:"bytes,1,opt,name=diary,proto3" json:"diary,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateDiaryResponse) Reset() {
+	*x = CreateDiaryResponse{}
+	mi := &file_diary_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateDiaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateDiaryResponse) ProtoMessage() {}
+
+func (x *CreateDiaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_diary_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateDiaryResponse.ProtoReflect.Descriptor instead.
+func (*CreateDiaryResponse) Descriptor() ([]byte, []int) {
+	return file_diary_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateDiaryResponse) GetDiary() *Diary {
+	if x != nil {
+		return x.Diary
+	}
+	return nil
+}
+
 type DiaryCreated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -195,7 +238,7 @@ type DiaryCreated struct {
 
 func (x *DiaryCreated) Reset() {
 	*x = DiaryCreated{}
-	mi := &file_diary_proto_msgTypes[2]
+	mi := &file_diary_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -207,7 +250,7 @@ func (x *DiaryCreated) String() string {
 func (*DiaryCreated) ProtoMessage() {}
 
 func (x *DiaryCreated) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[2]
+	mi := &file_diary_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -220,7 +263,7 @@ func (x *DiaryCreated) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DiaryCreated.ProtoReflect.Descriptor instead.
 func (*DiaryCreated) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{2}
+	return file_diary_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *DiaryCreated) GetEventId() string {
@@ -253,7 +296,7 @@ type GetDiaryRequest struct {
 
 func (x *GetDiaryRequest) Reset() {
 	*x = GetDiaryRequest{}
-	mi := &file_diary_proto_msgTypes[3]
+	mi := &file_diary_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -265,7 +308,7 @@ func (x *GetDiaryRequest) String() string {
 func (*GetDiaryRequest) ProtoMessage() {}
 
 func (x *GetDiaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[3]
+	mi := &file_diary_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -278,7 +321,7 @@ func (x *GetDiaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDiaryRequest.ProtoReflect.Descriptor instead.
 func (*GetDiaryRequest) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{3}
+	return file_diary_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *GetDiaryRequest) GetDiaryId() string {
@@ -297,7 +340,7 @@ type GetDiaryResponse struct {
 
 func (x *GetDiaryResponse) Reset() {
 	*x = GetDiaryResponse{}
-	mi := &file_diary_proto_msgTypes[4]
+	mi := &file_diary_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -309,7 +352,7 @@ func (x *GetDiaryResponse) String() string {
 func (*GetDiaryResponse) ProtoMessage() {}
 
 func (x *GetDiaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[4]
+	mi := &file_diary_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -322,7 +365,7 @@ func (x *GetDiaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDiaryResponse.ProtoReflect.Descriptor instead.
 func (*GetDiaryResponse) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{4}
+	return file_diary_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *GetDiaryResponse) GetDiary() *Diary {
@@ -341,7 +384,7 @@ type ListDiariesRequest struct {
 
 func (x *ListDiariesRequest) Reset() {
 	*x = ListDiariesRequest{}
-	mi := &file_diary_proto_msgTypes[5]
+	mi := &file_diary_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -353,7 +396,7 @@ func (x *ListDiariesRequest) String() string {
 func (*ListDiariesRequest) ProtoMessage() {}
 
 func (x *ListDiariesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[5]
+	mi := &file_diary_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -366,7 +409,7 @@ func (x *ListDiariesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDiariesRequest.ProtoReflect.Descriptor instead.
 func (*ListDiariesRequest) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{5}
+	return file_diary_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ListDiariesRequest) GetPage() *Page {
@@ -386,7 +429,7 @@ type ListDiariesResponse struct {
 
 func (x *ListDiariesResponse) Reset() {
 	*x = ListDiariesResponse{}
-	mi := &file_diary_proto_msgTypes[6]
+	mi := &file_diary_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -398,7 +441,7 @@ func (x *ListDiariesResponse) String() string {
 func (*ListDiariesResponse) ProtoMessage() {}
 
 func (x *ListDiariesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[6]
+	mi := &file_diary_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -411,7 +454,7 @@ func (x *ListDiariesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDiariesResponse.ProtoReflect.Descriptor instead.
 func (*ListDiariesResponse) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{6}
+	return file_diary_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ListDiariesResponse) GetDiaries() []*Diary {
@@ -428,7 +471,6 @@ func (x *ListDiariesResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutDiaryRequest returns Diary.
 type PutDiaryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -441,7 +483,7 @@ type PutDiaryRequest struct {
 
 func (x *PutDiaryRequest) Reset() {
 	*x = PutDiaryRequest{}
-	mi := &file_diary_proto_msgTypes[7]
+	mi := &file_diary_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -453,7 +495,7 @@ func (x *PutDiaryRequest) String() string {
 func (*PutDiaryRequest) ProtoMessage() {}
 
 func (x *PutDiaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[7]
+	mi := &file_diary_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -466,7 +508,7 @@ func (x *PutDiaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutDiaryRequest.ProtoReflect.Descriptor instead.
 func (*PutDiaryRequest) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{7}
+	return file_diary_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *PutDiaryRequest) GetDiaryId() string {
@@ -497,6 +539,50 @@ func (x *PutDiaryRequest) GetDetails() *EncryptedData {
 	return nil
 }
 
+type PutDiaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Diary         *Diary                 `protobuf:"bytes,1,opt,name=diary,proto3" json:"diary,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutDiaryResponse) Reset() {
+	*x = PutDiaryResponse{}
+	mi := &file_diary_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutDiaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutDiaryResponse) ProtoMessage() {}
+
+func (x *PutDiaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_diary_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutDiaryResponse.ProtoReflect.Descriptor instead.
+func (*PutDiaryResponse) Descriptor() ([]byte, []int) {
+	return file_diary_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *PutDiaryResponse) GetDiary() *Diary {
+	if x != nil {
+		return x.Diary
+	}
+	return nil
+}
+
 type DiaryChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -508,7 +594,7 @@ type DiaryChanged struct {
 
 func (x *DiaryChanged) Reset() {
 	*x = DiaryChanged{}
-	mi := &file_diary_proto_msgTypes[8]
+	mi := &file_diary_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -520,7 +606,7 @@ func (x *DiaryChanged) String() string {
 func (*DiaryChanged) ProtoMessage() {}
 
 func (x *DiaryChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[8]
+	mi := &file_diary_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -533,7 +619,7 @@ func (x *DiaryChanged) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DiaryChanged.ProtoReflect.Descriptor instead.
 func (*DiaryChanged) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{8}
+	return file_diary_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DiaryChanged) GetEventId() string {
@@ -557,7 +643,6 @@ func (x *DiaryChanged) GetDiary() *Diary {
 	return nil
 }
 
-// DeleteDiaryRequest returns an empty response.
 type DeleteDiaryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -567,7 +652,7 @@ type DeleteDiaryRequest struct {
 
 func (x *DeleteDiaryRequest) Reset() {
 	*x = DeleteDiaryRequest{}
-	mi := &file_diary_proto_msgTypes[9]
+	mi := &file_diary_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -579,7 +664,7 @@ func (x *DeleteDiaryRequest) String() string {
 func (*DeleteDiaryRequest) ProtoMessage() {}
 
 func (x *DeleteDiaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[9]
+	mi := &file_diary_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -592,7 +677,7 @@ func (x *DeleteDiaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDiaryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteDiaryRequest) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{9}
+	return file_diary_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *DeleteDiaryRequest) GetDiaryId() string {
@@ -600,6 +685,42 @@ func (x *DeleteDiaryRequest) GetDiaryId() string {
 		return x.DiaryId
 	}
 	return ""
+}
+
+type DeleteDiaryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteDiaryResponse) Reset() {
+	*x = DeleteDiaryResponse{}
+	mi := &file_diary_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteDiaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteDiaryResponse) ProtoMessage() {}
+
+func (x *DeleteDiaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_diary_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteDiaryResponse.ProtoReflect.Descriptor instead.
+func (*DeleteDiaryResponse) Descriptor() ([]byte, []int) {
+	return file_diary_proto_rawDescGZIP(), []int{12}
 }
 
 type DiaryDeleted struct {
@@ -615,7 +736,7 @@ type DiaryDeleted struct {
 
 func (x *DiaryDeleted) Reset() {
 	*x = DiaryDeleted{}
-	mi := &file_diary_proto_msgTypes[10]
+	mi := &file_diary_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -627,7 +748,7 @@ func (x *DiaryDeleted) String() string {
 func (*DiaryDeleted) ProtoMessage() {}
 
 func (x *DiaryDeleted) ProtoReflect() protoreflect.Message {
-	mi := &file_diary_proto_msgTypes[10]
+	mi := &file_diary_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -640,7 +761,7 @@ func (x *DiaryDeleted) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DiaryDeleted.ProtoReflect.Descriptor instead.
 func (*DiaryDeleted) Descriptor() ([]byte, []int) {
-	return file_diary_proto_rawDescGZIP(), []int{10}
+	return file_diary_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DiaryDeleted) GetEventId() string {
@@ -699,7 +820,9 @@ const file_diary_proto_rawDesc = "" +
 	"\x13encrypted_diary_key\x18\x01 \x01(\fR\x11encryptedDiaryKey\x12.\n" +
 	"\x13encrypted_key_nonce\x18\x02 \x01(\fR\x11encryptedKeyNonce\x12,\n" +
 	"\x12encrypted_key_data\x18\x03 \x01(\fR\x10encryptedKeyData\x12:\n" +
-	"\adetails\x18\x04 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"\x96\x01\n" +
+	"\adetails\x18\x04 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"E\n" +
+	"\x13CreateDiaryResponse\x12.\n" +
+	"\x05diary\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.DiaryR\x05diary\"\x96\x01\n" +
 	"\fDiaryCreated\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -720,14 +843,17 @@ const file_diary_proto_rawDesc = "" +
 	"\n" +
 	"encryption\x18\x03 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
 	"encryption\x12:\n" +
-	"\adetails\x18\x04 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"\x96\x01\n" +
+	"\adetails\x18\x04 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"B\n" +
+	"\x10PutDiaryResponse\x12.\n" +
+	"\x05diary\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.DiaryR\x05diary\"\x96\x01\n" +
 	"\fDiaryChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"occurredAt\x12.\n" +
 	"\x05diary\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.DiaryR\x05diary\"/\n" +
 	"\x12DeleteDiaryRequest\x12\x19\n" +
-	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"\xd6\x01\n" +
+	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"\x15\n" +
+	"\x13DeleteDiaryResponse\"\xd6\x01\n" +
 	"\fDiaryDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -749,50 +875,55 @@ func file_diary_proto_rawDescGZIP() []byte {
 	return file_diary_proto_rawDescData
 }
 
-var file_diary_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_diary_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_diary_proto_goTypes = []any{
 	(*Diary)(nil),                 // 0: io.thingsdiary.v1.Diary
 	(*CreateDiaryRequest)(nil),    // 1: io.thingsdiary.v1.CreateDiaryRequest
-	(*DiaryCreated)(nil),          // 2: io.thingsdiary.v1.DiaryCreated
-	(*GetDiaryRequest)(nil),       // 3: io.thingsdiary.v1.GetDiaryRequest
-	(*GetDiaryResponse)(nil),      // 4: io.thingsdiary.v1.GetDiaryResponse
-	(*ListDiariesRequest)(nil),    // 5: io.thingsdiary.v1.ListDiariesRequest
-	(*ListDiariesResponse)(nil),   // 6: io.thingsdiary.v1.ListDiariesResponse
-	(*PutDiaryRequest)(nil),       // 7: io.thingsdiary.v1.PutDiaryRequest
-	(*DiaryChanged)(nil),          // 8: io.thingsdiary.v1.DiaryChanged
-	(*DeleteDiaryRequest)(nil),    // 9: io.thingsdiary.v1.DeleteDiaryRequest
-	(*DiaryDeleted)(nil),          // 10: io.thingsdiary.v1.DiaryDeleted
-	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
-	(*DiaryEncryptionKey)(nil),    // 12: io.thingsdiary.v1.DiaryEncryptionKey
-	(*Encryption)(nil),            // 13: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 14: io.thingsdiary.v1.EncryptedData
-	(*Page)(nil),                  // 15: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),              // 16: io.thingsdiary.v1.PageInfo
+	(*CreateDiaryResponse)(nil),   // 2: io.thingsdiary.v1.CreateDiaryResponse
+	(*DiaryCreated)(nil),          // 3: io.thingsdiary.v1.DiaryCreated
+	(*GetDiaryRequest)(nil),       // 4: io.thingsdiary.v1.GetDiaryRequest
+	(*GetDiaryResponse)(nil),      // 5: io.thingsdiary.v1.GetDiaryResponse
+	(*ListDiariesRequest)(nil),    // 6: io.thingsdiary.v1.ListDiariesRequest
+	(*ListDiariesResponse)(nil),   // 7: io.thingsdiary.v1.ListDiariesResponse
+	(*PutDiaryRequest)(nil),       // 8: io.thingsdiary.v1.PutDiaryRequest
+	(*PutDiaryResponse)(nil),      // 9: io.thingsdiary.v1.PutDiaryResponse
+	(*DiaryChanged)(nil),          // 10: io.thingsdiary.v1.DiaryChanged
+	(*DeleteDiaryRequest)(nil),    // 11: io.thingsdiary.v1.DeleteDiaryRequest
+	(*DeleteDiaryResponse)(nil),   // 12: io.thingsdiary.v1.DeleteDiaryResponse
+	(*DiaryDeleted)(nil),          // 13: io.thingsdiary.v1.DiaryDeleted
+	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
+	(*DiaryEncryptionKey)(nil),    // 15: io.thingsdiary.v1.DiaryEncryptionKey
+	(*Encryption)(nil),            // 16: io.thingsdiary.v1.Encryption
+	(*EncryptedData)(nil),         // 17: io.thingsdiary.v1.EncryptedData
+	(*Page)(nil),                  // 18: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),              // 19: io.thingsdiary.v1.PageInfo
 }
 var file_diary_proto_depIdxs = []int32{
-	11, // 0: io.thingsdiary.v1.Diary.created_at:type_name -> google.protobuf.Timestamp
-	11, // 1: io.thingsdiary.v1.Diary.updated_at:type_name -> google.protobuf.Timestamp
-	12, // 2: io.thingsdiary.v1.Diary.encryption_keys:type_name -> io.thingsdiary.v1.DiaryEncryptionKey
-	13, // 3: io.thingsdiary.v1.Diary.encryption:type_name -> io.thingsdiary.v1.Encryption
-	14, // 4: io.thingsdiary.v1.Diary.details:type_name -> io.thingsdiary.v1.EncryptedData
-	14, // 5: io.thingsdiary.v1.CreateDiaryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	11, // 6: io.thingsdiary.v1.DiaryCreated.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 7: io.thingsdiary.v1.DiaryCreated.diary:type_name -> io.thingsdiary.v1.Diary
-	0,  // 8: io.thingsdiary.v1.GetDiaryResponse.diary:type_name -> io.thingsdiary.v1.Diary
-	15, // 9: io.thingsdiary.v1.ListDiariesRequest.page:type_name -> io.thingsdiary.v1.Page
-	0,  // 10: io.thingsdiary.v1.ListDiariesResponse.diaries:type_name -> io.thingsdiary.v1.Diary
-	16, // 11: io.thingsdiary.v1.ListDiariesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	13, // 12: io.thingsdiary.v1.PutDiaryRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	14, // 13: io.thingsdiary.v1.PutDiaryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	11, // 14: io.thingsdiary.v1.DiaryChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 15: io.thingsdiary.v1.DiaryChanged.diary:type_name -> io.thingsdiary.v1.Diary
-	11, // 16: io.thingsdiary.v1.DiaryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	11, // 17: io.thingsdiary.v1.DiaryDeleted.deleted_at:type_name -> google.protobuf.Timestamp
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	14, // 0: io.thingsdiary.v1.Diary.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: io.thingsdiary.v1.Diary.updated_at:type_name -> google.protobuf.Timestamp
+	15, // 2: io.thingsdiary.v1.Diary.encryption_keys:type_name -> io.thingsdiary.v1.DiaryEncryptionKey
+	16, // 3: io.thingsdiary.v1.Diary.encryption:type_name -> io.thingsdiary.v1.Encryption
+	17, // 4: io.thingsdiary.v1.Diary.details:type_name -> io.thingsdiary.v1.EncryptedData
+	17, // 5: io.thingsdiary.v1.CreateDiaryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	0,  // 6: io.thingsdiary.v1.CreateDiaryResponse.diary:type_name -> io.thingsdiary.v1.Diary
+	14, // 7: io.thingsdiary.v1.DiaryCreated.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 8: io.thingsdiary.v1.DiaryCreated.diary:type_name -> io.thingsdiary.v1.Diary
+	0,  // 9: io.thingsdiary.v1.GetDiaryResponse.diary:type_name -> io.thingsdiary.v1.Diary
+	18, // 10: io.thingsdiary.v1.ListDiariesRequest.page:type_name -> io.thingsdiary.v1.Page
+	0,  // 11: io.thingsdiary.v1.ListDiariesResponse.diaries:type_name -> io.thingsdiary.v1.Diary
+	19, // 12: io.thingsdiary.v1.ListDiariesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	16, // 13: io.thingsdiary.v1.PutDiaryRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
+	17, // 14: io.thingsdiary.v1.PutDiaryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	0,  // 15: io.thingsdiary.v1.PutDiaryResponse.diary:type_name -> io.thingsdiary.v1.Diary
+	14, // 16: io.thingsdiary.v1.DiaryChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 17: io.thingsdiary.v1.DiaryChanged.diary:type_name -> io.thingsdiary.v1.Diary
+	14, // 18: io.thingsdiary.v1.DiaryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	14, // 19: io.thingsdiary.v1.DiaryDeleted.deleted_at:type_name -> google.protobuf.Timestamp
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_diary_proto_init() }
@@ -809,7 +940,7 @@ func file_diary_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_diary_proto_rawDesc), len(file_diary_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

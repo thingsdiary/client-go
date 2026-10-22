@@ -31,7 +31,7 @@ func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string
 		DeleteEntries: p.DeleteEntries,
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.delete", req, nil); err != nil {
+	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.delete", req, &v1.DeleteTopicResponse{}); err != nil {
 		return err
 	}
 

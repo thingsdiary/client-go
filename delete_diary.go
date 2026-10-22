@@ -15,7 +15,7 @@ func (c *Client) DeleteDiary(ctx context.Context, diaryID string) error {
 		DiaryId: diaryID,
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.delete", req, nil); err != nil {
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.delete", req, &v1.DeleteDiaryResponse{}); err != nil {
 		return err
 	}
 

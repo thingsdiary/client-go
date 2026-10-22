@@ -331,7 +331,6 @@ func (x *ListTemplatesResponse) GetPage() *PageInfo {
 	return nil
 }
 
-// PutTemplateRequest returns Template.
 type PutTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -408,7 +407,50 @@ func (x *PutTemplateRequest) GetDetails() *EncryptedData {
 	return nil
 }
 
-// DeleteTemplateRequest returns an empty response.
+type PutTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Template      *Template              `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PutTemplateResponse) Reset() {
+	*x = PutTemplateResponse{}
+	mi := &file_template_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PutTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PutTemplateResponse) ProtoMessage() {}
+
+func (x *PutTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_template_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PutTemplateResponse.ProtoReflect.Descriptor instead.
+func (*PutTemplateResponse) Descriptor() ([]byte, []int) {
+	return file_template_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *PutTemplateResponse) GetTemplate() *Template {
+	if x != nil {
+		return x.Template
+	}
+	return nil
+}
+
 type DeleteTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -420,7 +462,7 @@ type DeleteTemplateRequest struct {
 
 func (x *DeleteTemplateRequest) Reset() {
 	*x = DeleteTemplateRequest{}
-	mi := &file_template_proto_msgTypes[6]
+	mi := &file_template_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -432,7 +474,7 @@ func (x *DeleteTemplateRequest) String() string {
 func (*DeleteTemplateRequest) ProtoMessage() {}
 
 func (x *DeleteTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_template_proto_msgTypes[6]
+	mi := &file_template_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -445,7 +487,7 @@ func (x *DeleteTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteTemplateRequest.ProtoReflect.Descriptor instead.
 func (*DeleteTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_template_proto_rawDescGZIP(), []int{6}
+	return file_template_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *DeleteTemplateRequest) GetDiaryId() string {
@@ -469,7 +511,42 @@ func (x *DeleteTemplateRequest) GetSoft() bool {
 	return false
 }
 
-// RestoreTemplateRequest returns Template.
+type DeleteTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTemplateResponse) Reset() {
+	*x = DeleteTemplateResponse{}
+	mi := &file_template_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTemplateResponse) ProtoMessage() {}
+
+func (x *DeleteTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_template_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTemplateResponse.ProtoReflect.Descriptor instead.
+func (*DeleteTemplateResponse) Descriptor() ([]byte, []int) {
+	return file_template_proto_rawDescGZIP(), []int{8}
+}
+
 type RestoreTemplateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
@@ -480,7 +557,7 @@ type RestoreTemplateRequest struct {
 
 func (x *RestoreTemplateRequest) Reset() {
 	*x = RestoreTemplateRequest{}
-	mi := &file_template_proto_msgTypes[7]
+	mi := &file_template_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -492,7 +569,7 @@ func (x *RestoreTemplateRequest) String() string {
 func (*RestoreTemplateRequest) ProtoMessage() {}
 
 func (x *RestoreTemplateRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_template_proto_msgTypes[7]
+	mi := &file_template_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -505,7 +582,7 @@ func (x *RestoreTemplateRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreTemplateRequest.ProtoReflect.Descriptor instead.
 func (*RestoreTemplateRequest) Descriptor() ([]byte, []int) {
-	return file_template_proto_rawDescGZIP(), []int{7}
+	return file_template_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *RestoreTemplateRequest) GetDiaryId() string {
@@ -522,6 +599,50 @@ func (x *RestoreTemplateRequest) GetTemplateId() string {
 	return ""
 }
 
+type RestoreTemplateResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Template      *Template              `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RestoreTemplateResponse) Reset() {
+	*x = RestoreTemplateResponse{}
+	mi := &file_template_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RestoreTemplateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RestoreTemplateResponse) ProtoMessage() {}
+
+func (x *RestoreTemplateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_template_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RestoreTemplateResponse.ProtoReflect.Descriptor instead.
+func (*RestoreTemplateResponse) Descriptor() ([]byte, []int) {
+	return file_template_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *RestoreTemplateResponse) GetTemplate() *Template {
+	if x != nil {
+		return x.Template
+	}
+	return nil
+}
+
 type TemplateChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
@@ -533,7 +654,7 @@ type TemplateChanged struct {
 
 func (x *TemplateChanged) Reset() {
 	*x = TemplateChanged{}
-	mi := &file_template_proto_msgTypes[8]
+	mi := &file_template_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -545,7 +666,7 @@ func (x *TemplateChanged) String() string {
 func (*TemplateChanged) ProtoMessage() {}
 
 func (x *TemplateChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_template_proto_msgTypes[8]
+	mi := &file_template_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -558,7 +679,7 @@ func (x *TemplateChanged) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TemplateChanged.ProtoReflect.Descriptor instead.
 func (*TemplateChanged) Descriptor() ([]byte, []int) {
-	return file_template_proto_rawDescGZIP(), []int{8}
+	return file_template_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *TemplateChanged) GetEventId() string {
@@ -593,7 +714,7 @@ type TemplateDeleted struct {
 
 func (x *TemplateDeleted) Reset() {
 	*x = TemplateDeleted{}
-	mi := &file_template_proto_msgTypes[9]
+	mi := &file_template_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -605,7 +726,7 @@ func (x *TemplateDeleted) String() string {
 func (*TemplateDeleted) ProtoMessage() {}
 
 func (x *TemplateDeleted) ProtoReflect() protoreflect.Message {
-	mi := &file_template_proto_msgTypes[9]
+	mi := &file_template_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -618,7 +739,7 @@ func (x *TemplateDeleted) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TemplateDeleted.ProtoReflect.Descriptor instead.
 func (*TemplateDeleted) Descriptor() ([]byte, []int) {
-	return file_template_proto_rawDescGZIP(), []int{9}
+	return file_template_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *TemplateDeleted) GetEventId() string {
@@ -653,7 +774,7 @@ type TemplateRestored struct {
 
 func (x *TemplateRestored) Reset() {
 	*x = TemplateRestored{}
-	mi := &file_template_proto_msgTypes[10]
+	mi := &file_template_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -665,7 +786,7 @@ func (x *TemplateRestored) String() string {
 func (*TemplateRestored) ProtoMessage() {}
 
 func (x *TemplateRestored) ProtoReflect() protoreflect.Message {
-	mi := &file_template_proto_msgTypes[10]
+	mi := &file_template_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -678,7 +799,7 @@ func (x *TemplateRestored) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TemplateRestored.ProtoReflect.Descriptor instead.
 func (*TemplateRestored) Descriptor() ([]byte, []int) {
-	return file_template_proto_rawDescGZIP(), []int{10}
+	return file_template_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *TemplateRestored) GetEventId() string {
@@ -743,17 +864,22 @@ const file_template_proto_rawDesc = "" +
 	"\n" +
 	"encryption\x18\x04 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
 	"encryption\x12:\n" +
-	"\adetails\x18\x05 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"u\n" +
+	"\adetails\x18\x05 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"N\n" +
+	"\x13PutTemplateResponse\x127\n" +
+	"\btemplate\x18\x01 \x01(\v2\x1b.io.thingsdiary.v1.TemplateR\btemplate\"u\n" +
 	"\x15DeleteTemplateRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
 	"templateId\x12\x17\n" +
 	"\x04soft\x18\x03 \x01(\bH\x00R\x04soft\x88\x01\x01B\a\n" +
-	"\x05_soft\"T\n" +
+	"\x05_soft\"\x18\n" +
+	"\x16DeleteTemplateResponse\"T\n" +
 	"\x16RestoreTemplateRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
-	"templateId\"\xa2\x01\n" +
+	"templateId\"R\n" +
+	"\x17RestoreTemplateResponse\x127\n" +
+	"\btemplate\x18\x01 \x01(\v2\x1b.io.thingsdiary.v1.TemplateR\btemplate\"\xa2\x01\n" +
 	"\x0fTemplateChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -782,49 +908,54 @@ func file_template_proto_rawDescGZIP() []byte {
 	return file_template_proto_rawDescData
 }
 
-var file_template_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
+var file_template_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_template_proto_goTypes = []any{
-	(*Template)(nil),               // 0: io.thingsdiary.v1.Template
-	(*GetTemplateRequest)(nil),     // 1: io.thingsdiary.v1.GetTemplateRequest
-	(*GetTemplateResponse)(nil),    // 2: io.thingsdiary.v1.GetTemplateResponse
-	(*ListTemplatesRequest)(nil),   // 3: io.thingsdiary.v1.ListTemplatesRequest
-	(*ListTemplatesResponse)(nil),  // 4: io.thingsdiary.v1.ListTemplatesResponse
-	(*PutTemplateRequest)(nil),     // 5: io.thingsdiary.v1.PutTemplateRequest
-	(*DeleteTemplateRequest)(nil),  // 6: io.thingsdiary.v1.DeleteTemplateRequest
-	(*RestoreTemplateRequest)(nil), // 7: io.thingsdiary.v1.RestoreTemplateRequest
-	(*TemplateChanged)(nil),        // 8: io.thingsdiary.v1.TemplateChanged
-	(*TemplateDeleted)(nil),        // 9: io.thingsdiary.v1.TemplateDeleted
-	(*TemplateRestored)(nil),       // 10: io.thingsdiary.v1.TemplateRestored
-	(*timestamppb.Timestamp)(nil),  // 11: google.protobuf.Timestamp
-	(*Encryption)(nil),             // 12: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),          // 13: io.thingsdiary.v1.EncryptedData
-	(*Page)(nil),                   // 14: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),               // 15: io.thingsdiary.v1.PageInfo
+	(*Template)(nil),                // 0: io.thingsdiary.v1.Template
+	(*GetTemplateRequest)(nil),      // 1: io.thingsdiary.v1.GetTemplateRequest
+	(*GetTemplateResponse)(nil),     // 2: io.thingsdiary.v1.GetTemplateResponse
+	(*ListTemplatesRequest)(nil),    // 3: io.thingsdiary.v1.ListTemplatesRequest
+	(*ListTemplatesResponse)(nil),   // 4: io.thingsdiary.v1.ListTemplatesResponse
+	(*PutTemplateRequest)(nil),      // 5: io.thingsdiary.v1.PutTemplateRequest
+	(*PutTemplateResponse)(nil),     // 6: io.thingsdiary.v1.PutTemplateResponse
+	(*DeleteTemplateRequest)(nil),   // 7: io.thingsdiary.v1.DeleteTemplateRequest
+	(*DeleteTemplateResponse)(nil),  // 8: io.thingsdiary.v1.DeleteTemplateResponse
+	(*RestoreTemplateRequest)(nil),  // 9: io.thingsdiary.v1.RestoreTemplateRequest
+	(*RestoreTemplateResponse)(nil), // 10: io.thingsdiary.v1.RestoreTemplateResponse
+	(*TemplateChanged)(nil),         // 11: io.thingsdiary.v1.TemplateChanged
+	(*TemplateDeleted)(nil),         // 12: io.thingsdiary.v1.TemplateDeleted
+	(*TemplateRestored)(nil),        // 13: io.thingsdiary.v1.TemplateRestored
+	(*timestamppb.Timestamp)(nil),   // 14: google.protobuf.Timestamp
+	(*Encryption)(nil),              // 15: io.thingsdiary.v1.Encryption
+	(*EncryptedData)(nil),           // 16: io.thingsdiary.v1.EncryptedData
+	(*Page)(nil),                    // 17: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),                // 18: io.thingsdiary.v1.PageInfo
 }
 var file_template_proto_depIdxs = []int32{
-	11, // 0: io.thingsdiary.v1.Template.created_at:type_name -> google.protobuf.Timestamp
-	11, // 1: io.thingsdiary.v1.Template.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 2: io.thingsdiary.v1.Template.deleted_at:type_name -> google.protobuf.Timestamp
-	12, // 3: io.thingsdiary.v1.Template.encryption:type_name -> io.thingsdiary.v1.Encryption
-	13, // 4: io.thingsdiary.v1.Template.details:type_name -> io.thingsdiary.v1.EncryptedData
-	11, // 5: io.thingsdiary.v1.Template.removed_at:type_name -> google.protobuf.Timestamp
+	14, // 0: io.thingsdiary.v1.Template.created_at:type_name -> google.protobuf.Timestamp
+	14, // 1: io.thingsdiary.v1.Template.updated_at:type_name -> google.protobuf.Timestamp
+	14, // 2: io.thingsdiary.v1.Template.deleted_at:type_name -> google.protobuf.Timestamp
+	15, // 3: io.thingsdiary.v1.Template.encryption:type_name -> io.thingsdiary.v1.Encryption
+	16, // 4: io.thingsdiary.v1.Template.details:type_name -> io.thingsdiary.v1.EncryptedData
+	14, // 5: io.thingsdiary.v1.Template.removed_at:type_name -> google.protobuf.Timestamp
 	0,  // 6: io.thingsdiary.v1.GetTemplateResponse.template:type_name -> io.thingsdiary.v1.Template
-	14, // 7: io.thingsdiary.v1.ListTemplatesRequest.page:type_name -> io.thingsdiary.v1.Page
+	17, // 7: io.thingsdiary.v1.ListTemplatesRequest.page:type_name -> io.thingsdiary.v1.Page
 	0,  // 8: io.thingsdiary.v1.ListTemplatesResponse.templates:type_name -> io.thingsdiary.v1.Template
-	15, // 9: io.thingsdiary.v1.ListTemplatesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	12, // 10: io.thingsdiary.v1.PutTemplateRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	13, // 11: io.thingsdiary.v1.PutTemplateRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	11, // 12: io.thingsdiary.v1.TemplateChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 13: io.thingsdiary.v1.TemplateChanged.template:type_name -> io.thingsdiary.v1.Template
-	11, // 14: io.thingsdiary.v1.TemplateDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 15: io.thingsdiary.v1.TemplateDeleted.template:type_name -> io.thingsdiary.v1.Template
-	11, // 16: io.thingsdiary.v1.TemplateRestored.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 17: io.thingsdiary.v1.TemplateRestored.template:type_name -> io.thingsdiary.v1.Template
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	18, // 9: io.thingsdiary.v1.ListTemplatesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	15, // 10: io.thingsdiary.v1.PutTemplateRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
+	16, // 11: io.thingsdiary.v1.PutTemplateRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	0,  // 12: io.thingsdiary.v1.PutTemplateResponse.template:type_name -> io.thingsdiary.v1.Template
+	0,  // 13: io.thingsdiary.v1.RestoreTemplateResponse.template:type_name -> io.thingsdiary.v1.Template
+	14, // 14: io.thingsdiary.v1.TemplateChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 15: io.thingsdiary.v1.TemplateChanged.template:type_name -> io.thingsdiary.v1.Template
+	14, // 16: io.thingsdiary.v1.TemplateDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 17: io.thingsdiary.v1.TemplateDeleted.template:type_name -> io.thingsdiary.v1.Template
+	14, // 18: io.thingsdiary.v1.TemplateRestored.occurred_at:type_name -> google.protobuf.Timestamp
+	0,  // 19: io.thingsdiary.v1.TemplateRestored.template:type_name -> io.thingsdiary.v1.Template
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_template_proto_init() }
@@ -834,14 +965,14 @@ func file_template_proto_init() {
 	}
 	file_encryption_proto_init()
 	file_pagination_proto_init()
-	file_template_proto_msgTypes[6].OneofWrappers = []any{}
+	file_template_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_template_proto_rawDesc), len(file_template_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   11,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
