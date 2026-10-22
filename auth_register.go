@@ -39,6 +39,9 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase, kdfS
 	if resp.StatusCode == http.StatusConflict {
 		return ErrAccountAlreadyExists
 	}
+	if resp.StatusCode == http.StatusBadRequest {
+		return ErrBadRequest
+	}
 
 	if resp.StatusCode != http.StatusCreated {
 		return errors.Errorf("register failed: %s", resp.Status)
