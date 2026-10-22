@@ -127,17 +127,7 @@ func TestMapRealtimeRPCFailedPreconditionToRemoved(t *testing.T) {
 	require.ErrorIs(t, got, ErrEntityRemoved)
 }
 
-func TestDeleteSoftValueDefaultsToSoftAndHonorsHardDelete(t *testing.T) {
-	softTrue := true
-	softFalse := false
-	require.True(t, deleteSoftValue(nil))
-	require.True(t, deleteSoftValue(&softTrue))
-	require.False(t, deleteSoftValue(&softFalse))
-}
-
 func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
-	hardDelete := false
-
 	tests := []struct {
 		name       string
 		method     string
@@ -163,7 +153,7 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 			name:   "entry supports hard delete",
 			method: "io.thingsdiary.v1.entry.delete",
 			call: func(c *Client) error {
-				return c.DeleteEntry(context.Background(), "diary-1", "entry-1", DeleteEntryParams{Soft: &hardDelete})
+				return c.DeleteEntry(context.Background(), "diary-1", "entry-1", DeleteEntryParams{Soft: mo.Some(false)})
 			},
 			assertData: func(t *testing.T, data []byte) {
 				var req v1.DeleteEntryRequest
@@ -194,7 +184,7 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 			call: func(c *Client) error {
 				return c.DeleteTopic(context.Background(), "diary-1", "topic-1", DeleteTopicParams{
 					DeleteEntries: true,
-					Soft:          &hardDelete,
+					Soft:          mo.Some(false),
 				})
 			},
 			assertData: func(t *testing.T, data []byte) {
@@ -224,7 +214,7 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 			name:   "template supports hard delete",
 			method: "io.thingsdiary.v1.template.delete",
 			call: func(c *Client) error {
-				return c.DeleteTemplate(context.Background(), "diary-1", "template-1", DeleteTemplateParams{Soft: &hardDelete})
+				return c.DeleteTemplate(context.Background(), "diary-1", "template-1", DeleteTemplateParams{Soft: mo.Some(false)})
 			},
 			assertData: func(t *testing.T, data []byte) {
 				var req v1.DeleteTemplateRequest
