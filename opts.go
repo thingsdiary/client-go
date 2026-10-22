@@ -1,8 +1,16 @@
 package client
 
 import (
+	"net"
 	"net/url"
+	"strings"
 	"time"
+)
+
+const (
+	localRealtimePort = "8000"
+	realtimeAPIPath   = "/v1/realtime"
+	rawRealtimePath   = "/connection/websocket"
 )
 
 type options struct {
@@ -20,7 +28,7 @@ func defaultOptions() *options {
 
 func realtimeURLFromBaseURL(baseURL string) string {
 	u, err := url.Parse(baseURL)
-	if err != nil {
+	if err != nil || u.Hostname() == "" {
 		return ""
 	}
 
@@ -33,12 +41,27 @@ func realtimeURLFromBaseURL(baseURL string) string {
 		return ""
 	}
 
-	u.Path = "/connection/websocket"
+	if isLocalhost(u.Hostname()) {
+		u.Scheme = "ws"
+		u.Host = net.JoinHostPort(u.Hostname(), localRealtimePort)
+		u.Path = rawRealtimePath
+	} else {
+		u.Path = strings.TrimRight(u.Path, "/") + realtimeAPIPath
+	}
 	u.RawPath = ""
 	u.RawQuery = ""
 	u.Fragment = ""
 
 	return u.String()
+}
+
+func isLocalhost(host string) bool {
+	switch strings.ToLower(host) {
+	case "localhost", "127.0.0.1", "::1":
+		return true
+	default:
+		return false
+	}
 }
 
 type clientOption func(o *options)
