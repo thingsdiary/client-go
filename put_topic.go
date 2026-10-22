@@ -100,7 +100,6 @@ func (c *Client) PutTopic(ctx context.Context, diaryID, topicID string, params P
 		DefaultTemplateId: protoString(params.DefaultTemplateID),
 	}
 
-	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
 	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.put", req, nil); err != nil {
 		return nil, err
 	}

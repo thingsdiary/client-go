@@ -239,12 +239,12 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			c := NewClient()
-			c.credentials = &Credentials{}
+			c.credentials = &Credentials{SigningPrivateKey: testSigningPrivateKey()}
 			c.conn = &mockRealtimeConn{
 				state: centrifuge.StateConnected,
 				rpc: func(_ context.Context, method string, data []byte) (centrifuge.RPCResult, error) {
 					require.Equal(t, test.method, method)
-					test.assertData(t, data)
+					test.assertData(t, rpcPayload(t, method, data))
 					return centrifuge.RPCResult{}, nil
 				},
 			}

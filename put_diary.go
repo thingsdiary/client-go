@@ -90,7 +90,6 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 		Details:    details,
 	}
 
-	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
 	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.put", req, nil); err != nil {
 		return nil, err
 	}

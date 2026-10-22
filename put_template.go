@@ -91,7 +91,6 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		Details:    details,
 	}
 
-	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
 	if err := c.rpc(ctx, "io.thingsdiary.v1.template.put", req, nil); err != nil {
 		return nil, err
 	}

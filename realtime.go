@@ -3,6 +3,7 @@ package client
 import (
 	"bytes"
 	"context"
+	"crypto/ed25519"
 
 	"github.com/centrifugal/centrifuge-go"
 	"github.com/pkg/errors"
@@ -151,6 +152,21 @@ func (c *Client) rpc(ctx context.Context, method string, request, response proto
 	data, err := proto.Marshal(request)
 	if err != nil {
 		return errors.Wrap(err, "failed to encode RPC request")
+	}
+
+	if c.credentials == nil {
+		return ErrUnauthorized
+	}
+
+	envelope := NewEnvelope(method, data)
+	signedEnvelope, err := signEnvelope(envelope, ed25519.PrivateKey(c.credentials.SigningPrivateKey))
+	if err != nil {
+		return err
+	}
+
+	data, err = proto.Marshal(signedEnvelope)
+	if err != nil {
+		return errors.Wrap(err, "failed to encode signed RPC envelope")
 	}
 
 	result, err := conn.RPC(ctx, method, data)

@@ -128,6 +128,7 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 	c.credentials = &Credentials{
 		EncryptionPublicKey:  publicKey[:],
 		EncryptionPrivateKey: privateKey[:],
+		SigningPrivateKey:    testSigningPrivateKey(),
 	}
 
 	var method string
@@ -136,7 +137,7 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 		switch gotMethod {
 		case "io.thingsdiary.v1.diary.create":
 			method = gotMethod
-			require.NoError(t, proto.Unmarshal(data, &req))
+			require.NoError(t, proto.Unmarshal(rpcPayload(t, gotMethod, data), &req))
 			return centrifuge.RPCResult{}, nil
 		case "io.thingsdiary.v1.diary.list":
 			now := timestamppb.Now()

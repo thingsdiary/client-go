@@ -29,7 +29,6 @@ func (c *Client) DeleteEntry(ctx context.Context, diaryID string, entryID string
 		Soft:    protoBool(deleteSoftValue(p.Soft)),
 	}
 
-	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
 	if err := c.rpc(ctx, "io.thingsdiary.v1.entry.delete", req, nil); err != nil {
 		return err
 	}

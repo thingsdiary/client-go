@@ -72,7 +72,6 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		},
 	}
 
-	// TODO: Sign the encoded request with c.credentials.SigningPrivateKey before sending it.
 	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.create", req, nil); err != nil {
 		return nil, err
 	}
