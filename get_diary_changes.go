@@ -11,7 +11,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/samber/mo"
-
 	"github.com/thingsdiary/client-go/openapi"
 )
 

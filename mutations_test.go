@@ -8,11 +8,10 @@ import (
 
 	"github.com/centrifugal/centrifuge-go"
 	"github.com/stretchr/testify/require"
+	v1 "github.com/thingsdiary/client-go/proto"
 	"golang.org/x/crypto/nacl/box"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
-
-	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 var (

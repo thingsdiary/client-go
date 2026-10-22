@@ -5,7 +5,6 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/samber/mo"
-
 	v1 "github.com/thingsdiary/client-go/proto"
 )
 

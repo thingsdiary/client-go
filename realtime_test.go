@@ -10,10 +10,9 @@ import (
 	"github.com/centrifugal/centrifuge-go"
 	"github.com/samber/mo"
 	"github.com/stretchr/testify/require"
+	v1 "github.com/thingsdiary/client-go/proto"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
-
-	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 func TestGetRealtimeTokenUsesCurrentAuthToken(t *testing.T) {

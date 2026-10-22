@@ -5,9 +5,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"google.golang.org/protobuf/proto"
-
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 const envelopeVersion uint32 = 1

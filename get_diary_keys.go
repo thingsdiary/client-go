@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/pkg/errors"
-
 	v1 "github.com/thingsdiary/client-go/proto"
 )
 

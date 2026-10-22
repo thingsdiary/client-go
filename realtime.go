@@ -7,9 +7,8 @@ import (
 
 	"github.com/centrifugal/centrifuge-go"
 	"github.com/pkg/errors"
-	"google.golang.org/protobuf/proto"
-
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 type realtimeConn interface {
