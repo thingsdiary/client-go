@@ -131,6 +131,10 @@ func (c *Client) PutTopic(ctx context.Context, diaryID, topicID string, params P
 		return nil, ErrForbidden
 	}
 
+	if resp.StatusCode == http.StatusGone {
+		return nil, ErrEntityRemoved
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.Errorf("unexpected status code: %s", resp.Status)
 	}

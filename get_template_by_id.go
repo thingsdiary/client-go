@@ -63,6 +63,10 @@ func (c *Client) getTemplate(ctx context.Context, diaryID, templateID string) (*
 		return nil, ErrForbidden
 	}
 
+	if resp.StatusCode == http.StatusGone {
+		return nil, ErrEntityRemoved
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		return nil, errors.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
