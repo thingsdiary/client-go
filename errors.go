@@ -13,5 +13,7 @@ var (
 	ErrEntryNotFound        = errors.New("entry not found")
 	ErrTopicNotFound        = errors.New("topic not found")
 	ErrTemplateNotFound     = errors.New("template not found")
+	ErrEntityRemoved        = errors.New("entity permanently removed")
+	ErrEntityNotDeleted     = errors.New("entity is not deleted")
 	ErrDiaryLimitExceeded   = errors.New("diary limit exceeded")
 )

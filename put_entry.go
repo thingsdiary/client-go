@@ -155,6 +155,10 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 		return nil, ErrForbidden
 	}
 
+	if resp.StatusCode == http.StatusGone {
+		return nil, ErrEntityRemoved
+	}
+
 	if resp.StatusCode == http.StatusBadRequest {
 		var errorResp openapi.ErrorResponse
 		if err := json.NewDecoder(resp.Body).Decode(&errorResp); err == nil {

@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/pkg/errors"
 )
 
 type DeleteTopicParams struct {
 	DeleteEntries bool
+	Soft          *bool
 }
 
 func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string, params ...DeleteTopicParams) error {
@@ -29,11 +31,14 @@ func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string
 		return errors.Wrap(err, "failed to parse URL")
 	}
 
+	q := url.Values{}
 	if p.DeleteEntries {
-		q := url.Values{}
 		q.Set("delete_entries", "true")
-		u.RawQuery = q.Encode()
 	}
+	if p.Soft != nil {
+		q.Set("soft", strconv.FormatBool(*p.Soft))
+	}
+	u.RawQuery = q.Encode()
 
 	req, err := c.newAuthenticatedRequest(ctx, http.MethodDelete, u.String(), nil)
 	if err != nil {
@@ -52,6 +57,10 @@ func (c *Client) DeleteTopic(ctx context.Context, diaryID string, topicID string
 
 	if resp.StatusCode == http.StatusForbidden {
 		return ErrForbidden
+	}
+
+	if resp.StatusCode == http.StatusGone {
+		return ErrEntityRemoved
 	}
 
 	if resp.StatusCode != http.StatusNoContent {
