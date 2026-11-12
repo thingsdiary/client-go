@@ -33,4 +33,6 @@ func (s *ClientSuite) TestLogin_Register() {
 	var login = fmt.Sprintf("test-login-%d@thingsdiary.io", time.Now().UnixMilli())
 	err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 	require.NoError(t, err)
+	require.NotEmpty(t, s.client.authToken)
+	require.NotNil(t, s.client.credentials)
 }

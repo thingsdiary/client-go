@@ -35,16 +35,18 @@ func (s *ClientSuite) TestLogin_AuthenticateWithInvalidCredentials() {
 		err := s.client.Register(ctx, login, "password-123", s.seedPhrase, s.kdfSalt)
 		require.NoError(t, err)
 
-		err = s.client.Authenticate(ctx, login, "wrong-password", s.seedPhrase)
+		client := NewClient(WithBaseURL(s.client.baseURL), WithRealtimeURL(s.client.realtimeURL))
+		err = client.Authenticate(ctx, login, "wrong-password", s.seedPhrase)
 		require.ErrorIs(t, err, ErrInvalidCredentials)
-		require.Empty(t, s.client.authToken)
-		require.Nil(t, s.client.credentials)
+		require.Empty(t, client.authToken)
+		require.Nil(t, client.credentials)
 	})
 
 	t.Run("invalid credentials", func(t *testing.T) {
-		err := s.client.Authenticate(ctx, "non-existent@thingsdiary.io", "password-123", s.seedPhrase)
+		client := NewClient(WithBaseURL(s.client.baseURL), WithRealtimeURL(s.client.realtimeURL))
+		err := client.Authenticate(ctx, "non-existent@thingsdiary.io", "password-123", s.seedPhrase)
 		require.ErrorIs(t, err, ErrInvalidCredentials)
-		require.Empty(t, s.client.authToken)
-		require.Nil(t, s.client.credentials)
+		require.Empty(t, client.authToken)
+		require.Nil(t, client.credentials)
 	})
 }

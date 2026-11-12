@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+
 	"github.com/thingsdiary/client-go/openapi"
 )
 
@@ -54,6 +55,9 @@ func (c *Client) login(ctx context.Context, login, password string) (*openapi.Lo
 
 	if resp.StatusCode == http.StatusUnauthorized {
 		return nil, ErrInvalidCredentials
+	}
+	if resp.StatusCode == http.StatusBadRequest {
+		return nil, ErrBadRequest
 	}
 
 	if resp.StatusCode != http.StatusOK {

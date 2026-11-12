@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/pkg/errors"
+
 	"github.com/thingsdiary/client-go/openapi"
 )
 
@@ -51,6 +52,9 @@ func (c *Client) Register(ctx context.Context, login, password, seedPhrase, kdfS
 	if err := json.NewDecoder(resp.Body).Decode(&r); err != nil {
 		return err
 	}
+
+	c.credentials = creds
+	c.authToken = r.Token
 
 	return nil
 }
