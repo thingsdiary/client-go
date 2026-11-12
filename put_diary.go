@@ -2,26 +2,36 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // PutDiaryParams contains parameters for updating a diary
 type PutDiaryParams struct {
 	Title       string
 	Description string
+	// ParentChangeIDs identifies the parents of the new change. At least one is required.
+	ParentChangeIDs []string
 }
 
 // GetDiaryDetails extracts diary details from parameters
 func (p PutDiaryParams) GetDiaryDetails() DiaryDetails {
-	return DiaryDetails(p)
+	return DiaryDetails{
+		Title:       p.Title,
+		Description: p.Description,
+	}
 }
 
 func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryParams) (*Diary, error) {
 	if c.credentials == nil {
 		return nil, ErrUnauthorized
+	}
+
+	if len(params.ParentChangeIDs) == 0 {
+		return nil, errors.Wrap(ErrBadRequest, "parent change IDs are required")
 	}
 
 	diaryData, err := c.getDiary(ctx, diaryID)
@@ -41,12 +51,15 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 	}
 
 	diaryDetails := params.GetDiaryDetails()
-	diaryDetailsJSON, err := json.Marshal(diaryDetails)
+	diaryDetailsBytes, err := proto.Marshal(&v1.DiaryDetails{
+		Title:       diaryDetails.Title,
+		Description: diaryDetails.Description,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal diary details")
 	}
 
-	contentNonce, encryptedContent, err := encryptWithSymmetricKey(diaryDetailsJSON, entityKey)
+	contentNonce, encryptedContent, err := encryptWithSymmetricKey(diaryDetailsBytes, entityKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encrypt diary content")
 	}
@@ -82,7 +95,20 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
+	payload, err := MarshalChangePayload(contentNonce, encryptedContent)
+	if err != nil {
+		return nil, err
+	}
+
+	change := &v1.Change{
+		Id:              uuid.NewString(),
+		ObjectId:        diaryID,
+		ParentChangeIds: append([]string(nil), params.ParentChangeIDs...),
+		Payload:         payload,
+	}
+
 	req := &v1.PutDiaryRequest{
+		Change:     change,
 		DiaryId:    diaryID,
 		Version:    NewVersion(),
 		Encryption: encryption,
@@ -94,9 +120,16 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 		return nil, err
 	}
 
-	return diaryFromProto(
+	diary, err := diaryFromProto(
 		response.GetDiary(),
 		c.credentials.EncryptionPrivateKey,
 		c.credentials.EncryptionPublicKey,
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	diary.ChangeID = change.GetId()
+
+	return diary, nil
 }

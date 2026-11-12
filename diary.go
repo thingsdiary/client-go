@@ -1,11 +1,11 @@
 package client
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/pkg/errors"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Diary represents a plaintext diary that users work with
@@ -16,6 +16,8 @@ type Diary struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	Version     uint64
+	// ChangeID identifies the change written by CreateDiary or PutDiary. Reads leave it empty.
+	ChangeID string
 }
 
 // DiaryDetails represents the plaintext content structure for diary details
@@ -24,7 +26,7 @@ type DiaryDetails struct {
 	Description string `json:"description"`
 }
 
-func diaryFromProto(value *v1.Diary, privateKey, publicKey []byte) (*Diary, error) {
+func diaryFromProto(value *v1.EncryptedDiary, privateKey, publicKey []byte) (*Diary, error) {
 	if value == nil {
 		return nil, errors.New("diary is required")
 	}
@@ -52,8 +54,8 @@ func diaryFromProto(value *v1.Diary, privateKey, publicKey []byte) (*Diary, erro
 		return nil, err
 	}
 
-	var decryptedDiaryDetails DiaryDetails
-	if err := json.Unmarshal(decryptedContentBytes, &decryptedDiaryDetails); err != nil {
+	var decryptedDiaryDetails v1.DiaryDetails
+	if err := proto.Unmarshal(decryptedContentBytes, &decryptedDiaryDetails); err != nil {
 		return nil, errors.Wrap(err, "failed to parse decrypted diary details")
 	}
 

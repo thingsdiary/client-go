@@ -23,7 +23,7 @@ func (c *Client) GetDiaryByID(ctx context.Context, id string) (*Diary, error) {
 	)
 }
 
-func (c *Client) getDiary(ctx context.Context, id string) (*v1.Diary, error) {
+func (c *Client) getDiary(ctx context.Context, id string) (*v1.EncryptedDiary, error) {
 	req := &v1.GetDiaryRequest{
 		DiaryId: id,
 	}

@@ -1,12 +1,12 @@
 package client
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/samber/mo"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // Topic represents a plaintext topic that users work with
@@ -20,6 +20,7 @@ type Topic struct {
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
 	DeletedAt         mo.Option[time.Time]
+	RemovedAt         mo.Option[time.Time]
 	Version           uint64
 }
 
@@ -30,7 +31,7 @@ type TopicDetails struct {
 	Color       string `json:"color"`
 }
 
-func topicFromProto(value *v1.Topic, diaryKey []byte) (*Topic, error) {
+func topicFromProto(value *v1.EncryptedTopic, diaryKey []byte) (*Topic, error) {
 	if value == nil {
 		return nil, errors.New("topic is required")
 	}
@@ -45,8 +46,8 @@ func topicFromProto(value *v1.Topic, diaryKey []byte) (*Topic, error) {
 		return nil, err
 	}
 
-	var details TopicDetails
-	if err := json.Unmarshal(decryptedDetails, &details); err != nil {
+	var details v1.TopicDetails
+	if err := proto.Unmarshal(decryptedDetails, &details); err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal topic details")
 	}
 
@@ -65,6 +66,9 @@ func topicFromProto(value *v1.Topic, diaryKey []byte) (*Topic, error) {
 	}
 	if value.DeletedAt != nil {
 		topic.DeletedAt = mo.Some(protoTime(value.DeletedAt))
+	}
+	if value.RemovedAt != nil {
+		topic.RemovedAt = mo.Some(protoTime(value.RemovedAt))
 	}
 
 	return topic, nil

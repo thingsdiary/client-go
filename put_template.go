@@ -2,10 +2,10 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/pkg/errors"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // PutTemplateParams contains parameters for creating/updating a template
@@ -40,12 +40,14 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 
 	// Encrypt template details
 	templateDetails := params.GetTemplateDetails()
-	templateDetailsJSON, err := json.Marshal(templateDetails)
+	templateDetailsBytes, err := proto.Marshal(&v1.TemplateDetails{
+		Content: templateDetails.Content,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal template details")
 	}
 
-	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(templateDetailsJSON, entityKey)
+	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(templateDetailsBytes, entityKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encrypt template details")
 	}

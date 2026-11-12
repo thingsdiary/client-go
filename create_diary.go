@@ -2,10 +2,11 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // CreateDiaryParams contains parameters for creating a new diary
@@ -39,12 +40,15 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 
 	// Encrypt diary content with entity key
 	diaryDetails := params.GetDiaryDetails()
-	diaryDetailsJSON, err := json.Marshal(diaryDetails)
+	diaryDetailsBytes, err := proto.Marshal(&v1.DiaryDetails{
+		Title:       diaryDetails.Title,
+		Description: diaryDetails.Description,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal diary details")
 	}
 
-	contentNonce, encryptedContent, err := encryptWithSymmetricKey(diaryDetailsJSON, entityKey)
+	contentNonce, encryptedContent, err := encryptWithSymmetricKey(diaryDetailsBytes, entityKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encrypt diary content")
 	}
@@ -61,7 +65,18 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		return nil, errors.Wrap(err, "failed to encrypt diary key")
 	}
 
+	payload, err := MarshalChangePayload(contentNonce, encryptedContent)
+	if err != nil {
+		return nil, err
+	}
+
+	change := &v1.Change{
+		Id:      uuid.NewString(),
+		Payload: payload,
+	}
+
 	req := &v1.CreateDiaryRequest{
+		Change:            change,
 		EncryptedDiaryKey: encryptedDiaryKey,
 		EncryptedKeyNonce: keyNonce,
 		EncryptedKeyData:  encryptedEntityKey,
@@ -76,9 +91,16 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		return nil, err
 	}
 
-	return diaryFromProto(
+	diary, err := diaryFromProto(
 		response.GetDiary(),
 		c.credentials.EncryptionPrivateKey,
 		c.credentials.EncryptionPublicKey,
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	diary.ChangeID = change.GetId()
+
+	return diary, nil
 }

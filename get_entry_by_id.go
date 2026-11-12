@@ -38,7 +38,7 @@ func (c *Client) GetEntryByID(ctx context.Context, diaryID, entryID string) (*En
 	return entryFromProto(value, decryptedDiaryKey)
 }
 
-func (c *Client) getEntry(ctx context.Context, diaryID, entryID string) (*v1.Entry, error) {
+func (c *Client) getEntry(ctx context.Context, diaryID, entryID string) (*v1.EncryptedEntry, error) {
 	req := &v1.GetEntryRequest{
 		DiaryId: diaryID,
 		EntryId: entryID,

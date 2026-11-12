@@ -2,11 +2,11 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/pkg/errors"
 	"github.com/samber/mo"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // PutEntryParams contains parameters for creating/updating an entry
@@ -55,24 +55,34 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 
 	// Encrypt entry details
 	entryDetails := params.GetEntryDetails()
-	entryDetailsJSON, err := json.Marshal(entryDetails)
+	entryDetailsBytes, err := proto.Marshal(&v1.EntryDetails{
+		Content:       entryDetails.Content,
+		Archived:      entryDetails.Archived,
+		Bookmarked:    entryDetails.Bookmarked,
+		PreviewHidden: entryDetails.PreviewHidden,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal entry details")
 	}
 
-	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(entryDetailsJSON, entityKey)
+	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(entryDetailsBytes, entityKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encrypt entry details")
 	}
 
 	// Encrypt entry preview (same as details for now)
 	entryPreview := params.GetEntryPreview()
-	entryPreviewJSON, err := json.Marshal(entryPreview)
+	entryPreviewBytes, err := proto.Marshal(&v1.EntryPreview{
+		Content:       entryPreview.Content,
+		Archived:      entryPreview.Archived,
+		Bookmarked:    entryPreview.Bookmarked,
+		PreviewHidden: entryPreview.PreviewHidden,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal entry preview")
 	}
 
-	previewNonce, encryptedPreview, err := encryptWithSymmetricKey(entryPreviewJSON, entityKey)
+	previewNonce, encryptedPreview, err := encryptWithSymmetricKey(entryPreviewBytes, entityKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encrypt entry preview")
 	}

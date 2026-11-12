@@ -22,36 +22,31 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Topic struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	DiaryId           string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	Version           uint64                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	DeletedAt         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
-	Encryption        *Encryption            `protobuf:"bytes,7,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details           *EncryptedData         `protobuf:"bytes,8,opt,name=details,proto3" json:"details,omitempty"`
-	DefaultTemplateId *string                `protobuf:"bytes,9,opt,name=default_template_id,json=defaultTemplateId,proto3,oneof" json:"default_template_id,omitempty"`
-	RemovedAt         *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=removed_at,json=removedAt,proto3" json:"removed_at,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+// Plaintext serialized before encrypting EncryptedTopic.details.
+type TopicDetails struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Title            string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Description      string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Color            string                 `protobuf:"bytes,3,opt,name=color,proto3" json:"color,omitempty"`
+	EntryPreviewable *bool                  `protobuf:"varint,4,opt,name=entry_previewable,json=entryPreviewable,proto3,oneof" json:"entry_previewable,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
-func (x *Topic) Reset() {
-	*x = Topic{}
+func (x *TopicDetails) Reset() {
+	*x = TopicDetails{}
 	mi := &file_topic_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Topic) String() string {
+func (x *TopicDetails) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Topic) ProtoMessage() {}
+func (*TopicDetails) ProtoMessage() {}
 
-func (x *Topic) ProtoReflect() protoreflect.Message {
+func (x *TopicDetails) ProtoReflect() protoreflect.Message {
 	mi := &file_topic_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -63,79 +58,37 @@ func (x *Topic) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Topic.ProtoReflect.Descriptor instead.
-func (*Topic) Descriptor() ([]byte, []int) {
+// Deprecated: Use TopicDetails.ProtoReflect.Descriptor instead.
+func (*TopicDetails) Descriptor() ([]byte, []int) {
 	return file_topic_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Topic) GetId() string {
+func (x *TopicDetails) GetTitle() string {
 	if x != nil {
-		return x.Id
+		return x.Title
 	}
 	return ""
 }
 
-func (x *Topic) GetDiaryId() string {
+func (x *TopicDetails) GetDescription() string {
 	if x != nil {
-		return x.DiaryId
+		return x.Description
 	}
 	return ""
 }
 
-func (x *Topic) GetVersion() uint64 {
+func (x *TopicDetails) GetColor() string {
 	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
-func (x *Topic) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *Topic) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-func (x *Topic) GetDeletedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.DeletedAt
-	}
-	return nil
-}
-
-func (x *Topic) GetEncryption() *Encryption {
-	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-func (x *Topic) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
-	}
-	return nil
-}
-
-func (x *Topic) GetDefaultTemplateId() string {
-	if x != nil && x.DefaultTemplateId != nil {
-		return *x.DefaultTemplateId
+		return x.Color
 	}
 	return ""
 }
 
-func (x *Topic) GetRemovedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.RemovedAt
+func (x *TopicDetails) GetEntryPreviewable() bool {
+	if x != nil && x.EntryPreviewable != nil {
+		return *x.EntryPreviewable
 	}
-	return nil
+	return false
 }
 
 // Centrifugo methods: io.thingsdiary.v1.topic.{get,list,put,delete,restore}.
@@ -193,7 +146,7 @@ func (x *GetTopicRequest) GetTopicId() string {
 
 type GetTopicResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Topic         *Topic                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic         *EncryptedTopic        `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -228,7 +181,7 @@ func (*GetTopicResponse) Descriptor() ([]byte, []int) {
 	return file_topic_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetTopicResponse) GetTopic() *Topic {
+func (x *GetTopicResponse) GetTopic() *EncryptedTopic {
 	if x != nil {
 		return x.Topic
 	}
@@ -289,7 +242,7 @@ func (x *ListTopicsRequest) GetPage() *Page {
 
 type ListTopicsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Topics        []*Topic               `protobuf:"bytes,1,rep,name=topics,proto3" json:"topics,omitempty"`
+	Topics        []*EncryptedTopic      `protobuf:"bytes,1,rep,name=topics,proto3" json:"topics,omitempty"`
 	Page          *PageInfo              `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -325,7 +278,7 @@ func (*ListTopicsResponse) Descriptor() ([]byte, []int) {
 	return file_topic_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ListTopicsResponse) GetTopics() []*Topic {
+func (x *ListTopicsResponse) GetTopics() []*EncryptedTopic {
 	if x != nil {
 		return x.Topics
 	}
@@ -425,7 +378,7 @@ func (x *PutTopicRequest) GetDefaultTemplateId() string {
 
 type PutTopicResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Topic         *Topic                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic         *EncryptedTopic        `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -460,7 +413,7 @@ func (*PutTopicResponse) Descriptor() ([]byte, []int) {
 	return file_topic_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *PutTopicResponse) GetTopic() *Topic {
+func (x *PutTopicResponse) GetTopic() *EncryptedTopic {
 	if x != nil {
 		return x.Topic
 	}
@@ -625,7 +578,7 @@ func (x *RestoreTopicRequest) GetTopicId() string {
 
 type RestoreTopicResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Topic         *Topic                 `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic         *EncryptedTopic        `protobuf:"bytes,1,opt,name=topic,proto3" json:"topic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -660,7 +613,7 @@ func (*RestoreTopicResponse) Descriptor() ([]byte, []int) {
 	return file_topic_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *RestoreTopicResponse) GetTopic() *Topic {
+func (x *RestoreTopicResponse) GetTopic() *EncryptedTopic {
 	if x != nil {
 		return x.Topic
 	}
@@ -671,7 +624,7 @@ type TopicChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Topic         *Topic                 `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic         *EncryptedTopic        `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -720,7 +673,7 @@ func (x *TopicChanged) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *TopicChanged) GetTopic() *Topic {
+func (x *TopicChanged) GetTopic() *EncryptedTopic {
 	if x != nil {
 		return x.Topic
 	}
@@ -731,7 +684,7 @@ type TopicDeleted struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Topic         *Topic                 `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic         *EncryptedTopic        `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -780,7 +733,7 @@ func (x *TopicDeleted) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *TopicDeleted) GetTopic() *Topic {
+func (x *TopicDeleted) GetTopic() *EncryptedTopic {
 	if x != nil {
 		return x.Topic
 	}
@@ -791,7 +744,7 @@ type TopicRestored struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Topic         *Topic                 `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic         *EncryptedTopic        `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -840,7 +793,7 @@ func (x *TopicRestored) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *TopicRestored) GetTopic() *Topic {
+func (x *TopicRestored) GetTopic() *EncryptedTopic {
 	if x != nil {
 		return x.Topic
 	}
@@ -851,36 +804,23 @@ var File_topic_proto protoreflect.FileDescriptor
 
 const file_topic_proto_rawDesc = "" +
 	"\n" +
-	"\vtopic.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x80\x04\n" +
-	"\x05Topic\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x04R\aversion\x129\n" +
-	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
-	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
-	"\n" +
-	"deleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\x12=\n" +
-	"\n" +
-	"encryption\x18\a \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12:\n" +
-	"\adetails\x18\b \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x123\n" +
-	"\x13default_template_id\x18\t \x01(\tH\x00R\x11defaultTemplateId\x88\x01\x01\x129\n" +
-	"\n" +
-	"removed_at\x18\n" +
-	" \x01(\v2\x1a.google.protobuf.TimestampR\tremovedAtB\x16\n" +
-	"\x14_default_template_id\"G\n" +
+	"\vtopic.proto\x12\x11io.thingsdiary.v1\x1a\x15encrypted_topic.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\xa4\x01\n" +
+	"\fTopicDetails\x12\x14\n" +
+	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
+	"\x05color\x18\x03 \x01(\tR\x05color\x120\n" +
+	"\x11entry_previewable\x18\x04 \x01(\bH\x00R\x10entryPreviewable\x88\x01\x01B\x14\n" +
+	"\x12_entry_previewable\"G\n" +
 	"\x0fGetTopicRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\btopic_id\x18\x02 \x01(\tR\atopicId\"B\n" +
-	"\x10GetTopicResponse\x12.\n" +
-	"\x05topic\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"[\n" +
+	"\btopic_id\x18\x02 \x01(\tR\atopicId\"K\n" +
+	"\x10GetTopicResponse\x127\n" +
+	"\x05topic\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedTopicR\x05topic\"[\n" +
 	"\x11ListTopicsRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12+\n" +
-	"\x04page\x18\x02 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"w\n" +
-	"\x12ListTopicsResponse\x120\n" +
-	"\x06topics\x18\x01 \x03(\v2\x18.io.thingsdiary.v1.TopicR\x06topics\x12/\n" +
+	"\x04page\x18\x02 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"\x80\x01\n" +
+	"\x12ListTopicsResponse\x129\n" +
+	"\x06topics\x18\x01 \x03(\v2!.io.thingsdiary.v1.EncryptedTopicR\x06topics\x12/\n" +
 	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\xa9\x02\n" +
 	"\x0fPutTopicRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
@@ -891,9 +831,9 @@ const file_topic_proto_rawDesc = "" +
 	"encryption\x12:\n" +
 	"\adetails\x18\x05 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x123\n" +
 	"\x13default_template_id\x18\x06 \x01(\tH\x00R\x11defaultTemplateId\x88\x01\x01B\x16\n" +
-	"\x14_default_template_id\"B\n" +
-	"\x10PutTopicResponse\x12.\n" +
-	"\x05topic\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"\x93\x01\n" +
+	"\x14_default_template_id\"K\n" +
+	"\x10PutTopicResponse\x127\n" +
+	"\x05topic\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedTopicR\x05topic\"\x93\x01\n" +
 	"\x12DeleteTopicRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
 	"\btopic_id\x18\x02 \x01(\tR\atopicId\x12\x17\n" +
@@ -903,24 +843,24 @@ const file_topic_proto_rawDesc = "" +
 	"\x13DeleteTopicResponse\"K\n" +
 	"\x13RestoreTopicRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\btopic_id\x18\x02 \x01(\tR\atopicId\"F\n" +
-	"\x14RestoreTopicResponse\x12.\n" +
-	"\x05topic\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"\x96\x01\n" +
+	"\btopic_id\x18\x02 \x01(\tR\atopicId\"O\n" +
+	"\x14RestoreTopicResponse\x127\n" +
+	"\x05topic\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedTopicR\x05topic\"\x9f\x01\n" +
 	"\fTopicChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12.\n" +
-	"\x05topic\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"\x96\x01\n" +
+	"occurredAt\x127\n" +
+	"\x05topic\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedTopicR\x05topic\"\x9f\x01\n" +
 	"\fTopicDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12.\n" +
-	"\x05topic\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topic\"\x97\x01\n" +
+	"occurredAt\x127\n" +
+	"\x05topic\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedTopicR\x05topic\"\xa0\x01\n" +
 	"\rTopicRestored\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12.\n" +
-	"\x05topic\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.TopicR\x05topicBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"occurredAt\x127\n" +
+	"\x05topic\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedTopicR\x05topicBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_topic_proto_rawDescOnce sync.Once
@@ -936,7 +876,7 @@ func file_topic_proto_rawDescGZIP() []byte {
 
 var file_topic_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_topic_proto_goTypes = []any{
-	(*Topic)(nil),                 // 0: io.thingsdiary.v1.Topic
+	(*TopicDetails)(nil),          // 0: io.thingsdiary.v1.TopicDetails
 	(*GetTopicRequest)(nil),       // 1: io.thingsdiary.v1.GetTopicRequest
 	(*GetTopicResponse)(nil),      // 2: io.thingsdiary.v1.GetTopicResponse
 	(*ListTopicsRequest)(nil),     // 3: io.thingsdiary.v1.ListTopicsRequest
@@ -950,38 +890,33 @@ var file_topic_proto_goTypes = []any{
 	(*TopicChanged)(nil),          // 11: io.thingsdiary.v1.TopicChanged
 	(*TopicDeleted)(nil),          // 12: io.thingsdiary.v1.TopicDeleted
 	(*TopicRestored)(nil),         // 13: io.thingsdiary.v1.TopicRestored
-	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
-	(*Encryption)(nil),            // 15: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 16: io.thingsdiary.v1.EncryptedData
-	(*Page)(nil),                  // 17: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),              // 18: io.thingsdiary.v1.PageInfo
+	(*EncryptedTopic)(nil),        // 14: io.thingsdiary.v1.EncryptedTopic
+	(*Page)(nil),                  // 15: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),              // 16: io.thingsdiary.v1.PageInfo
+	(*Encryption)(nil),            // 17: io.thingsdiary.v1.Encryption
+	(*EncryptedData)(nil),         // 18: io.thingsdiary.v1.EncryptedData
+	(*timestamppb.Timestamp)(nil), // 19: google.protobuf.Timestamp
 }
 var file_topic_proto_depIdxs = []int32{
-	14, // 0: io.thingsdiary.v1.Topic.created_at:type_name -> google.protobuf.Timestamp
-	14, // 1: io.thingsdiary.v1.Topic.updated_at:type_name -> google.protobuf.Timestamp
-	14, // 2: io.thingsdiary.v1.Topic.deleted_at:type_name -> google.protobuf.Timestamp
-	15, // 3: io.thingsdiary.v1.Topic.encryption:type_name -> io.thingsdiary.v1.Encryption
-	16, // 4: io.thingsdiary.v1.Topic.details:type_name -> io.thingsdiary.v1.EncryptedData
-	14, // 5: io.thingsdiary.v1.Topic.removed_at:type_name -> google.protobuf.Timestamp
-	0,  // 6: io.thingsdiary.v1.GetTopicResponse.topic:type_name -> io.thingsdiary.v1.Topic
-	17, // 7: io.thingsdiary.v1.ListTopicsRequest.page:type_name -> io.thingsdiary.v1.Page
-	0,  // 8: io.thingsdiary.v1.ListTopicsResponse.topics:type_name -> io.thingsdiary.v1.Topic
-	18, // 9: io.thingsdiary.v1.ListTopicsResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	15, // 10: io.thingsdiary.v1.PutTopicRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	16, // 11: io.thingsdiary.v1.PutTopicRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	0,  // 12: io.thingsdiary.v1.PutTopicResponse.topic:type_name -> io.thingsdiary.v1.Topic
-	0,  // 13: io.thingsdiary.v1.RestoreTopicResponse.topic:type_name -> io.thingsdiary.v1.Topic
-	14, // 14: io.thingsdiary.v1.TopicChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 15: io.thingsdiary.v1.TopicChanged.topic:type_name -> io.thingsdiary.v1.Topic
-	14, // 16: io.thingsdiary.v1.TopicDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 17: io.thingsdiary.v1.TopicDeleted.topic:type_name -> io.thingsdiary.v1.Topic
-	14, // 18: io.thingsdiary.v1.TopicRestored.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 19: io.thingsdiary.v1.TopicRestored.topic:type_name -> io.thingsdiary.v1.Topic
-	20, // [20:20] is the sub-list for method output_type
-	20, // [20:20] is the sub-list for method input_type
-	20, // [20:20] is the sub-list for extension type_name
-	20, // [20:20] is the sub-list for extension extendee
-	0,  // [0:20] is the sub-list for field type_name
+	14, // 0: io.thingsdiary.v1.GetTopicResponse.topic:type_name -> io.thingsdiary.v1.EncryptedTopic
+	15, // 1: io.thingsdiary.v1.ListTopicsRequest.page:type_name -> io.thingsdiary.v1.Page
+	14, // 2: io.thingsdiary.v1.ListTopicsResponse.topics:type_name -> io.thingsdiary.v1.EncryptedTopic
+	16, // 3: io.thingsdiary.v1.ListTopicsResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	17, // 4: io.thingsdiary.v1.PutTopicRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
+	18, // 5: io.thingsdiary.v1.PutTopicRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	14, // 6: io.thingsdiary.v1.PutTopicResponse.topic:type_name -> io.thingsdiary.v1.EncryptedTopic
+	14, // 7: io.thingsdiary.v1.RestoreTopicResponse.topic:type_name -> io.thingsdiary.v1.EncryptedTopic
+	19, // 8: io.thingsdiary.v1.TopicChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	14, // 9: io.thingsdiary.v1.TopicChanged.topic:type_name -> io.thingsdiary.v1.EncryptedTopic
+	19, // 10: io.thingsdiary.v1.TopicDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	14, // 11: io.thingsdiary.v1.TopicDeleted.topic:type_name -> io.thingsdiary.v1.EncryptedTopic
+	19, // 12: io.thingsdiary.v1.TopicRestored.occurred_at:type_name -> google.protobuf.Timestamp
+	14, // 13: io.thingsdiary.v1.TopicRestored.topic:type_name -> io.thingsdiary.v1.EncryptedTopic
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_topic_proto_init() }
@@ -989,6 +924,7 @@ func file_topic_proto_init() {
 	if File_topic_proto != nil {
 		return
 	}
+	file_encrypted_topic_proto_init()
 	file_encryption_proto_init()
 	file_pagination_proto_init()
 	file_topic_proto_msgTypes[0].OneofWrappers = []any{}

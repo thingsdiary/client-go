@@ -9,6 +9,7 @@ import (
 
 	"github.com/centrifugal/centrifuge-go"
 	"github.com/samber/mo"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	v1 "github.com/thingsdiary/client-go/proto"
 	"google.golang.org/protobuf/proto"
@@ -39,23 +40,31 @@ func TestGetRealtimeTokenRequiresAuthentication(t *testing.T) {
 }
 
 func TestEntryFromProtoDecryptsTransportToDomain(t *testing.T) {
+	// arrange
 	created := time.Date(2026, 10, 17, 12, 30, 0, 0, time.UTC)
+	removed := created.Add(2 * time.Minute)
 	topicID := "topic-1"
 	diaryKey := make([]byte, 32)
 	entityKey := make([]byte, 32)
-	detailsJSON := []byte(`{"content":"hello","archived":true}`)
+	detailsBytes, err := proto.Marshal(&v1.EntryDetails{Content: "hello", Archived: true})
+	require.NoError(t, err)
 	keyNonce, encryptedKey, err := encryptWithSymmetricKey(entityKey, diaryKey)
 	require.NoError(t, err)
-	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(detailsJSON, entityKey)
+	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(detailsBytes, entityKey)
 	require.NoError(t, err)
-	entry := &v1.Entry{
+	entry := &v1.EncryptedEntry{
 		Id: "entry-1", DiaryId: "diary-1", Version: 42,
 		CreatedAt: timestamppb.New(created), UpdatedAt: timestamppb.New(created.Add(time.Minute)),
+		RemovedAt:  timestamppb.New(removed),
 		TopicId:    &topicID,
 		Encryption: &v1.Encryption{DiaryKeyId: "key-1", EncryptedKeyNonce: keyNonce, EncryptedKeyData: encryptedKey},
 		Details:    &v1.EncryptedData{Nonce: detailsNonce, Data: encryptedDetails},
 	}
+
+	// act
 	got, err := entryFromProto(entry, diaryKey)
+
+	// assert
 	require.NoError(t, err)
 	require.Equal(t, "entry-1", got.ID)
 	require.Equal(t, uint64(42), got.Version)
@@ -63,6 +72,8 @@ func TestEntryFromProtoDecryptsTransportToDomain(t *testing.T) {
 	require.Equal(t, "topic-1", got.TopicID.MustGet())
 	require.Equal(t, "hello", got.Content)
 	require.True(t, got.Archived)
+	assert.False(t, got.DeletedAt.IsPresent())
+	assert.Equal(t, mo.Some(removed), got.RemovedAt)
 }
 
 func TestRealtimeCodecPreservesOptionalString(t *testing.T) {
@@ -73,7 +84,7 @@ func TestRealtimeCodecPreservesOptionalString(t *testing.T) {
 }
 
 func TestRealtimeEventDecodesResourceOneof(t *testing.T) {
-	want := &v1.Event{Payload: &v1.Event_DiaryChanged{DiaryChanged: &v1.DiaryChanged{EventId: "event-1", Diary: &v1.Diary{Id: "diary-1"}}}}
+	want := &v1.Event{Payload: &v1.Event_DiaryChanged{DiaryChanged: &v1.DiaryChanged{EventId: "event-1", Diary: &v1.EncryptedDiary{Id: "diary-1"}}}}
 	encoded, err := proto.Marshal(want)
 	require.NoError(t, err)
 	got := &v1.Event{}

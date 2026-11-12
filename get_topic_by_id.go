@@ -37,7 +37,7 @@ func (c *Client) GetTopicByID(ctx context.Context, diaryID, topicID string) (*To
 	return topicFromProto(value, decryptedDiaryKey)
 }
 
-func (c *Client) getTopic(ctx context.Context, diaryID, topicID string) (*v1.Topic, error) {
+func (c *Client) getTopic(ctx context.Context, diaryID, topicID string) (*v1.EncryptedTopic, error) {
 	req := &v1.GetTopicRequest{
 		DiaryId: diaryID,
 		TopicId: topicID,

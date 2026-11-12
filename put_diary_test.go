@@ -32,8 +32,9 @@ func (s *ClientSuite) TestDiary_PutDiary() {
 
 	// Act: Update diary
 	updatedDiary, err := s.client.PutDiary(ctx, initialDiary.ID, PutDiaryParams{
-		Title:       "Updated Title",
-		Description: "Updated Description",
+		ParentChangeIDs: []string{initialDiary.ChangeID},
+		Title:           "Updated Title",
+		Description:     "Updated Description",
 	})
 
 	// Assert: Verify update was successful
@@ -71,8 +72,9 @@ func (s *ClientSuite) TestDiary_PutDiary_NotFound() {
 
 	// Act: Try to update non-existent diary
 	diary, err := s.client.PutDiary(ctx, uuid.NewString(), PutDiaryParams{
-		Title:       "Test Title",
-		Description: "Test Description",
+		ParentChangeIDs: []string{"known-parent"},
+		Title:           "Test Title",
+		Description:     "Test Description",
 	})
 
 	// Assert: Should return error
@@ -87,8 +89,9 @@ func (s *ClientSuite) TestDiary_PutDiary_NotAuthenticated() {
 
 	// Act: Try to update diary without authentication
 	diary, err := s.client.PutDiary(ctx, uuid.NewString(), PutDiaryParams{
-		Title:       "Test Title",
-		Description: "Test Description",
+		ParentChangeIDs: []string{"known-parent"},
+		Title:           "Test Title",
+		Description:     "Test Description",
 	})
 
 	// Assert: Should return unauthorized error
@@ -119,8 +122,9 @@ func (s *ClientSuite) TestDiary_PutDiary_PartialUpdate() {
 
 	// Act: Update only title
 	updatedDiary, err := s.client.PutDiary(ctx, initialDiary.ID, PutDiaryParams{
-		Title:       "New Title Only",
-		Description: "New Description Too",
+		ParentChangeIDs: []string{initialDiary.ChangeID},
+		Title:           "New Title Only",
+		Description:     "New Description Too",
 	})
 
 	// Assert: Both fields should be updated
@@ -155,8 +159,9 @@ func (s *ClientSuite) TestDiary_PutDiary_EmptyFields() {
 
 	// Act: Update with empty fields
 	updatedDiary, err := s.client.PutDiary(ctx, initialDiary.ID, PutDiaryParams{
-		Title:       "",
-		Description: "",
+		ParentChangeIDs: []string{initialDiary.ChangeID},
+		Title:           "",
+		Description:     "",
 	})
 
 	// Assert: Empty fields should be allowed and applied

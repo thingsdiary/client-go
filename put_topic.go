@@ -2,11 +2,11 @@ package client
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/pkg/errors"
 	"github.com/samber/mo"
 	v1 "github.com/thingsdiary/client-go/proto"
+	"google.golang.org/protobuf/proto"
 )
 
 // PutTopicParams contains parameters for creating/updating a topic
@@ -48,12 +48,16 @@ func (c *Client) PutTopic(ctx context.Context, diaryID, topicID string, params P
 
 	// Encrypt topic details
 	topicDetails := params.GetTopicDetails()
-	topicDetailsJSON, err := json.Marshal(topicDetails)
+	topicDetailsBytes, err := proto.Marshal(&v1.TopicDetails{
+		Title:       topicDetails.Title,
+		Description: topicDetails.Description,
+		Color:       topicDetails.Color,
+	})
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to marshal topic details")
 	}
 
-	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(topicDetailsJSON, entityKey)
+	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(topicDetailsBytes, entityKey)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to encrypt topic details")
 	}

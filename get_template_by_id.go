@@ -36,7 +36,7 @@ func (c *Client) GetTemplateByID(ctx context.Context, diaryID, templateID string
 	return templateFromProto(value, decryptedDiaryKey)
 }
 
-func (c *Client) getTemplate(ctx context.Context, diaryID, templateID string) (*v1.Template, error) {
+func (c *Client) getTemplate(ctx context.Context, diaryID, templateID string) (*v1.EncryptedTemplate, error) {
 	req := &v1.GetTemplateRequest{
 		DiaryId:    diaryID,
 		TemplateId: templateID,

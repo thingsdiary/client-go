@@ -22,37 +22,31 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type Entry struct {
+// Plaintext serialized before encrypting EncryptedEntry.details.
+type EntryDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	DiaryId       string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	Version       uint64                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
-	TopicId       *string                `protobuf:"bytes,7,opt,name=topic_id,json=topicId,proto3,oneof" json:"topic_id,omitempty"`
-	Encryption    *Encryption            `protobuf:"bytes,8,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details       *EncryptedData         `protobuf:"bytes,9,opt,name=details,proto3" json:"details,omitempty"`
-	Preview       *EncryptedData         `protobuf:"bytes,10,opt,name=preview,proto3" json:"preview,omitempty"`
-	RemovedAt     *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=removed_at,json=removedAt,proto3" json:"removed_at,omitempty"`
+	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	Archived      bool                   `protobuf:"varint,2,opt,name=archived,proto3" json:"archived,omitempty"`
+	Bookmarked    bool                   `protobuf:"varint,3,opt,name=bookmarked,proto3" json:"bookmarked,omitempty"`
+	PreviewHidden bool                   `protobuf:"varint,4,opt,name=preview_hidden,json=previewHidden,proto3" json:"preview_hidden,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Entry) Reset() {
-	*x = Entry{}
+func (x *EntryDetails) Reset() {
+	*x = EntryDetails{}
 	mi := &file_entry_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Entry) String() string {
+func (x *EntryDetails) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Entry) ProtoMessage() {}
+func (*EntryDetails) ProtoMessage() {}
 
-func (x *Entry) ProtoReflect() protoreflect.Message {
+func (x *EntryDetails) ProtoReflect() protoreflect.Message {
 	mi := &file_entry_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -64,86 +58,107 @@ func (x *Entry) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Entry.ProtoReflect.Descriptor instead.
-func (*Entry) Descriptor() ([]byte, []int) {
+// Deprecated: Use EntryDetails.ProtoReflect.Descriptor instead.
+func (*EntryDetails) Descriptor() ([]byte, []int) {
 	return file_entry_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Entry) GetId() string {
+func (x *EntryDetails) GetContent() string {
 	if x != nil {
-		return x.Id
+		return x.Content
 	}
 	return ""
 }
 
-func (x *Entry) GetDiaryId() string {
+func (x *EntryDetails) GetArchived() bool {
 	if x != nil {
-		return x.DiaryId
+		return x.Archived
+	}
+	return false
+}
+
+func (x *EntryDetails) GetBookmarked() bool {
+	if x != nil {
+		return x.Bookmarked
+	}
+	return false
+}
+
+func (x *EntryDetails) GetPreviewHidden() bool {
+	if x != nil {
+		return x.PreviewHidden
+	}
+	return false
+}
+
+// Plaintext serialized before encrypting EncryptedEntry.preview.
+// The current clients use the same content and flags as EntryDetails.
+type EntryPreview struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
+	Archived      bool                   `protobuf:"varint,2,opt,name=archived,proto3" json:"archived,omitempty"`
+	Bookmarked    bool                   `protobuf:"varint,3,opt,name=bookmarked,proto3" json:"bookmarked,omitempty"`
+	PreviewHidden bool                   `protobuf:"varint,4,opt,name=preview_hidden,json=previewHidden,proto3" json:"preview_hidden,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EntryPreview) Reset() {
+	*x = EntryPreview{}
+	mi := &file_entry_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EntryPreview) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EntryPreview) ProtoMessage() {}
+
+func (x *EntryPreview) ProtoReflect() protoreflect.Message {
+	mi := &file_entry_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EntryPreview.ProtoReflect.Descriptor instead.
+func (*EntryPreview) Descriptor() ([]byte, []int) {
+	return file_entry_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *EntryPreview) GetContent() string {
+	if x != nil {
+		return x.Content
 	}
 	return ""
 }
 
-func (x *Entry) GetVersion() uint64 {
+func (x *EntryPreview) GetArchived() bool {
 	if x != nil {
-		return x.Version
+		return x.Archived
 	}
-	return 0
+	return false
 }
 
-func (x *Entry) GetCreatedAt() *timestamppb.Timestamp {
+func (x *EntryPreview) GetBookmarked() bool {
 	if x != nil {
-		return x.CreatedAt
+		return x.Bookmarked
 	}
-	return nil
+	return false
 }
 
-func (x *Entry) GetUpdatedAt() *timestamppb.Timestamp {
+func (x *EntryPreview) GetPreviewHidden() bool {
 	if x != nil {
-		return x.UpdatedAt
+		return x.PreviewHidden
 	}
-	return nil
-}
-
-func (x *Entry) GetDeletedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.DeletedAt
-	}
-	return nil
-}
-
-func (x *Entry) GetTopicId() string {
-	if x != nil && x.TopicId != nil {
-		return *x.TopicId
-	}
-	return ""
-}
-
-func (x *Entry) GetEncryption() *Encryption {
-	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-func (x *Entry) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
-	}
-	return nil
-}
-
-func (x *Entry) GetPreview() *EncryptedData {
-	if x != nil {
-		return x.Preview
-	}
-	return nil
-}
-
-func (x *Entry) GetRemovedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.RemovedAt
-	}
-	return nil
+	return false
 }
 
 // Centrifugo methods: io.thingsdiary.v1.entry.{get,list,put,delete,restore}.
@@ -157,7 +172,7 @@ type GetEntryRequest struct {
 
 func (x *GetEntryRequest) Reset() {
 	*x = GetEntryRequest{}
-	mi := &file_entry_proto_msgTypes[1]
+	mi := &file_entry_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -169,7 +184,7 @@ func (x *GetEntryRequest) String() string {
 func (*GetEntryRequest) ProtoMessage() {}
 
 func (x *GetEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[1]
+	mi := &file_entry_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -182,7 +197,7 @@ func (x *GetEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEntryRequest.ProtoReflect.Descriptor instead.
 func (*GetEntryRequest) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{1}
+	return file_entry_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *GetEntryRequest) GetDiaryId() string {
@@ -201,14 +216,14 @@ func (x *GetEntryRequest) GetEntryId() string {
 
 type GetEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *Entry                 `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetEntryResponse) Reset() {
 	*x = GetEntryResponse{}
-	mi := &file_entry_proto_msgTypes[2]
+	mi := &file_entry_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -220,7 +235,7 @@ func (x *GetEntryResponse) String() string {
 func (*GetEntryResponse) ProtoMessage() {}
 
 func (x *GetEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[2]
+	mi := &file_entry_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -233,10 +248,10 @@ func (x *GetEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEntryResponse.ProtoReflect.Descriptor instead.
 func (*GetEntryResponse) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{2}
+	return file_entry_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *GetEntryResponse) GetEntry() *Entry {
+func (x *GetEntryResponse) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -253,7 +268,7 @@ type ListEntriesRequest struct {
 
 func (x *ListEntriesRequest) Reset() {
 	*x = ListEntriesRequest{}
-	mi := &file_entry_proto_msgTypes[3]
+	mi := &file_entry_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -265,7 +280,7 @@ func (x *ListEntriesRequest) String() string {
 func (*ListEntriesRequest) ProtoMessage() {}
 
 func (x *ListEntriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[3]
+	mi := &file_entry_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -278,7 +293,7 @@ func (x *ListEntriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEntriesRequest.ProtoReflect.Descriptor instead.
 func (*ListEntriesRequest) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{3}
+	return file_entry_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ListEntriesRequest) GetDiaryId() string {
@@ -297,7 +312,7 @@ func (x *ListEntriesRequest) GetPage() *Page {
 
 type ListEntriesResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entries       []*Entry               `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
+	Entries       []*EncryptedEntry      `protobuf:"bytes,1,rep,name=entries,proto3" json:"entries,omitempty"`
 	Page          *PageInfo              `protobuf:"bytes,2,opt,name=page,proto3" json:"page,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -305,7 +320,7 @@ type ListEntriesResponse struct {
 
 func (x *ListEntriesResponse) Reset() {
 	*x = ListEntriesResponse{}
-	mi := &file_entry_proto_msgTypes[4]
+	mi := &file_entry_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -317,7 +332,7 @@ func (x *ListEntriesResponse) String() string {
 func (*ListEntriesResponse) ProtoMessage() {}
 
 func (x *ListEntriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[4]
+	mi := &file_entry_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -330,10 +345,10 @@ func (x *ListEntriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListEntriesResponse.ProtoReflect.Descriptor instead.
 func (*ListEntriesResponse) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{4}
+	return file_entry_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListEntriesResponse) GetEntries() []*Entry {
+func (x *ListEntriesResponse) GetEntries() []*EncryptedEntry {
 	if x != nil {
 		return x.Entries
 	}
@@ -362,7 +377,7 @@ type PutEntryRequest struct {
 
 func (x *PutEntryRequest) Reset() {
 	*x = PutEntryRequest{}
-	mi := &file_entry_proto_msgTypes[5]
+	mi := &file_entry_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -374,7 +389,7 @@ func (x *PutEntryRequest) String() string {
 func (*PutEntryRequest) ProtoMessage() {}
 
 func (x *PutEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[5]
+	mi := &file_entry_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -387,7 +402,7 @@ func (x *PutEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutEntryRequest.ProtoReflect.Descriptor instead.
 func (*PutEntryRequest) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{5}
+	return file_entry_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PutEntryRequest) GetDiaryId() string {
@@ -441,14 +456,14 @@ func (x *PutEntryRequest) GetPreview() *EncryptedData {
 
 type PutEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *Entry                 `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PutEntryResponse) Reset() {
 	*x = PutEntryResponse{}
-	mi := &file_entry_proto_msgTypes[6]
+	mi := &file_entry_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -460,7 +475,7 @@ func (x *PutEntryResponse) String() string {
 func (*PutEntryResponse) ProtoMessage() {}
 
 func (x *PutEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[6]
+	mi := &file_entry_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -473,10 +488,10 @@ func (x *PutEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutEntryResponse.ProtoReflect.Descriptor instead.
 func (*PutEntryResponse) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{6}
+	return file_entry_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *PutEntryResponse) GetEntry() *Entry {
+func (x *PutEntryResponse) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -494,7 +509,7 @@ type DeleteEntryRequest struct {
 
 func (x *DeleteEntryRequest) Reset() {
 	*x = DeleteEntryRequest{}
-	mi := &file_entry_proto_msgTypes[7]
+	mi := &file_entry_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -506,7 +521,7 @@ func (x *DeleteEntryRequest) String() string {
 func (*DeleteEntryRequest) ProtoMessage() {}
 
 func (x *DeleteEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[7]
+	mi := &file_entry_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -519,7 +534,7 @@ func (x *DeleteEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEntryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteEntryRequest) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{7}
+	return file_entry_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteEntryRequest) GetDiaryId() string {
@@ -551,7 +566,7 @@ type DeleteEntryResponse struct {
 
 func (x *DeleteEntryResponse) Reset() {
 	*x = DeleteEntryResponse{}
-	mi := &file_entry_proto_msgTypes[8]
+	mi := &file_entry_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -563,7 +578,7 @@ func (x *DeleteEntryResponse) String() string {
 func (*DeleteEntryResponse) ProtoMessage() {}
 
 func (x *DeleteEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[8]
+	mi := &file_entry_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -576,7 +591,7 @@ func (x *DeleteEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEntryResponse.ProtoReflect.Descriptor instead.
 func (*DeleteEntryResponse) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{8}
+	return file_entry_proto_rawDescGZIP(), []int{9}
 }
 
 type RestoreEntryRequest struct {
@@ -589,7 +604,7 @@ type RestoreEntryRequest struct {
 
 func (x *RestoreEntryRequest) Reset() {
 	*x = RestoreEntryRequest{}
-	mi := &file_entry_proto_msgTypes[9]
+	mi := &file_entry_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -601,7 +616,7 @@ func (x *RestoreEntryRequest) String() string {
 func (*RestoreEntryRequest) ProtoMessage() {}
 
 func (x *RestoreEntryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[9]
+	mi := &file_entry_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -614,7 +629,7 @@ func (x *RestoreEntryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreEntryRequest.ProtoReflect.Descriptor instead.
 func (*RestoreEntryRequest) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{9}
+	return file_entry_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *RestoreEntryRequest) GetDiaryId() string {
@@ -633,14 +648,14 @@ func (x *RestoreEntryRequest) GetEntryId() string {
 
 type RestoreEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *Entry                 `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *RestoreEntryResponse) Reset() {
 	*x = RestoreEntryResponse{}
-	mi := &file_entry_proto_msgTypes[10]
+	mi := &file_entry_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -652,7 +667,7 @@ func (x *RestoreEntryResponse) String() string {
 func (*RestoreEntryResponse) ProtoMessage() {}
 
 func (x *RestoreEntryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[10]
+	mi := &file_entry_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -665,10 +680,10 @@ func (x *RestoreEntryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreEntryResponse.ProtoReflect.Descriptor instead.
 func (*RestoreEntryResponse) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{10}
+	return file_entry_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *RestoreEntryResponse) GetEntry() *Entry {
+func (x *RestoreEntryResponse) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -679,14 +694,14 @@ type EntryChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Entry         *Entry                 `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *EntryChanged) Reset() {
 	*x = EntryChanged{}
-	mi := &file_entry_proto_msgTypes[11]
+	mi := &file_entry_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -698,7 +713,7 @@ func (x *EntryChanged) String() string {
 func (*EntryChanged) ProtoMessage() {}
 
 func (x *EntryChanged) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[11]
+	mi := &file_entry_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -711,7 +726,7 @@ func (x *EntryChanged) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntryChanged.ProtoReflect.Descriptor instead.
 func (*EntryChanged) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{11}
+	return file_entry_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *EntryChanged) GetEventId() string {
@@ -728,7 +743,7 @@ func (x *EntryChanged) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EntryChanged) GetEntry() *Entry {
+func (x *EntryChanged) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -739,14 +754,14 @@ type EntryDeleted struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Entry         *Entry                 `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *EntryDeleted) Reset() {
 	*x = EntryDeleted{}
-	mi := &file_entry_proto_msgTypes[12]
+	mi := &file_entry_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -758,7 +773,7 @@ func (x *EntryDeleted) String() string {
 func (*EntryDeleted) ProtoMessage() {}
 
 func (x *EntryDeleted) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[12]
+	mi := &file_entry_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -771,7 +786,7 @@ func (x *EntryDeleted) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntryDeleted.ProtoReflect.Descriptor instead.
 func (*EntryDeleted) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{12}
+	return file_entry_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *EntryDeleted) GetEventId() string {
@@ -788,7 +803,7 @@ func (x *EntryDeleted) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EntryDeleted) GetEntry() *Entry {
+func (x *EntryDeleted) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -799,14 +814,14 @@ type EntryRestored struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Entry         *Entry                 `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *EntryRestored) Reset() {
 	*x = EntryRestored{}
-	mi := &file_entry_proto_msgTypes[13]
+	mi := &file_entry_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -818,7 +833,7 @@ func (x *EntryRestored) String() string {
 func (*EntryRestored) ProtoMessage() {}
 
 func (x *EntryRestored) ProtoReflect() protoreflect.Message {
-	mi := &file_entry_proto_msgTypes[13]
+	mi := &file_entry_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -831,7 +846,7 @@ func (x *EntryRestored) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EntryRestored.ProtoReflect.Descriptor instead.
 func (*EntryRestored) Descriptor() ([]byte, []int) {
-	return file_entry_proto_rawDescGZIP(), []int{13}
+	return file_entry_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *EntryRestored) GetEventId() string {
@@ -848,7 +863,7 @@ func (x *EntryRestored) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EntryRestored) GetEntry() *Entry {
+func (x *EntryRestored) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
 	}
@@ -859,37 +874,31 @@ var File_entry_proto protoreflect.FileDescriptor
 
 const file_entry_proto_rawDesc = "" +
 	"\n" +
-	"\ventry.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x9c\x04\n" +
-	"\x05Entry\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x04R\aversion\x129\n" +
+	"\ventry.proto\x12\x11io.thingsdiary.v1\x1a\x15encrypted_entry.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x8b\x01\n" +
+	"\fEntryDetails\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent\x12\x1a\n" +
+	"\barchived\x18\x02 \x01(\bR\barchived\x12\x1e\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"bookmarked\x18\x03 \x01(\bR\n" +
+	"bookmarked\x12%\n" +
+	"\x0epreview_hidden\x18\x04 \x01(\bR\rpreviewHidden\"\x8b\x01\n" +
+	"\fEntryPreview\x12\x18\n" +
+	"\acontent\x18\x01 \x01(\tR\acontent\x12\x1a\n" +
+	"\barchived\x18\x02 \x01(\bR\barchived\x12\x1e\n" +
 	"\n" +
-	"updated_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x129\n" +
-	"\n" +
-	"deleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tdeletedAt\x12\x1e\n" +
-	"\btopic_id\x18\a \x01(\tH\x00R\atopicId\x88\x01\x01\x12=\n" +
-	"\n" +
-	"encryption\x18\b \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12:\n" +
-	"\adetails\x18\t \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x12:\n" +
-	"\apreview\x18\n" +
-	" \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\apreview\x129\n" +
-	"\n" +
-	"removed_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tremovedAtB\v\n" +
-	"\t_topic_id\"G\n" +
+	"bookmarked\x18\x03 \x01(\bR\n" +
+	"bookmarked\x12%\n" +
+	"\x0epreview_hidden\x18\x04 \x01(\bR\rpreviewHidden\"G\n" +
 	"\x0fGetEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\tR\aentryId\"B\n" +
-	"\x10GetEntryResponse\x12.\n" +
-	"\x05entry\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.EntryR\x05entry\"\\\n" +
+	"\bentry_id\x18\x02 \x01(\tR\aentryId\"K\n" +
+	"\x10GetEntryResponse\x127\n" +
+	"\x05entry\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\\\n" +
 	"\x12ListEntriesRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12+\n" +
-	"\x04page\x18\x02 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"z\n" +
-	"\x13ListEntriesResponse\x122\n" +
-	"\aentries\x18\x01 \x03(\v2\x18.io.thingsdiary.v1.EntryR\aentries\x12/\n" +
+	"\x04page\x18\x02 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"\x83\x01\n" +
+	"\x13ListEntriesResponse\x12;\n" +
+	"\aentries\x18\x01 \x03(\v2!.io.thingsdiary.v1.EncryptedEntryR\aentries\x12/\n" +
 	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\xc5\x02\n" +
 	"\x0fPutEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
@@ -901,9 +910,9 @@ const file_entry_proto_rawDesc = "" +
 	"encryption\x12:\n" +
 	"\adetails\x18\x06 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x12:\n" +
 	"\apreview\x18\a \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\apreviewB\v\n" +
-	"\t_topic_id\"B\n" +
-	"\x10PutEntryResponse\x12.\n" +
-	"\x05entry\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.EntryR\x05entry\"l\n" +
+	"\t_topic_id\"K\n" +
+	"\x10PutEntryResponse\x127\n" +
+	"\x05entry\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"l\n" +
 	"\x12DeleteEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
 	"\bentry_id\x18\x02 \x01(\tR\aentryId\x12\x17\n" +
@@ -912,24 +921,24 @@ const file_entry_proto_rawDesc = "" +
 	"\x13DeleteEntryResponse\"K\n" +
 	"\x13RestoreEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\tR\aentryId\"F\n" +
-	"\x14RestoreEntryResponse\x12.\n" +
-	"\x05entry\x18\x01 \x01(\v2\x18.io.thingsdiary.v1.EntryR\x05entry\"\x96\x01\n" +
+	"\bentry_id\x18\x02 \x01(\tR\aentryId\"O\n" +
+	"\x14RestoreEntryResponse\x127\n" +
+	"\x05entry\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\x9f\x01\n" +
 	"\fEntryChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12.\n" +
-	"\x05entry\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.EntryR\x05entry\"\x96\x01\n" +
+	"occurredAt\x127\n" +
+	"\x05entry\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\x9f\x01\n" +
 	"\fEntryDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12.\n" +
-	"\x05entry\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.EntryR\x05entry\"\x97\x01\n" +
+	"occurredAt\x127\n" +
+	"\x05entry\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\xa0\x01\n" +
 	"\rEntryRestored\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12.\n" +
-	"\x05entry\x18\x03 \x01(\v2\x18.io.thingsdiary.v1.EntryR\x05entryBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"occurredAt\x127\n" +
+	"\x05entry\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entryBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_entry_proto_rawDescOnce sync.Once
@@ -943,56 +952,51 @@ func file_entry_proto_rawDescGZIP() []byte {
 	return file_entry_proto_rawDescData
 }
 
-var file_entry_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
+var file_entry_proto_msgTypes = make([]protoimpl.MessageInfo, 15)
 var file_entry_proto_goTypes = []any{
-	(*Entry)(nil),                 // 0: io.thingsdiary.v1.Entry
-	(*GetEntryRequest)(nil),       // 1: io.thingsdiary.v1.GetEntryRequest
-	(*GetEntryResponse)(nil),      // 2: io.thingsdiary.v1.GetEntryResponse
-	(*ListEntriesRequest)(nil),    // 3: io.thingsdiary.v1.ListEntriesRequest
-	(*ListEntriesResponse)(nil),   // 4: io.thingsdiary.v1.ListEntriesResponse
-	(*PutEntryRequest)(nil),       // 5: io.thingsdiary.v1.PutEntryRequest
-	(*PutEntryResponse)(nil),      // 6: io.thingsdiary.v1.PutEntryResponse
-	(*DeleteEntryRequest)(nil),    // 7: io.thingsdiary.v1.DeleteEntryRequest
-	(*DeleteEntryResponse)(nil),   // 8: io.thingsdiary.v1.DeleteEntryResponse
-	(*RestoreEntryRequest)(nil),   // 9: io.thingsdiary.v1.RestoreEntryRequest
-	(*RestoreEntryResponse)(nil),  // 10: io.thingsdiary.v1.RestoreEntryResponse
-	(*EntryChanged)(nil),          // 11: io.thingsdiary.v1.EntryChanged
-	(*EntryDeleted)(nil),          // 12: io.thingsdiary.v1.EntryDeleted
-	(*EntryRestored)(nil),         // 13: io.thingsdiary.v1.EntryRestored
-	(*timestamppb.Timestamp)(nil), // 14: google.protobuf.Timestamp
-	(*Encryption)(nil),            // 15: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 16: io.thingsdiary.v1.EncryptedData
-	(*Page)(nil),                  // 17: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),              // 18: io.thingsdiary.v1.PageInfo
+	(*EntryDetails)(nil),          // 0: io.thingsdiary.v1.EntryDetails
+	(*EntryPreview)(nil),          // 1: io.thingsdiary.v1.EntryPreview
+	(*GetEntryRequest)(nil),       // 2: io.thingsdiary.v1.GetEntryRequest
+	(*GetEntryResponse)(nil),      // 3: io.thingsdiary.v1.GetEntryResponse
+	(*ListEntriesRequest)(nil),    // 4: io.thingsdiary.v1.ListEntriesRequest
+	(*ListEntriesResponse)(nil),   // 5: io.thingsdiary.v1.ListEntriesResponse
+	(*PutEntryRequest)(nil),       // 6: io.thingsdiary.v1.PutEntryRequest
+	(*PutEntryResponse)(nil),      // 7: io.thingsdiary.v1.PutEntryResponse
+	(*DeleteEntryRequest)(nil),    // 8: io.thingsdiary.v1.DeleteEntryRequest
+	(*DeleteEntryResponse)(nil),   // 9: io.thingsdiary.v1.DeleteEntryResponse
+	(*RestoreEntryRequest)(nil),   // 10: io.thingsdiary.v1.RestoreEntryRequest
+	(*RestoreEntryResponse)(nil),  // 11: io.thingsdiary.v1.RestoreEntryResponse
+	(*EntryChanged)(nil),          // 12: io.thingsdiary.v1.EntryChanged
+	(*EntryDeleted)(nil),          // 13: io.thingsdiary.v1.EntryDeleted
+	(*EntryRestored)(nil),         // 14: io.thingsdiary.v1.EntryRestored
+	(*EncryptedEntry)(nil),        // 15: io.thingsdiary.v1.EncryptedEntry
+	(*Page)(nil),                  // 16: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),              // 17: io.thingsdiary.v1.PageInfo
+	(*Encryption)(nil),            // 18: io.thingsdiary.v1.Encryption
+	(*EncryptedData)(nil),         // 19: io.thingsdiary.v1.EncryptedData
+	(*timestamppb.Timestamp)(nil), // 20: google.protobuf.Timestamp
 }
 var file_entry_proto_depIdxs = []int32{
-	14, // 0: io.thingsdiary.v1.Entry.created_at:type_name -> google.protobuf.Timestamp
-	14, // 1: io.thingsdiary.v1.Entry.updated_at:type_name -> google.protobuf.Timestamp
-	14, // 2: io.thingsdiary.v1.Entry.deleted_at:type_name -> google.protobuf.Timestamp
-	15, // 3: io.thingsdiary.v1.Entry.encryption:type_name -> io.thingsdiary.v1.Encryption
-	16, // 4: io.thingsdiary.v1.Entry.details:type_name -> io.thingsdiary.v1.EncryptedData
-	16, // 5: io.thingsdiary.v1.Entry.preview:type_name -> io.thingsdiary.v1.EncryptedData
-	14, // 6: io.thingsdiary.v1.Entry.removed_at:type_name -> google.protobuf.Timestamp
-	0,  // 7: io.thingsdiary.v1.GetEntryResponse.entry:type_name -> io.thingsdiary.v1.Entry
-	17, // 8: io.thingsdiary.v1.ListEntriesRequest.page:type_name -> io.thingsdiary.v1.Page
-	0,  // 9: io.thingsdiary.v1.ListEntriesResponse.entries:type_name -> io.thingsdiary.v1.Entry
-	18, // 10: io.thingsdiary.v1.ListEntriesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	15, // 11: io.thingsdiary.v1.PutEntryRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	16, // 12: io.thingsdiary.v1.PutEntryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	16, // 13: io.thingsdiary.v1.PutEntryRequest.preview:type_name -> io.thingsdiary.v1.EncryptedData
-	0,  // 14: io.thingsdiary.v1.PutEntryResponse.entry:type_name -> io.thingsdiary.v1.Entry
-	0,  // 15: io.thingsdiary.v1.RestoreEntryResponse.entry:type_name -> io.thingsdiary.v1.Entry
-	14, // 16: io.thingsdiary.v1.EntryChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 17: io.thingsdiary.v1.EntryChanged.entry:type_name -> io.thingsdiary.v1.Entry
-	14, // 18: io.thingsdiary.v1.EntryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 19: io.thingsdiary.v1.EntryDeleted.entry:type_name -> io.thingsdiary.v1.Entry
-	14, // 20: io.thingsdiary.v1.EntryRestored.occurred_at:type_name -> google.protobuf.Timestamp
-	0,  // 21: io.thingsdiary.v1.EntryRestored.entry:type_name -> io.thingsdiary.v1.Entry
-	22, // [22:22] is the sub-list for method output_type
-	22, // [22:22] is the sub-list for method input_type
-	22, // [22:22] is the sub-list for extension type_name
-	22, // [22:22] is the sub-list for extension extendee
-	0,  // [0:22] is the sub-list for field type_name
+	15, // 0: io.thingsdiary.v1.GetEntryResponse.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	16, // 1: io.thingsdiary.v1.ListEntriesRequest.page:type_name -> io.thingsdiary.v1.Page
+	15, // 2: io.thingsdiary.v1.ListEntriesResponse.entries:type_name -> io.thingsdiary.v1.EncryptedEntry
+	17, // 3: io.thingsdiary.v1.ListEntriesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	18, // 4: io.thingsdiary.v1.PutEntryRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
+	19, // 5: io.thingsdiary.v1.PutEntryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	19, // 6: io.thingsdiary.v1.PutEntryRequest.preview:type_name -> io.thingsdiary.v1.EncryptedData
+	15, // 7: io.thingsdiary.v1.PutEntryResponse.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	15, // 8: io.thingsdiary.v1.RestoreEntryResponse.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	20, // 9: io.thingsdiary.v1.EntryChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // 10: io.thingsdiary.v1.EntryChanged.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	20, // 11: io.thingsdiary.v1.EntryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // 12: io.thingsdiary.v1.EntryDeleted.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	20, // 13: io.thingsdiary.v1.EntryRestored.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // 14: io.thingsdiary.v1.EntryRestored.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_entry_proto_init() }
@@ -1000,18 +1004,18 @@ func file_entry_proto_init() {
 	if File_entry_proto != nil {
 		return
 	}
+	file_encrypted_entry_proto_init()
 	file_encryption_proto_init()
 	file_pagination_proto_init()
-	file_entry_proto_msgTypes[0].OneofWrappers = []any{}
-	file_entry_proto_msgTypes[5].OneofWrappers = []any{}
-	file_entry_proto_msgTypes[7].OneofWrappers = []any{}
+	file_entry_proto_msgTypes[6].OneofWrappers = []any{}
+	file_entry_proto_msgTypes[8].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_entry_proto_rawDesc), len(file_entry_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   14,
+			NumMessages:   15,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
