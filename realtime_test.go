@@ -84,12 +84,12 @@ func TestRealtimeCodecPreservesOptionalString(t *testing.T) {
 }
 
 func TestRealtimeEventDecodesResourceOneof(t *testing.T) {
-	want := &v1.Event{Payload: &v1.Event_DiaryChanged{DiaryChanged: &v1.DiaryChanged{EventId: "event-1", Diary: &v1.EncryptedDiary{Id: "diary-1"}}}}
+	want := &v1.Event{Payload: &v1.Event_DiaryChanged{DiaryChanged: &v1.DiaryChanged{EventId: "event-1", DiaryId: "diary-1"}}}
 	encoded, err := proto.Marshal(want)
 	require.NoError(t, err)
 	got := &v1.Event{}
 	require.NoError(t, proto.Unmarshal(encoded, got))
-	require.Equal(t, "diary-1", got.GetDiaryChanged().GetDiary().GetId())
+	require.Equal(t, "diary-1", got.GetDiaryChanged().GetDiaryId())
 	require.Equal(t, "event-1", got.GetDiaryChanged().GetEventId())
 }
 

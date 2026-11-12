@@ -85,13 +85,7 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 		EncryptedKeyData:  encryptedEntityKey,
 	}
 
-	details := &v1.EncryptedData{Nonce: contentNonce, Data: encryptedContent}
-
 	if err := validateProtoEncryption(encryption); err != nil {
-		return nil, errors.Wrap(err, "request validation failed")
-	}
-
-	if err := validateProtoEncryptedData(details, "details"); err != nil {
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
@@ -108,11 +102,11 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 	}
 
 	req := &v1.PutDiaryRequest{
-		Change:     change,
-		DiaryId:    diaryID,
-		Version:    NewVersion(),
-		Encryption: encryption,
-		Details:    details,
+		DiaryId: diaryID,
+		EncryptedChange: &v1.EncryptedChange{
+			Change:     change,
+			Encryption: encryption,
+		},
 	}
 
 	response := &v1.PutDiaryResponse{}
@@ -120,16 +114,18 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 		return nil, err
 	}
 
+	diaryData, err = c.getDiary(ctx, diaryID)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get updated diary")
+	}
 	diary, err := diaryFromProto(
-		response.GetDiary(),
+		diaryData,
 		c.credentials.EncryptionPrivateKey,
 		c.credentials.EncryptionPublicKey,
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	diary.ChangeID = change.GetId()
 
 	return diary, nil
 }

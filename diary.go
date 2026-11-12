@@ -15,8 +15,10 @@ type Diary struct {
 	Description string
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
-	Version     uint64
-	// ChangeID identifies the change written by CreateDiary or PutDiary. Reads leave it empty.
+	// Version is a local compatibility value derived from UpdatedAt. Diary
+	// versions are no longer part of the encrypted DAG contract.
+	Version uint64
+	// ChangeID identifies the change returned by the diary read model.
 	ChangeID string
 }
 
@@ -44,12 +46,24 @@ func diaryFromProto(value *v1.EncryptedDiary, privateKey, publicKey []byte) (*Di
 		return nil, errors.Wrap(err, "failed to decrypt diary key")
 	}
 
-	decryptedContentBytes, err := decryptProtoDetails(
-		value.Encryption,
-		value.Details,
+	change := value.GetChange()
+	if change == nil || change.GetChange() == nil || change.GetEncryption() == nil {
+		return nil, errors.New("diary change is required")
+	}
+
+	nonce, encryptedContent, err := UnmarshalChangePayload(change.GetChange().GetPayload())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode diary change payload")
+	}
+	entityKey, err := decryptWithSymmetricKey(
+		change.GetEncryption().GetEncryptedKeyNonce(),
+		change.GetEncryption().GetEncryptedKeyData(),
 		decryptedDiaryKey,
-		"diary content",
 	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decrypt diary entity key")
+	}
+	decryptedContentBytes, err := decryptWithSymmetricKey(nonce, encryptedContent, entityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +79,8 @@ func diaryFromProto(value *v1.EncryptedDiary, privateKey, publicKey []byte) (*Di
 		Description: decryptedDiaryDetails.Description,
 		CreatedAt:   protoTime(value.CreatedAt),
 		UpdatedAt:   protoTime(value.UpdatedAt),
-		Version:     value.Version,
+		Version:     uint64(protoTime(value.UpdatedAt).UnixNano()),
+		ChangeID:    change.GetChange().GetId(),
 	}
 
 	return diary, nil

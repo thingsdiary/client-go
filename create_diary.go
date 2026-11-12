@@ -76,14 +76,14 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 	}
 
 	req := &v1.CreateDiaryRequest{
-		Change:            change,
-		EncryptedDiaryKey: encryptedDiaryKey,
-		EncryptedKeyNonce: keyNonce,
-		EncryptedKeyData:  encryptedEntityKey,
-		Details: &v1.EncryptedData{
-			Nonce: contentNonce,
-			Data:  encryptedContent,
+		EncryptedChange: &v1.EncryptedChange{
+			Change: change,
+			Encryption: &v1.Encryption{
+				EncryptedKeyNonce: keyNonce,
+				EncryptedKeyData:  encryptedEntityKey,
+			},
 		},
+		EncryptedDiaryKey: encryptedDiaryKey,
 	}
 
 	response := &v1.CreateDiaryResponse{}
@@ -91,16 +91,18 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 		return nil, err
 	}
 
+	diaryData, err := c.getDiary(ctx, response.GetDiaryId())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to get created diary")
+	}
 	diary, err := diaryFromProto(
-		response.GetDiary(),
+		diaryData,
 		c.credentials.EncryptionPrivateKey,
 		c.credentials.EncryptionPublicKey,
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	diary.ChangeID = change.GetId()
 
 	return diary, nil
 }

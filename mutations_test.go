@@ -136,27 +136,25 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 	var method string
 	var req v1.CreateDiaryRequest
 	c.conn = &mockRealtimeConn{state: centrifuge.StateConnected, rpc: func(_ context.Context, gotMethod string, data []byte) (centrifuge.RPCResult, error) {
-		require.Equal(t, "io.thingsdiary.v1.diary.create", gotMethod)
-		method = gotMethod
-		require.NoError(t, proto.Unmarshal(rpcPayload(t, gotMethod, data), &req))
-		now := timestamppb.Now()
-		response := &v1.CreateDiaryResponse{
-			Diary: &v1.EncryptedDiary{
-				Id:        "diary-1",
-				Version:   1,
-				CreatedAt: now,
-				UpdatedAt: now,
-				EncryptionKeys: []*v1.DiaryEncryptionKey{{
-					Id:    "key-1",
-					Value: req.EncryptedDiaryKey,
-				}},
-				Encryption: &v1.Encryption{
-					DiaryKeyId:        "key-1",
-					EncryptedKeyNonce: req.EncryptedKeyNonce,
-					EncryptedKeyData:  req.EncryptedKeyData,
+		var response proto.Message
+		switch gotMethod {
+		case "io.thingsdiary.v1.diary.create":
+			method = gotMethod
+			require.NoError(t, proto.Unmarshal(rpcPayload(t, gotMethod, data), &req))
+			response = &v1.CreateDiaryResponse{DiaryId: "diary-1"}
+		case "io.thingsdiary.v1.diary.get":
+			response = &v1.GetDiaryResponse{Diary: &v1.EncryptedDiary{
+				Id:             "diary-1",
+				CreatedAt:      timestamppb.Now(),
+				UpdatedAt:      timestamppb.Now(),
+				EncryptionKeys: []*v1.DiaryEncryptionKey{{Id: "key-1", Value: req.EncryptedDiaryKey}},
+				Change: &v1.EncryptedChange{
+					Change:     req.GetEncryptedChange().GetChange(),
+					Encryption: req.GetEncryptedChange().GetEncryption(),
 				},
-				Details: req.Details,
-			},
+			}}
+		default:
+			t.Fatalf("unexpected RPC method: %s", gotMethod)
 		}
 		encoded, err := proto.Marshal(response)
 		require.NoError(t, err)
@@ -170,34 +168,32 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, "io.thingsdiary.v1.diary.create", method)
 	require.NotEmpty(t, req.GetEncryptedDiaryKey())
-	require.NotEmpty(t, req.GetEncryptedKeyNonce())
-	require.NotEmpty(t, req.GetEncryptedKeyData())
-	require.NotEmpty(t, req.GetDetails().GetNonce())
-	require.NotEmpty(t, req.GetDetails().GetData())
-	require.NotNil(t, req.GetChange())
-	_, err = uuid.Parse(req.GetChange().GetId())
+	require.NotEmpty(t, req.GetEncryptedChange().GetEncryption().GetEncryptedKeyNonce())
+	require.NotEmpty(t, req.GetEncryptedChange().GetEncryption().GetEncryptedKeyData())
+	require.NotNil(t, req.GetEncryptedChange().GetChange())
+	_, err = uuid.Parse(req.GetEncryptedChange().GetChange().GetId())
 	require.NoError(t, err)
-	require.Equal(t, req.GetChange().GetId(), diary.ChangeID)
-	require.Empty(t, req.GetChange().GetObjectId())
-	require.Empty(t, req.GetChange().GetParentChangeIds())
-	payloadNonce, payloadData, err := UnmarshalChangePayload(req.GetChange().GetPayload())
+	require.Equal(t, req.GetEncryptedChange().GetChange().GetId(), diary.ChangeID)
+	require.Empty(t, req.GetEncryptedChange().GetChange().GetObjectId())
+	require.Empty(t, req.GetEncryptedChange().GetChange().GetParentChangeIds())
+	payloadNonce, payloadData, err := UnmarshalChangePayload(req.GetEncryptedChange().GetChange().GetPayload())
 	require.NoError(t, err)
-	require.Equal(t, req.GetDetails().GetNonce(), payloadNonce)
-	require.Equal(t, req.GetDetails().GetData(), payloadData)
+	require.NotEmpty(t, payloadNonce)
+	require.NotEmpty(t, payloadData)
 
 	diaryKey, ok := box.OpenAnonymous(nil, req.GetEncryptedDiaryKey(), publicKey, privateKey)
 	require.True(t, ok)
 
 	entityKey, err := decryptWithSymmetricKey(
-		req.GetEncryptedKeyNonce(),
-		req.GetEncryptedKeyData(),
+		req.GetEncryptedChange().GetEncryption().GetEncryptedKeyNonce(),
+		req.GetEncryptedChange().GetEncryption().GetEncryptedKeyData(),
 		diaryKey,
 	)
 	require.NoError(t, err)
 
 	detailsBytes, err := decryptWithSymmetricKey(
-		req.GetDetails().GetNonce(),
-		req.GetDetails().GetData(),
+		payloadNonce,
+		payloadData,
 		entityKey,
 	)
 	require.NoError(t, err)
@@ -210,7 +206,7 @@ func TestCreateDiarySendsEncryptedRPCRequest(t *testing.T) {
 	}, &details))
 }
 
-func TestPutDiarySendsEncryptedChangeAndLegacyFields(t *testing.T) {
+func TestPutDiarySendsEncryptedChange(t *testing.T) {
 	publicKey, privateKey, err := box.GenerateKey(rand.Reader)
 	require.NoError(t, err)
 	diaryKey, err := generateSymmetricKey()
@@ -227,6 +223,7 @@ func TestPutDiarySendsEncryptedChangeAndLegacyFields(t *testing.T) {
 	parents := []string{"head-a", "head-b"}
 	var methods []string
 	var req v1.PutDiaryRequest
+	putReceived := false
 	c.conn = &mockRealtimeConn{state: centrifuge.StateConnected, rpc: func(_ context.Context, method string, data []byte) (centrifuge.RPCResult, error) {
 		methods = append(methods, method)
 		var response proto.Message
@@ -237,19 +234,23 @@ func TestPutDiarySendsEncryptedChangeAndLegacyFields(t *testing.T) {
 			require.Equal(t, "diary-1", getReq.GetDiaryId())
 			response = &v1.GetDiaryResponse{Diary: &v1.EncryptedDiary{
 				Id:             "diary-1",
-				EncryptionKeys: []*v1.DiaryEncryptionKey{{Id: "key-1", Value: envelope}},
-			}}
-		case "io.thingsdiary.v1.diary.put":
-			require.NoError(t, proto.Unmarshal(rpcPayload(t, method, data), &req))
-			response = &v1.PutDiaryResponse{Diary: &v1.EncryptedDiary{
-				Id:             req.GetDiaryId(),
-				Version:        req.GetVersion(),
 				CreatedAt:      timestamppb.Now(),
 				UpdatedAt:      timestamppb.Now(),
 				EncryptionKeys: []*v1.DiaryEncryptionKey{{Id: "key-1", Value: envelope}},
-				Encryption:     req.GetEncryption(),
-				Details:        req.GetDetails(),
 			}}
+			if putReceived {
+				response = &v1.GetDiaryResponse{Diary: &v1.EncryptedDiary{
+					Id:             "diary-1",
+					CreatedAt:      timestamppb.Now(),
+					UpdatedAt:      timestamppb.Now(),
+					EncryptionKeys: []*v1.DiaryEncryptionKey{{Id: "key-1", Value: envelope}},
+					Change:         req.GetEncryptedChange(),
+				}}
+			}
+		case "io.thingsdiary.v1.diary.put":
+			require.NoError(t, proto.Unmarshal(rpcPayload(t, method, data), &req))
+			putReceived = true
+			response = &v1.PutDiaryResponse{}
 		default:
 			t.Fatalf("unexpected RPC method: %s", method)
 		}
@@ -264,29 +265,28 @@ func TestPutDiarySendsEncryptedChangeAndLegacyFields(t *testing.T) {
 		ParentChangeIDs: parents,
 	})
 	require.NoError(t, err)
-	require.Equal(t, []string{"io.thingsdiary.v1.diary.get", "io.thingsdiary.v1.diary.put"}, methods)
+	require.Equal(t, []string{"io.thingsdiary.v1.diary.get", "io.thingsdiary.v1.diary.put", "io.thingsdiary.v1.diary.get"}, methods)
 	require.Equal(t, "diary-1", req.GetDiaryId())
-	require.NotZero(t, req.GetVersion())
-	require.Equal(t, "key-1", req.GetEncryption().GetDiaryKeyId())
-	require.NotEmpty(t, req.GetEncryption().GetEncryptedKeyNonce())
-	require.NotEmpty(t, req.GetEncryption().GetEncryptedKeyData())
-	require.NotNil(t, req.GetChange())
-	_, err = uuid.Parse(req.GetChange().GetId())
+	require.Equal(t, "key-1", req.GetEncryptedChange().GetEncryption().GetDiaryKeyId())
+	require.NotEmpty(t, req.GetEncryptedChange().GetEncryption().GetEncryptedKeyNonce())
+	require.NotEmpty(t, req.GetEncryptedChange().GetEncryption().GetEncryptedKeyData())
+	require.NotNil(t, req.GetEncryptedChange().GetChange())
+	_, err = uuid.Parse(req.GetEncryptedChange().GetChange().GetId())
 	require.NoError(t, err)
-	require.Equal(t, "diary-1", req.GetChange().GetObjectId())
-	require.Equal(t, parents, req.GetChange().GetParentChangeIds())
+	require.Equal(t, "diary-1", req.GetEncryptedChange().GetChange().GetObjectId())
+	require.Equal(t, parents, req.GetEncryptedChange().GetChange().GetParentChangeIds())
 	require.Equal(t, []string{"head-a", "head-b"}, parents)
-	require.Equal(t, req.GetChange().GetId(), diary.ChangeID)
+	require.Equal(t, req.GetEncryptedChange().GetChange().GetId(), diary.ChangeID)
 	require.Equal(t, "Updated diary", diary.Title)
 	require.Equal(t, "Updated description", diary.Description)
 
-	nonce, encryptedData, err := UnmarshalChangePayload(req.GetChange().GetPayload())
+	nonce, encryptedData, err := UnmarshalChangePayload(req.GetEncryptedChange().GetChange().GetPayload())
 	require.NoError(t, err)
-	require.Equal(t, req.GetDetails().GetNonce(), nonce)
-	require.Equal(t, req.GetDetails().GetData(), encryptedData)
+	require.NotEmpty(t, nonce)
+	require.NotEmpty(t, encryptedData)
 	entityKey, err := decryptWithSymmetricKey(
-		req.GetEncryption().GetEncryptedKeyNonce(),
-		req.GetEncryption().GetEncryptedKeyData(),
+		req.GetEncryptedChange().GetEncryption().GetEncryptedKeyNonce(),
+		req.GetEncryptedChange().GetEncryption().GetEncryptedKeyData(),
 		diaryKey,
 	)
 	require.NoError(t, err)

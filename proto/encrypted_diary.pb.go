@@ -23,15 +23,12 @@ const (
 )
 
 type EncryptedDiary struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	// Deprecated: Marked as deprecated in encrypted_diary.proto.
-	Version        uint64                 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	EncryptionKeys []*DiaryEncryptionKey  `protobuf:"bytes,5,rep,name=encryption_keys,json=encryptionKeys,proto3" json:"encryption_keys,omitempty"`
-	Encryption     *Encryption            `protobuf:"bytes,6,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details        *EncryptedData         `protobuf:"bytes,7,opt,name=details,proto3" json:"details,omitempty"`
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	EncryptionKeys []*DiaryEncryptionKey  `protobuf:"bytes,4,rep,name=encryption_keys,json=encryptionKeys,proto3" json:"encryption_keys,omitempty"`
+	Change         *EncryptedChange       `protobuf:"bytes,5,opt,name=change,proto3" json:"change,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -73,14 +70,6 @@ func (x *EncryptedDiary) GetId() string {
 	return ""
 }
 
-// Deprecated: Marked as deprecated in encrypted_diary.proto.
-func (x *EncryptedDiary) GetVersion() uint64 {
-	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
 func (x *EncryptedDiary) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -102,16 +91,9 @@ func (x *EncryptedDiary) GetEncryptionKeys() []*DiaryEncryptionKey {
 	return nil
 }
 
-func (x *EncryptedDiary) GetEncryption() *Encryption {
+func (x *EncryptedDiary) GetChange() *EncryptedChange {
 	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-func (x *EncryptedDiary) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
+		return x.Change
 	}
 	return nil
 }
@@ -120,19 +102,15 @@ var File_encrypted_diary_proto protoreflect.FileDescriptor
 
 const file_encrypted_diary_proto_rawDesc = "" +
 	"\n" +
-	"\x15encrypted_diary.proto\x12\x11io.thingsdiary.v1\x1a\x0fdiary_key.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xff\x02\n" +
+	"\x15encrypted_diary.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x0fdiary_key.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xa2\x02\n" +
 	"\x0eEncryptedDiary\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
-	"\aversion\x18\x02 \x01(\x04B\x02\x18\x01R\aversion\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x129\n" +
 	"\n" +
-	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12N\n" +
-	"\x0fencryption_keys\x18\x05 \x03(\v2%.io.thingsdiary.v1.DiaryEncryptionKeyR\x0eencryptionKeys\x12=\n" +
-	"\n" +
-	"encryption\x18\x06 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12:\n" +
-	"\adetails\x18\a \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetailsBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"updated_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12N\n" +
+	"\x0fencryption_keys\x18\x04 \x03(\v2%.io.thingsdiary.v1.DiaryEncryptionKeyR\x0eencryptionKeys\x12:\n" +
+	"\x06change\x18\x05 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x06changeBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_encrypted_diary_proto_rawDescOnce sync.Once
@@ -151,20 +129,18 @@ var file_encrypted_diary_proto_goTypes = []any{
 	(*EncryptedDiary)(nil),        // 0: io.thingsdiary.v1.EncryptedDiary
 	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
 	(*DiaryEncryptionKey)(nil),    // 2: io.thingsdiary.v1.DiaryEncryptionKey
-	(*Encryption)(nil),            // 3: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 4: io.thingsdiary.v1.EncryptedData
+	(*EncryptedChange)(nil),       // 3: io.thingsdiary.v1.EncryptedChange
 }
 var file_encrypted_diary_proto_depIdxs = []int32{
 	1, // 0: io.thingsdiary.v1.EncryptedDiary.created_at:type_name -> google.protobuf.Timestamp
 	1, // 1: io.thingsdiary.v1.EncryptedDiary.updated_at:type_name -> google.protobuf.Timestamp
 	2, // 2: io.thingsdiary.v1.EncryptedDiary.encryption_keys:type_name -> io.thingsdiary.v1.DiaryEncryptionKey
-	3, // 3: io.thingsdiary.v1.EncryptedDiary.encryption:type_name -> io.thingsdiary.v1.Encryption
-	4, // 4: io.thingsdiary.v1.EncryptedDiary.details:type_name -> io.thingsdiary.v1.EncryptedData
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	3, // 3: io.thingsdiary.v1.EncryptedDiary.change:type_name -> io.thingsdiary.v1.EncryptedChange
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_encrypted_diary_proto_init() }
@@ -172,8 +148,8 @@ func file_encrypted_diary_proto_init() {
 	if File_encrypted_diary_proto != nil {
 		return
 	}
+	file_change_proto_init()
 	file_diary_key_proto_init()
-	file_encryption_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -22,7 +22,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Plaintext serialized before encrypting EncryptedDiary.details.
+// Plaintext serialized before encrypting a diary change payload.
 type DiaryDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
@@ -79,13 +79,9 @@ func (x *DiaryDetails) GetDescription() string {
 type CreateDiaryRequest struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	EncryptedDiaryKey []byte                 `protobuf:"bytes,1,opt,name=encrypted_diary_key,json=encryptedDiaryKey,proto3" json:"encrypted_diary_key,omitempty"`
-	EncryptedKeyNonce []byte                 `protobuf:"bytes,2,opt,name=encrypted_key_nonce,json=encryptedKeyNonce,proto3" json:"encrypted_key_nonce,omitempty"`
-	EncryptedKeyData  []byte                 `protobuf:"bytes,3,opt,name=encrypted_key_data,json=encryptedKeyData,proto3" json:"encrypted_key_data,omitempty"`
-	// Deprecated: Marked as deprecated in diary.proto.
-	Details       *EncryptedData `protobuf:"bytes,4,opt,name=details,proto3" json:"details,omitempty"`
-	Change        *Change        `protobuf:"bytes,5,opt,name=change,proto3" json:"change,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	EncryptedChange   *EncryptedChange       `protobuf:"bytes,2,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateDiaryRequest) Reset() {
@@ -125,38 +121,16 @@ func (x *CreateDiaryRequest) GetEncryptedDiaryKey() []byte {
 	return nil
 }
 
-func (x *CreateDiaryRequest) GetEncryptedKeyNonce() []byte {
+func (x *CreateDiaryRequest) GetEncryptedChange() *EncryptedChange {
 	if x != nil {
-		return x.EncryptedKeyNonce
-	}
-	return nil
-}
-
-func (x *CreateDiaryRequest) GetEncryptedKeyData() []byte {
-	if x != nil {
-		return x.EncryptedKeyData
-	}
-	return nil
-}
-
-// Deprecated: Marked as deprecated in diary.proto.
-func (x *CreateDiaryRequest) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
-	}
-	return nil
-}
-
-func (x *CreateDiaryRequest) GetChange() *Change {
-	if x != nil {
-		return x.Change
+		return x.EncryptedChange
 	}
 	return nil
 }
 
 type CreateDiaryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Diary         *EncryptedDiary        `protobuf:"bytes,1,opt,name=diary,proto3" json:"diary,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -191,18 +165,18 @@ func (*CreateDiaryResponse) Descriptor() ([]byte, []int) {
 	return file_diary_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CreateDiaryResponse) GetDiary() *EncryptedDiary {
+func (x *CreateDiaryResponse) GetDiaryId() string {
 	if x != nil {
-		return x.Diary
+		return x.DiaryId
 	}
-	return nil
+	return ""
 }
 
 type DiaryCreated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Diary         *EncryptedDiary        `protobuf:"bytes,3,opt,name=diary,proto3" json:"diary,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,3,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -251,11 +225,11 @@ func (x *DiaryCreated) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *DiaryCreated) GetDiary() *EncryptedDiary {
+func (x *DiaryCreated) GetDiaryId() string {
 	if x != nil {
-		return x.Diary
+		return x.DiaryId
 	}
-	return nil
+	return ""
 }
 
 type GetDiaryRequest struct {
@@ -443,15 +417,11 @@ func (x *ListDiariesResponse) GetPage() *PageInfo {
 }
 
 type PutDiaryRequest struct {
-	state      protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId    string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	Version    uint64                 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
-	Encryption *Encryption            `protobuf:"bytes,3,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	// Deprecated: Marked as deprecated in diary.proto.
-	Details       *EncryptedData `protobuf:"bytes,4,opt,name=details,proto3" json:"details,omitempty"`
-	Change        *Change        `protobuf:"bytes,5,opt,name=change,proto3" json:"change,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,2,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *PutDiaryRequest) Reset() {
@@ -491,38 +461,15 @@ func (x *PutDiaryRequest) GetDiaryId() string {
 	return ""
 }
 
-func (x *PutDiaryRequest) GetVersion() uint64 {
+func (x *PutDiaryRequest) GetEncryptedChange() *EncryptedChange {
 	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
-func (x *PutDiaryRequest) GetEncryption() *Encryption {
-	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-// Deprecated: Marked as deprecated in diary.proto.
-func (x *PutDiaryRequest) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
-	}
-	return nil
-}
-
-func (x *PutDiaryRequest) GetChange() *Change {
-	if x != nil {
-		return x.Change
+		return x.EncryptedChange
 	}
 	return nil
 }
 
 type PutDiaryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Diary         *EncryptedDiary        `protobuf:"bytes,1,opt,name=diary,proto3" json:"diary,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -557,18 +504,11 @@ func (*PutDiaryResponse) Descriptor() ([]byte, []int) {
 	return file_diary_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *PutDiaryResponse) GetDiary() *EncryptedDiary {
-	if x != nil {
-		return x.Diary
-	}
-	return nil
-}
-
 type DiaryChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Diary         *EncryptedDiary        `protobuf:"bytes,3,opt,name=diary,proto3" json:"diary,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,3,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -617,11 +557,11 @@ func (x *DiaryChanged) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *DiaryChanged) GetDiary() *EncryptedDiary {
+func (x *DiaryChanged) GetDiaryId() string {
 	if x != nil {
-		return x.Diary
+		return x.DiaryId
 	}
-	return nil
+	return ""
 }
 
 type DeleteDiaryRequest struct {
@@ -709,8 +649,6 @@ type DiaryDeleted struct {
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
 	DiaryId       string                 `protobuf:"bytes,3,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	Version       uint64                 `protobuf:"varint,4,opt,name=version,proto3" json:"version,omitempty"`
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -766,41 +704,24 @@ func (x *DiaryDeleted) GetDiaryId() string {
 	return ""
 }
 
-func (x *DiaryDeleted) GetVersion() uint64 {
-	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
-func (x *DiaryDeleted) GetDeletedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.DeletedAt
-	}
-	return nil
-}
-
 var File_diary_proto protoreflect.FileDescriptor
 
 const file_diary_proto_rawDesc = "" +
 	"\n" +
-	"\vdiary.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x15encrypted_diary.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"F\n" +
+	"\vdiary.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x15encrypted_diary.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"F\n" +
 	"\fDiaryDetails\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\"\x95\x02\n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\"\x93\x01\n" +
 	"\x12CreateDiaryRequest\x12.\n" +
-	"\x13encrypted_diary_key\x18\x01 \x01(\fR\x11encryptedDiaryKey\x12.\n" +
-	"\x13encrypted_key_nonce\x18\x02 \x01(\fR\x11encryptedKeyNonce\x12,\n" +
-	"\x12encrypted_key_data\x18\x03 \x01(\fR\x10encryptedKeyData\x12>\n" +
-	"\adetails\x18\x04 \x01(\v2 .io.thingsdiary.v1.EncryptedDataB\x02\x18\x01R\adetails\x121\n" +
-	"\x06change\x18\x05 \x01(\v2\x19.io.thingsdiary.v1.ChangeR\x06change\"N\n" +
-	"\x13CreateDiaryResponse\x127\n" +
-	"\x05diary\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedDiaryR\x05diary\"\x9f\x01\n" +
+	"\x13encrypted_diary_key\x18\x01 \x01(\fR\x11encryptedDiaryKey\x12M\n" +
+	"\x10encrypted_change\x18\x02 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"0\n" +
+	"\x13CreateDiaryResponse\x12\x19\n" +
+	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"\x81\x01\n" +
 	"\fDiaryCreated\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x127\n" +
-	"\x05diary\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedDiaryR\x05diary\",\n" +
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\",\n" +
 	"\x0fGetDiaryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"K\n" +
 	"\x10GetDiaryResponse\x127\n" +
@@ -809,34 +730,24 @@ const file_diary_proto_rawDesc = "" +
 	"\x04page\x18\x01 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"\x83\x01\n" +
 	"\x13ListDiariesResponse\x12;\n" +
 	"\adiaries\x18\x01 \x03(\v2!.io.thingsdiary.v1.EncryptedDiaryR\adiaries\x12/\n" +
-	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\xf8\x01\n" +
+	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"{\n" +
 	"\x0fPutDiaryRequest\x12\x19\n" +
-	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x18\n" +
-	"\aversion\x18\x02 \x01(\x04R\aversion\x12=\n" +
-	"\n" +
-	"encryption\x18\x03 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12>\n" +
-	"\adetails\x18\x04 \x01(\v2 .io.thingsdiary.v1.EncryptedDataB\x02\x18\x01R\adetails\x121\n" +
-	"\x06change\x18\x05 \x01(\v2\x19.io.thingsdiary.v1.ChangeR\x06change\"K\n" +
-	"\x10PutDiaryResponse\x127\n" +
-	"\x05diary\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedDiaryR\x05diary\"\x9f\x01\n" +
+	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12M\n" +
+	"\x10encrypted_change\x18\x02 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"\x12\n" +
+	"\x10PutDiaryResponse\"\x81\x01\n" +
 	"\fDiaryChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x127\n" +
-	"\x05diary\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedDiaryR\x05diary\"/\n" +
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\"/\n" +
 	"\x12DeleteDiaryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"\x15\n" +
-	"\x13DeleteDiaryResponse\"\xea\x01\n" +
+	"\x13DeleteDiaryResponse\"\x81\x01\n" +
 	"\fDiaryDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"occurredAt\x12\x19\n" +
-	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\x12\x18\n" +
-	"\aversion\x18\x04 \x01(\x04R\aversion\x12>\n" +
-	"\n" +
-	"deleted_at\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\tdeletedAt\x88\x01\x01B\r\n" +
-	"\v_deleted_atBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"\bdiary_id\x18\x03 \x01(\tR\adiaryIdBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_diary_proto_rawDescOnce sync.Once
@@ -866,37 +777,27 @@ var file_diary_proto_goTypes = []any{
 	(*DeleteDiaryRequest)(nil),    // 11: io.thingsdiary.v1.DeleteDiaryRequest
 	(*DeleteDiaryResponse)(nil),   // 12: io.thingsdiary.v1.DeleteDiaryResponse
 	(*DiaryDeleted)(nil),          // 13: io.thingsdiary.v1.DiaryDeleted
-	(*EncryptedData)(nil),         // 14: io.thingsdiary.v1.EncryptedData
-	(*Change)(nil),                // 15: io.thingsdiary.v1.Change
+	(*EncryptedChange)(nil),       // 14: io.thingsdiary.v1.EncryptedChange
+	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
 	(*EncryptedDiary)(nil),        // 16: io.thingsdiary.v1.EncryptedDiary
-	(*timestamppb.Timestamp)(nil), // 17: google.protobuf.Timestamp
-	(*Page)(nil),                  // 18: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),              // 19: io.thingsdiary.v1.PageInfo
-	(*Encryption)(nil),            // 20: io.thingsdiary.v1.Encryption
+	(*Page)(nil),                  // 17: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),              // 18: io.thingsdiary.v1.PageInfo
 }
 var file_diary_proto_depIdxs = []int32{
-	14, // 0: io.thingsdiary.v1.CreateDiaryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	15, // 1: io.thingsdiary.v1.CreateDiaryRequest.change:type_name -> io.thingsdiary.v1.Change
-	16, // 2: io.thingsdiary.v1.CreateDiaryResponse.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
-	17, // 3: io.thingsdiary.v1.DiaryCreated.occurred_at:type_name -> google.protobuf.Timestamp
-	16, // 4: io.thingsdiary.v1.DiaryCreated.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
-	16, // 5: io.thingsdiary.v1.GetDiaryResponse.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
-	18, // 6: io.thingsdiary.v1.ListDiariesRequest.page:type_name -> io.thingsdiary.v1.Page
-	16, // 7: io.thingsdiary.v1.ListDiariesResponse.diaries:type_name -> io.thingsdiary.v1.EncryptedDiary
-	19, // 8: io.thingsdiary.v1.ListDiariesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	20, // 9: io.thingsdiary.v1.PutDiaryRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	14, // 10: io.thingsdiary.v1.PutDiaryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
-	15, // 11: io.thingsdiary.v1.PutDiaryRequest.change:type_name -> io.thingsdiary.v1.Change
-	16, // 12: io.thingsdiary.v1.PutDiaryResponse.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
-	17, // 13: io.thingsdiary.v1.DiaryChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	16, // 14: io.thingsdiary.v1.DiaryChanged.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
-	17, // 15: io.thingsdiary.v1.DiaryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	17, // 16: io.thingsdiary.v1.DiaryDeleted.deleted_at:type_name -> google.protobuf.Timestamp
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	14, // 0: io.thingsdiary.v1.CreateDiaryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	15, // 1: io.thingsdiary.v1.DiaryCreated.occurred_at:type_name -> google.protobuf.Timestamp
+	16, // 2: io.thingsdiary.v1.GetDiaryResponse.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
+	17, // 3: io.thingsdiary.v1.ListDiariesRequest.page:type_name -> io.thingsdiary.v1.Page
+	16, // 4: io.thingsdiary.v1.ListDiariesResponse.diaries:type_name -> io.thingsdiary.v1.EncryptedDiary
+	18, // 5: io.thingsdiary.v1.ListDiariesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	14, // 6: io.thingsdiary.v1.PutDiaryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	15, // 7: io.thingsdiary.v1.DiaryChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // 8: io.thingsdiary.v1.DiaryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_diary_proto_init() }
@@ -906,9 +807,7 @@ func file_diary_proto_init() {
 	}
 	file_change_proto_init()
 	file_encrypted_diary_proto_init()
-	file_encryption_proto_init()
 	file_pagination_proto_init()
-	file_diary_proto_msgTypes[13].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

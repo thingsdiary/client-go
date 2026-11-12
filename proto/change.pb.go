@@ -91,16 +91,73 @@ func (x *Change) GetPayload() []byte {
 	return nil
 }
 
+type EncryptedChange struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Change        *Change                `protobuf:"bytes,1,opt,name=change,proto3" json:"change,omitempty"`
+	Encryption    *Encryption            `protobuf:"bytes,2,opt,name=encryption,proto3" json:"encryption,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *EncryptedChange) Reset() {
+	*x = EncryptedChange{}
+	mi := &file_change_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *EncryptedChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*EncryptedChange) ProtoMessage() {}
+
+func (x *EncryptedChange) ProtoReflect() protoreflect.Message {
+	mi := &file_change_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use EncryptedChange.ProtoReflect.Descriptor instead.
+func (*EncryptedChange) Descriptor() ([]byte, []int) {
+	return file_change_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *EncryptedChange) GetChange() *Change {
+	if x != nil {
+		return x.Change
+	}
+	return nil
+}
+
+func (x *EncryptedChange) GetEncryption() *Encryption {
+	if x != nil {
+		return x.Encryption
+	}
+	return nil
+}
+
 var File_change_proto protoreflect.FileDescriptor
 
 const file_change_proto_rawDesc = "" +
 	"\n" +
-	"\fchange.proto\x12\x11io.thingsdiary.v1\"{\n" +
+	"\fchange.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\"{\n" +
 	"\x06Change\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\tobject_id\x18\x02 \x01(\tR\bobjectId\x12*\n" +
 	"\x11parent_change_ids\x18\x03 \x03(\tR\x0fparentChangeIds\x12\x18\n" +
-	"\apayload\x18\x04 \x01(\fR\apayloadBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"\apayload\x18\x04 \x01(\fR\apayload\"\x83\x01\n" +
+	"\x0fEncryptedChange\x121\n" +
+	"\x06change\x18\x01 \x01(\v2\x19.io.thingsdiary.v1.ChangeR\x06change\x12=\n" +
+	"\n" +
+	"encryption\x18\x02 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
+	"encryptionBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_change_proto_rawDescOnce sync.Once
@@ -114,16 +171,20 @@ func file_change_proto_rawDescGZIP() []byte {
 	return file_change_proto_rawDescData
 }
 
-var file_change_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_change_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_change_proto_goTypes = []any{
-	(*Change)(nil), // 0: io.thingsdiary.v1.Change
+	(*Change)(nil),          // 0: io.thingsdiary.v1.Change
+	(*EncryptedChange)(nil), // 1: io.thingsdiary.v1.EncryptedChange
+	(*Encryption)(nil),      // 2: io.thingsdiary.v1.Encryption
 }
 var file_change_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0, // 0: io.thingsdiary.v1.EncryptedChange.change:type_name -> io.thingsdiary.v1.Change
+	2, // 1: io.thingsdiary.v1.EncryptedChange.encryption:type_name -> io.thingsdiary.v1.Encryption
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_change_proto_init() }
@@ -131,13 +192,14 @@ func file_change_proto_init() {
 	if File_change_proto != nil {
 		return
 	}
+	file_encryption_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_change_proto_rawDesc), len(file_change_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
