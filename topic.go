@@ -21,7 +21,7 @@ type Topic struct {
 	UpdatedAt         time.Time
 	DeletedAt         mo.Option[time.Time]
 	RemovedAt         mo.Option[time.Time]
-	Version           uint64
+	ChangeID          string
 }
 
 // TopicDetails represents the plaintext content structure for topic details
@@ -36,12 +36,24 @@ func topicFromProto(value *v1.EncryptedTopic, diaryKey []byte) (*Topic, error) {
 		return nil, errors.New("topic is required")
 	}
 
-	decryptedDetails, err := decryptProtoDetails(
-		value.Encryption,
-		value.Details,
+	change := value.GetChange()
+	if change == nil || change.GetChange() == nil || change.GetEncryption() == nil {
+		return nil, errors.New("topic change is required")
+	}
+
+	nonce, encryptedDetails, err := UnmarshalChangePayload(change.GetChange().GetPayload())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode topic change payload")
+	}
+	entityKey, err := decryptWithSymmetricKey(
+		change.GetEncryption().GetEncryptedKeyNonce(),
+		change.GetEncryption().GetEncryptedKeyData(),
 		diaryKey,
-		"topic details",
 	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decrypt topic entity key")
+	}
+	decryptedDetails, err := decryptWithSymmetricKey(nonce, encryptedDetails, entityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +71,7 @@ func topicFromProto(value *v1.EncryptedTopic, diaryKey []byte) (*Topic, error) {
 		Color:       details.Color,
 		CreatedAt:   protoTime(value.CreatedAt),
 		UpdatedAt:   protoTime(value.UpdatedAt),
-		Version:     value.Version,
+		ChangeID:    change.GetChange().GetId(),
 	}
 	if value.DefaultTemplateId != nil {
 		topic.DefaultTemplateID = mo.Some(*value.DefaultTemplateId)

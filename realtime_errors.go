@@ -85,3 +85,16 @@ func mapEntryErrorCode(code v1.ErrorCode) error {
 		return fmt.Errorf("entry operation failed: %s", code)
 	}
 }
+
+func mapTopicErrorCode(code v1.ErrorCode) error {
+	switch code {
+	case v1.ErrorCode_ERROR_CODE_UNSPECIFIED:
+		return nil
+	case v1.ErrorCode_ERROR_CODE_BAD_DATA:
+		return ErrBadRequest
+	case v1.ErrorCode_ERROR_CODE_FAILED_PRECONDITION:
+		return ErrTopicEntriesChangeRequired
+	default:
+		return fmt.Errorf("topic operation failed: %s", code)
+	}
+}

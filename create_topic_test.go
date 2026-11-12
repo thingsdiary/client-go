@@ -45,7 +45,6 @@ func (s *ClientSuite) TestTopic_CreateTopic() {
 	assert.Equal(t, "My Personal Topic", createdTopic.Title)
 	assert.Equal(t, "A topic for personal thoughts", createdTopic.Description)
 	assert.Equal(t, "#FF5733", createdTopic.Color)
-	assert.Greater(t, createdTopic.Version, uint64(0))
 	assert.WithinDuration(t, time.Now(), createdTopic.CreatedAt, 5*time.Second)
 	assert.WithinDuration(t, time.Now(), createdTopic.UpdatedAt, 5*time.Second)
 }

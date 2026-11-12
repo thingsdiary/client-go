@@ -50,7 +50,6 @@ func (s *ClientSuite) TestTopic_GetByID() {
 	assert.Equal(t, "Personal Notes", fetchedTopic.Title)
 	assert.Equal(t, "Topics for personal notes and thoughts", fetchedTopic.Description)
 	assert.Equal(t, "#3366FF", fetchedTopic.Color)
-	assert.Equal(t, createdTopic.Version, fetchedTopic.Version)
 	assert.WithinDuration(t, createdTopic.CreatedAt, fetchedTopic.CreatedAt, time.Second)
 	assert.WithinDuration(t, createdTopic.UpdatedAt, fetchedTopic.UpdatedAt, time.Second)
 }
@@ -150,5 +149,4 @@ func (s *ClientSuite) TestTopic_GetByID_EmptyFields() {
 	assert.Equal(t, "", fetchedTopic.Title)
 	assert.Equal(t, "", fetchedTopic.Description)
 	assert.Equal(t, "", fetchedTopic.Color)
-	assert.Equal(t, createdTopic.Version, fetchedTopic.Version)
 }

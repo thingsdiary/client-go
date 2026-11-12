@@ -47,7 +47,6 @@ func (s *ClientSuite) TestTopic_PutTopic() {
 	assert.Equal(t, "Work Projects", createdTopic.Title)
 	assert.Equal(t, "Topics related to work projects", createdTopic.Description)
 	assert.Equal(t, "#FF5733", createdTopic.Color)
-	assert.Greater(t, createdTopic.Version, uint64(0))
 
 	// Act: Update topic
 	updatedTopic, err := s.client.PutTopic(ctx, diary.ID, topicID, PutTopicParams{
@@ -64,7 +63,6 @@ func (s *ClientSuite) TestTopic_PutTopic() {
 	assert.Equal(t, "Updated Work Projects", updatedTopic.Title)
 	assert.Equal(t, "Updated description for work projects", updatedTopic.Description)
 	assert.Equal(t, "#33FF57", updatedTopic.Color)
-	assert.Greater(t, updatedTopic.Version, createdTopic.Version)
 }
 
 func (s *ClientSuite) TestTopic_PutTopic_EmptyFields() {
@@ -195,7 +193,6 @@ func (s *ClientSuite) TestTopic_PutTopicWithDefaultTemplate() {
 	assert.Equal(t, "#FF5733", createdTopic.Color)
 	assert.True(t, createdTopic.DefaultTemplateID.IsPresent())
 	assert.Equal(t, templateID, createdTopic.DefaultTemplateID.MustGet())
-	assert.Greater(t, createdTopic.Version, uint64(0))
 
 	// Act: Remove default template
 	updatedTopic, err := s.client.PutTopic(ctx, diary.ID, topicID, PutTopicParams{

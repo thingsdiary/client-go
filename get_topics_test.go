@@ -78,7 +78,6 @@ func (s *ClientSuite) TestTopic_GetTopics() {
 	assert.Equal(t, "My First Topic", foundTopic1.Title)
 	assert.Equal(t, "First topic description", foundTopic1.Description)
 	assert.Equal(t, "#FF5733", foundTopic1.Color)
-	assert.Equal(t, createdTopic1.Version, foundTopic1.Version)
 	assert.WithinDuration(t, createdTopic1.CreatedAt, foundTopic1.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, createdTopic1.UpdatedAt, foundTopic1.UpdatedAt, 1*time.Second)
 
@@ -88,7 +87,6 @@ func (s *ClientSuite) TestTopic_GetTopics() {
 	assert.Equal(t, "My Second Topic", foundTopic2.Title)
 	assert.Equal(t, "Second topic description", foundTopic2.Description)
 	assert.Equal(t, "#33FF57", foundTopic2.Color)
-	assert.Equal(t, createdTopic2.Version, foundTopic2.Version)
 	assert.WithinDuration(t, createdTopic2.CreatedAt, foundTopic2.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, createdTopic2.UpdatedAt, foundTopic2.UpdatedAt, 1*time.Second)
 }

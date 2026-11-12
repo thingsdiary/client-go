@@ -12,22 +12,34 @@ func (c *Client) RestoreTopic(ctx context.Context, diaryID, topicID string) (*To
 		return nil, ErrUnauthorized
 	}
 
-	keys, err := c.getDiaryKeys(ctx, diaryID)
+	current, err := c.getTopic(ctx, diaryID, topicID)
+	if err != nil {
+		return nil, err
+	}
+	encryptedChange, err := nextTopicStateChange(current, topicID)
 	if err != nil {
 		return nil, err
 	}
 
 	req := &v1.RestoreTopicRequest{
-		DiaryId: diaryID,
-		TopicId: topicID,
+		DiaryId:         diaryID,
+		TopicId:         topicID,
+		EncryptedChange: encryptedChange,
 	}
 
 	response := &v1.RestoreTopicResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.topic.restore", req, response); err != nil {
 		return nil, err
 	}
+	if err := mapTopicErrorCode(response.GetErrorCode()); err != nil {
+		return nil, err
+	}
 
-	key, err := diaryKeyByID(keys, response.GetTopic().GetEncryption().GetDiaryKeyId())
+	keys, err := c.getDiaryKeys(ctx, diaryID)
+	if err != nil {
+		return nil, err
+	}
+	key, err := diaryKeyByID(keys, response.GetTopic().GetChange().GetEncryption().GetDiaryKeyId())
 	if err != nil {
 		return nil, err
 	}
