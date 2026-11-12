@@ -28,11 +28,6 @@ func (p PutEntryParams) GetEntryDetails() EntryDetails {
 	}
 }
 
-// GetEntryPreview extracts preview content (same as details for now)
-func (p PutEntryParams) GetEntryPreview() EntryDetails {
-	return p.GetEntryDetails()
-}
-
 // PutEntry creates or updates an entry in a diary
 func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params PutEntryParams) (*Entry, error) {
 	if c.credentials == nil {
@@ -70,23 +65,6 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 		return nil, errors.Wrap(err, "failed to encrypt entry details")
 	}
 
-	// Encrypt entry preview (same as details for now)
-	entryPreview := params.GetEntryPreview()
-	entryPreviewBytes, err := proto.Marshal(&v1.EntryPreview{
-		Content:       entryPreview.Content,
-		Archived:      entryPreview.Archived,
-		Bookmarked:    entryPreview.Bookmarked,
-		PreviewHidden: entryPreview.PreviewHidden,
-	})
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to marshal entry preview")
-	}
-
-	previewNonce, encryptedPreview, err := encryptWithSymmetricKey(entryPreviewBytes, entityKey)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to encrypt entry preview")
-	}
-
 	// Decrypt diary key
 	decryptedDiaryKey, err := decryptWithPrivateKey(
 		key.Value,
@@ -110,17 +88,12 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 	}
 
 	details := &v1.EncryptedData{Nonce: detailsNonce, Data: encryptedDetails}
-	preview := &v1.EncryptedData{Nonce: previewNonce, Data: encryptedPreview}
 
 	if err := validateProtoEncryption(encryption); err != nil {
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
 	if err := validateProtoEncryptedData(details, "details"); err != nil {
-		return nil, errors.Wrap(err, "request validation failed")
-	}
-
-	if err := validateProtoEncryptedData(preview, "preview"); err != nil {
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
@@ -131,7 +104,6 @@ func (c *Client) PutEntry(ctx context.Context, diaryID, entryID string, params P
 		TopicId:    protoString(params.TopicID),
 		Encryption: encryption,
 		Details:    details,
-		Preview:    preview,
 	}
 
 	response := &v1.PutEntryResponse{}

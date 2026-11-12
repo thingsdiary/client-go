@@ -34,7 +34,6 @@ type EncryptedEntry struct {
 	TopicId       *string                `protobuf:"bytes,8,opt,name=topic_id,json=topicId,proto3,oneof" json:"topic_id,omitempty"`
 	Encryption    *Encryption            `protobuf:"bytes,9,opt,name=encryption,proto3" json:"encryption,omitempty"`
 	Details       *EncryptedData         `protobuf:"bytes,10,opt,name=details,proto3" json:"details,omitempty"`
-	Preview       *EncryptedData         `protobuf:"bytes,11,opt,name=preview,proto3" json:"preview,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -139,18 +138,11 @@ func (x *EncryptedEntry) GetDetails() *EncryptedData {
 	return nil
 }
 
-func (x *EncryptedEntry) GetPreview() *EncryptedData {
-	if x != nil {
-		return x.Preview
-	}
-	return nil
-}
-
 var File_encrypted_entry_proto protoreflect.FileDescriptor
 
 const file_encrypted_entry_proto_rawDesc = "" +
 	"\n" +
-	"\x15encrypted_entry.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcd\x04\n" +
+	"\x15encrypted_entry.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x91\x04\n" +
 	"\x0eEncryptedEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x12\x18\n" +
@@ -168,8 +160,7 @@ const file_encrypted_entry_proto_rawDesc = "" +
 	"encryption\x18\t \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
 	"encryption\x12:\n" +
 	"\adetails\x18\n" +
-	" \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x12:\n" +
-	"\apreview\x18\v \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\apreviewB\r\n" +
+	" \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetailsB\r\n" +
 	"\v_deleted_atB\r\n" +
 	"\v_removed_atB\v\n" +
 	"\t_topic_idBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
@@ -200,12 +191,11 @@ var file_encrypted_entry_proto_depIdxs = []int32{
 	1, // 3: io.thingsdiary.v1.EncryptedEntry.removed_at:type_name -> google.protobuf.Timestamp
 	2, // 4: io.thingsdiary.v1.EncryptedEntry.encryption:type_name -> io.thingsdiary.v1.Encryption
 	3, // 5: io.thingsdiary.v1.EncryptedEntry.details:type_name -> io.thingsdiary.v1.EncryptedData
-	3, // 6: io.thingsdiary.v1.EncryptedEntry.preview:type_name -> io.thingsdiary.v1.EncryptedData
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_encrypted_entry_proto_init() }
