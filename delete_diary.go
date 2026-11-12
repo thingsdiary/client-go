@@ -15,7 +15,11 @@ func (c *Client) DeleteDiary(ctx context.Context, diaryID string) error {
 		DiaryId: diaryID,
 	}
 
-	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.delete", req, &v1.DeleteDiaryResponse{}); err != nil {
+	response := &v1.DeleteDiaryResponse{}
+	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.delete", req, response); err != nil {
+		return err
+	}
+	if err := mapDiaryErrorCode(response.GetErrorCode()); err != nil {
 		return err
 	}
 

@@ -130,7 +130,8 @@ func (x *CreateDiaryRequest) GetEncryptedChange() *EncryptedChange {
 
 type CreateDiaryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -163,6 +164,13 @@ func (x *CreateDiaryResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use CreateDiaryResponse.ProtoReflect.Descriptor instead.
 func (*CreateDiaryResponse) Descriptor() ([]byte, []int) {
 	return file_diary_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CreateDiaryResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
 }
 
 func (x *CreateDiaryResponse) GetDiaryId() string {
@@ -470,6 +478,7 @@ func (x *PutDiaryRequest) GetEncryptedChange() *EncryptedChange {
 
 type PutDiaryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -502,6 +511,13 @@ func (x *PutDiaryResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PutDiaryResponse.ProtoReflect.Descriptor instead.
 func (*PutDiaryResponse) Descriptor() ([]byte, []int) {
 	return file_diary_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *PutDiaryResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
 }
 
 type DiaryChanged struct {
@@ -610,6 +626,7 @@ func (x *DeleteDiaryRequest) GetDiaryId() string {
 
 type DeleteDiaryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -642,6 +659,13 @@ func (x *DeleteDiaryResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeleteDiaryResponse.ProtoReflect.Descriptor instead.
 func (*DeleteDiaryResponse) Descriptor() ([]byte, []int) {
 	return file_diary_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *DeleteDiaryResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
 }
 
 type DiaryDeleted struct {
@@ -708,15 +732,17 @@ var File_diary_proto protoreflect.FileDescriptor
 
 const file_diary_proto_rawDesc = "" +
 	"\n" +
-	"\vdiary.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x15encrypted_diary.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"F\n" +
+	"\vdiary.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x15encrypted_diary.proto\x1a\ferrors.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"F\n" +
 	"\fDiaryDetails\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\"\x93\x01\n" +
 	"\x12CreateDiaryRequest\x12.\n" +
 	"\x13encrypted_diary_key\x18\x01 \x01(\fR\x11encryptedDiaryKey\x12M\n" +
-	"\x10encrypted_change\x18\x02 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"0\n" +
-	"\x13CreateDiaryResponse\x12\x19\n" +
-	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"\x81\x01\n" +
+	"\x10encrypted_change\x18\x02 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"m\n" +
+	"\x13CreateDiaryResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\x12\x19\n" +
+	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\"\x81\x01\n" +
 	"\fDiaryCreated\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -733,16 +759,20 @@ const file_diary_proto_rawDesc = "" +
 	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"{\n" +
 	"\x0fPutDiaryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12M\n" +
-	"\x10encrypted_change\x18\x02 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"\x12\n" +
-	"\x10PutDiaryResponse\"\x81\x01\n" +
+	"\x10encrypted_change\x18\x02 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"O\n" +
+	"\x10PutDiaryResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\"\x81\x01\n" +
 	"\fDiaryChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
 	"occurredAt\x12\x19\n" +
 	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\"/\n" +
 	"\x12DeleteDiaryRequest\x12\x19\n" +
-	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"\x15\n" +
-	"\x13DeleteDiaryResponse\"\x81\x01\n" +
+	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\"R\n" +
+	"\x13DeleteDiaryResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\"\x81\x01\n" +
 	"\fDiaryDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
@@ -778,26 +808,30 @@ var file_diary_proto_goTypes = []any{
 	(*DeleteDiaryResponse)(nil),   // 12: io.thingsdiary.v1.DeleteDiaryResponse
 	(*DiaryDeleted)(nil),          // 13: io.thingsdiary.v1.DiaryDeleted
 	(*EncryptedChange)(nil),       // 14: io.thingsdiary.v1.EncryptedChange
-	(*timestamppb.Timestamp)(nil), // 15: google.protobuf.Timestamp
-	(*EncryptedDiary)(nil),        // 16: io.thingsdiary.v1.EncryptedDiary
-	(*Page)(nil),                  // 17: io.thingsdiary.v1.Page
-	(*PageInfo)(nil),              // 18: io.thingsdiary.v1.PageInfo
+	(ErrorCode)(0),                // 15: io.thingsdiary.v1.ErrorCode
+	(*timestamppb.Timestamp)(nil), // 16: google.protobuf.Timestamp
+	(*EncryptedDiary)(nil),        // 17: io.thingsdiary.v1.EncryptedDiary
+	(*Page)(nil),                  // 18: io.thingsdiary.v1.Page
+	(*PageInfo)(nil),              // 19: io.thingsdiary.v1.PageInfo
 }
 var file_diary_proto_depIdxs = []int32{
 	14, // 0: io.thingsdiary.v1.CreateDiaryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
-	15, // 1: io.thingsdiary.v1.DiaryCreated.occurred_at:type_name -> google.protobuf.Timestamp
-	16, // 2: io.thingsdiary.v1.GetDiaryResponse.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
-	17, // 3: io.thingsdiary.v1.ListDiariesRequest.page:type_name -> io.thingsdiary.v1.Page
-	16, // 4: io.thingsdiary.v1.ListDiariesResponse.diaries:type_name -> io.thingsdiary.v1.EncryptedDiary
-	18, // 5: io.thingsdiary.v1.ListDiariesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	14, // 6: io.thingsdiary.v1.PutDiaryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
-	15, // 7: io.thingsdiary.v1.DiaryChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	15, // 8: io.thingsdiary.v1.DiaryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	9,  // [9:9] is the sub-list for method output_type
-	9,  // [9:9] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	15, // 1: io.thingsdiary.v1.CreateDiaryResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	16, // 2: io.thingsdiary.v1.DiaryCreated.occurred_at:type_name -> google.protobuf.Timestamp
+	17, // 3: io.thingsdiary.v1.GetDiaryResponse.diary:type_name -> io.thingsdiary.v1.EncryptedDiary
+	18, // 4: io.thingsdiary.v1.ListDiariesRequest.page:type_name -> io.thingsdiary.v1.Page
+	17, // 5: io.thingsdiary.v1.ListDiariesResponse.diaries:type_name -> io.thingsdiary.v1.EncryptedDiary
+	19, // 6: io.thingsdiary.v1.ListDiariesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
+	14, // 7: io.thingsdiary.v1.PutDiaryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	15, // 8: io.thingsdiary.v1.PutDiaryResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	16, // 9: io.thingsdiary.v1.DiaryChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // 10: io.thingsdiary.v1.DeleteDiaryResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	16, // 11: io.thingsdiary.v1.DiaryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_diary_proto_init() }
@@ -807,6 +841,7 @@ func file_diary_proto_init() {
 	}
 	file_change_proto_init()
 	file_encrypted_diary_proto_init()
+	file_errors_proto_init()
 	file_pagination_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

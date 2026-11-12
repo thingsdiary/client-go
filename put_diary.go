@@ -113,6 +113,9 @@ func (c *Client) PutDiary(ctx context.Context, diaryID string, params PutDiaryPa
 	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.put", req, response); err != nil {
 		return nil, err
 	}
+	if err := mapDiaryErrorCode(response.GetErrorCode()); err != nil {
+		return nil, err
+	}
 
 	diaryData, err = c.getDiary(ctx, diaryID)
 	if err != nil {

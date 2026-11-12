@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/centrifugal/centrifuge-go"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
 
 const (
@@ -57,4 +58,19 @@ func mapRealtimeRPCError(method string, err error) error {
 	}
 
 	return fmt.Errorf("realtime RPC failed (%d): %s", rpcErr.Code, rpcErr.Message)
+}
+
+func mapDiaryErrorCode(code v1.ErrorCode) error {
+	switch code {
+	case v1.ErrorCode_ERROR_CODE_UNSPECIFIED:
+		return nil
+	case v1.ErrorCode_ERROR_CODE_BAD_DATA:
+		return ErrBadRequest
+	case v1.ErrorCode_ERROR_CODE_DIARIES_LIMIT_REACHED:
+		return ErrDiaryLimitExceeded
+	case v1.ErrorCode_ERROR_CODE_NOT_FOUND:
+		return ErrDiaryNotFound
+	default:
+		return fmt.Errorf("diary operation failed: %s", code)
+	}
 }

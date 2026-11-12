@@ -90,6 +90,9 @@ func (c *Client) CreateDiary(ctx context.Context, params CreateDiaryParams) (*Di
 	if err := c.rpc(ctx, "io.thingsdiary.v1.diary.create", req, response); err != nil {
 		return nil, err
 	}
+	if err := mapDiaryErrorCode(response.GetErrorCode()); err != nil {
+		return nil, err
+	}
 
 	diaryData, err := c.getDiary(ctx, response.GetDiaryId())
 	if err != nil {

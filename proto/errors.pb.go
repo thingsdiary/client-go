@@ -24,17 +24,19 @@ const (
 type ErrorCode int32
 
 const (
-	ErrorCode_ERROR_CODE_UNSPECIFIED         ErrorCode = 0
-	ErrorCode_ERROR_CODE_INVALID_ARGUMENT    ErrorCode = 1
-	ErrorCode_ERROR_CODE_UNAUTHENTICATED     ErrorCode = 2
-	ErrorCode_ERROR_CODE_PERMISSION_DENIED   ErrorCode = 3
-	ErrorCode_ERROR_CODE_NOT_FOUND           ErrorCode = 4
-	ErrorCode_ERROR_CODE_ALREADY_EXISTS      ErrorCode = 5
-	ErrorCode_ERROR_CODE_CONFLICT            ErrorCode = 6
-	ErrorCode_ERROR_CODE_FAILED_PRECONDITION ErrorCode = 7
-	ErrorCode_ERROR_CODE_RESOURCE_EXHAUSTED  ErrorCode = 8
-	ErrorCode_ERROR_CODE_INTERNAL            ErrorCode = 9
-	ErrorCode_ERROR_CODE_UNKNOWN_METHOD      ErrorCode = 10
+	ErrorCode_ERROR_CODE_UNSPECIFIED           ErrorCode = 0
+	ErrorCode_ERROR_CODE_INVALID_ARGUMENT      ErrorCode = 1
+	ErrorCode_ERROR_CODE_UNAUTHENTICATED       ErrorCode = 2
+	ErrorCode_ERROR_CODE_PERMISSION_DENIED     ErrorCode = 3
+	ErrorCode_ERROR_CODE_NOT_FOUND             ErrorCode = 4
+	ErrorCode_ERROR_CODE_ALREADY_EXISTS        ErrorCode = 5
+	ErrorCode_ERROR_CODE_CONFLICT              ErrorCode = 6
+	ErrorCode_ERROR_CODE_FAILED_PRECONDITION   ErrorCode = 7
+	ErrorCode_ERROR_CODE_RESOURCE_EXHAUSTED    ErrorCode = 8
+	ErrorCode_ERROR_CODE_INTERNAL              ErrorCode = 9
+	ErrorCode_ERROR_CODE_UNKNOWN_METHOD        ErrorCode = 10
+	ErrorCode_ERROR_CODE_BAD_DATA              ErrorCode = 11
+	ErrorCode_ERROR_CODE_DIARIES_LIMIT_REACHED ErrorCode = 12
 )
 
 // Enum value maps for ErrorCode.
@@ -51,19 +53,23 @@ var (
 		8:  "ERROR_CODE_RESOURCE_EXHAUSTED",
 		9:  "ERROR_CODE_INTERNAL",
 		10: "ERROR_CODE_UNKNOWN_METHOD",
+		11: "ERROR_CODE_BAD_DATA",
+		12: "ERROR_CODE_DIARIES_LIMIT_REACHED",
 	}
 	ErrorCode_value = map[string]int32{
-		"ERROR_CODE_UNSPECIFIED":         0,
-		"ERROR_CODE_INVALID_ARGUMENT":    1,
-		"ERROR_CODE_UNAUTHENTICATED":     2,
-		"ERROR_CODE_PERMISSION_DENIED":   3,
-		"ERROR_CODE_NOT_FOUND":           4,
-		"ERROR_CODE_ALREADY_EXISTS":      5,
-		"ERROR_CODE_CONFLICT":            6,
-		"ERROR_CODE_FAILED_PRECONDITION": 7,
-		"ERROR_CODE_RESOURCE_EXHAUSTED":  8,
-		"ERROR_CODE_INTERNAL":            9,
-		"ERROR_CODE_UNKNOWN_METHOD":      10,
+		"ERROR_CODE_UNSPECIFIED":           0,
+		"ERROR_CODE_INVALID_ARGUMENT":      1,
+		"ERROR_CODE_UNAUTHENTICATED":       2,
+		"ERROR_CODE_PERMISSION_DENIED":     3,
+		"ERROR_CODE_NOT_FOUND":             4,
+		"ERROR_CODE_ALREADY_EXISTS":        5,
+		"ERROR_CODE_CONFLICT":              6,
+		"ERROR_CODE_FAILED_PRECONDITION":   7,
+		"ERROR_CODE_RESOURCE_EXHAUSTED":    8,
+		"ERROR_CODE_INTERNAL":              9,
+		"ERROR_CODE_UNKNOWN_METHOD":        10,
+		"ERROR_CODE_BAD_DATA":              11,
+		"ERROR_CODE_DIARIES_LIMIT_REACHED": 12,
 	}
 )
 
@@ -153,7 +159,7 @@ const file_errors_proto_rawDesc = "" +
 	"\ferrors.proto\x12\x11io.thingsdiary.v1\"S\n" +
 	"\x05Error\x120\n" +
 	"\x04code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\x04code\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage*\xdb\x02\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage*\x9a\x03\n" +
 	"\tErrorCode\x12\x1a\n" +
 	"\x16ERROR_CODE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bERROR_CODE_INVALID_ARGUMENT\x10\x01\x12\x1e\n" +
@@ -166,7 +172,9 @@ const file_errors_proto_rawDesc = "" +
 	"\x1dERROR_CODE_RESOURCE_EXHAUSTED\x10\b\x12\x17\n" +
 	"\x13ERROR_CODE_INTERNAL\x10\t\x12\x1d\n" +
 	"\x19ERROR_CODE_UNKNOWN_METHOD\x10\n" +
-	"BEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"\x12\x17\n" +
+	"\x13ERROR_CODE_BAD_DATA\x10\v\x12$\n" +
+	" ERROR_CODE_DIARIES_LIMIT_REACHED\x10\fBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_errors_proto_rawDescOnce sync.Once

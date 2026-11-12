@@ -133,6 +133,36 @@ func TestMapRealtimeRPCErrorLeavesTransportErrorsAlone(t *testing.T) {
 	require.ErrorIs(t, mapRealtimeRPCError("io.thingsdiary.v1.diary.get", want), want)
 }
 
+func TestMapDiaryErrorCode(t *testing.T) {
+	t.Parallel()
+	// arrange
+	tests := []struct {
+		name string
+		code v1.ErrorCode
+		want error
+	}{
+		{name: "success", code: v1.ErrorCode_ERROR_CODE_UNSPECIFIED},
+		{name: "bad data", code: v1.ErrorCode_ERROR_CODE_BAD_DATA, want: ErrBadRequest},
+		{name: "diary limit", code: v1.ErrorCode_ERROR_CODE_DIARIES_LIMIT_REACHED, want: ErrDiaryLimitExceeded},
+		{name: "diary not found", code: v1.ErrorCode_ERROR_CODE_NOT_FOUND, want: ErrDiaryNotFound},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+			// act
+			err := mapDiaryErrorCode(test.code)
+
+			// assert
+			if test.want == nil {
+				require.NoError(t, err)
+				return
+			}
+			require.ErrorIs(t, err, test.want)
+		})
+	}
+}
+
 func TestMapRealtimeRPCFailedPreconditionToRemoved(t *testing.T) {
 	got := mapRealtimeRPCError("io.thingsdiary.v1.entry.put", &centrifuge.Error{Code: realtimeCodeFailedPrecondition, Message: "failed precondition"})
 	require.ErrorIs(t, got, ErrEntityRemoved)
