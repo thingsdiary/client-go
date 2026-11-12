@@ -22,7 +22,8 @@ type Entry struct {
 	UpdatedAt     time.Time
 	DeletedAt     mo.Option[time.Time]
 	RemovedAt     mo.Option[time.Time]
-	Version       uint64
+	// ChangeID identifies the change returned by the entry read model.
+	ChangeID string
 }
 
 // EntryDetails represents the plaintext content structure for entry details
@@ -38,12 +39,24 @@ func entryFromProto(value *v1.EncryptedEntry, diaryKey []byte) (*Entry, error) {
 		return nil, errors.New("entry is required")
 	}
 
-	decryptedDetails, err := decryptProtoDetails(
-		value.Encryption,
-		value.Details,
+	change := value.GetChange()
+	if change == nil || change.GetChange() == nil || change.GetEncryption() == nil {
+		return nil, errors.New("entry change is required")
+	}
+
+	nonce, encryptedDetails, err := UnmarshalChangePayload(change.GetChange().GetPayload())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode entry change payload")
+	}
+	entityKey, err := decryptWithSymmetricKey(
+		change.GetEncryption().GetEncryptedKeyNonce(),
+		change.GetEncryption().GetEncryptedKeyData(),
 		diaryKey,
-		"entry details",
 	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decrypt entry entity key")
+	}
+	decryptedDetails, err := decryptWithSymmetricKey(nonce, encryptedDetails, entityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +75,7 @@ func entryFromProto(value *v1.EncryptedEntry, diaryKey []byte) (*Entry, error) {
 		PreviewHidden: details.PreviewHidden,
 		CreatedAt:     protoTime(value.CreatedAt),
 		UpdatedAt:     protoTime(value.UpdatedAt),
-		Version:       value.Version,
+		ChangeID:      change.GetChange().GetId(),
 	}
 	if value.TopicId != nil {
 		entry.TopicID = mo.Some(*value.TopicId)

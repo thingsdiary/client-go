@@ -74,3 +74,14 @@ func mapDiaryErrorCode(code v1.ErrorCode) error {
 		return fmt.Errorf("diary operation failed: %s", code)
 	}
 }
+
+func mapEntryErrorCode(code v1.ErrorCode) error {
+	switch code {
+	case v1.ErrorCode_ERROR_CODE_UNSPECIFIED:
+		return nil
+	case v1.ErrorCode_ERROR_CODE_BAD_DATA:
+		return ErrBadRequest
+	default:
+		return fmt.Errorf("entry operation failed: %s", code)
+	}
+}

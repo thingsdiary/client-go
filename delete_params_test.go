@@ -87,6 +87,13 @@ func TestClientDeleteEntityHardDeleteRPC(t *testing.T) {
 			client.conn = &mockRealtimeConn{
 				state: centrifuge.StateConnected,
 				rpc: func(_ context.Context, method string, data []byte) (centrifuge.RPCResult, error) {
+					if test.method == "io.thingsdiary.v1.entry.delete" && method == "io.thingsdiary.v1.entry.get" {
+						response, err := proto.Marshal(&v1.GetEntryResponse{Entry: testEncryptedEntry()})
+						require.NoError(t, err)
+
+						return centrifuge.RPCResult{Data: response}, nil
+					}
+
 					require.Equal(t, test.method, method)
 					test.check(t, rpcPayload(t, method, data))
 

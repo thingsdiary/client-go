@@ -55,7 +55,7 @@ func (s *ClientSuite) TestEntry_GetByID() {
 	assert.True(t, fetchedEntry.Bookmarked)
 	assert.False(t, fetchedEntry.PreviewHidden)
 	assert.False(t, fetchedEntry.DeletedAt.IsPresent())
-	assert.Equal(t, createdEntry.Version, fetchedEntry.Version)
+	assert.Equal(t, createdEntry.ChangeID, fetchedEntry.ChangeID)
 	assert.WithinDuration(t, createdEntry.CreatedAt, fetchedEntry.CreatedAt, time.Second)
 	assert.WithinDuration(t, createdEntry.UpdatedAt, fetchedEntry.UpdatedAt, time.Second)
 }
@@ -167,5 +167,5 @@ func (s *ClientSuite) TestEntry_GetByID_WithTopic() {
 	assert.False(t, fetchedEntry.Bookmarked)
 	assert.True(t, fetchedEntry.PreviewHidden)
 	assert.False(t, fetchedEntry.DeletedAt.IsPresent())
-	assert.Equal(t, createdEntry.Version, fetchedEntry.Version)
+	assert.Equal(t, createdEntry.ChangeID, fetchedEntry.ChangeID)
 }

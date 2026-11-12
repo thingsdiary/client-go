@@ -85,7 +85,7 @@ func (s *ClientSuite) TestEntry_GetEntries() {
 	assert.False(t, foundEntry1.Archived)
 	assert.True(t, foundEntry1.Bookmarked)
 	assert.False(t, foundEntry1.PreviewHidden)
-	assert.Equal(t, createdEntry1.Version, foundEntry1.Version)
+	assert.Equal(t, createdEntry1.ChangeID, foundEntry1.ChangeID)
 	assert.WithinDuration(t, createdEntry1.CreatedAt, foundEntry1.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, createdEntry1.UpdatedAt, foundEntry1.UpdatedAt, 1*time.Second)
 
@@ -97,7 +97,7 @@ func (s *ClientSuite) TestEntry_GetEntries() {
 	assert.True(t, foundEntry2.Archived)
 	assert.False(t, foundEntry2.Bookmarked)
 	assert.True(t, foundEntry2.PreviewHidden)
-	assert.Equal(t, createdEntry2.Version, foundEntry2.Version)
+	assert.Equal(t, createdEntry2.ChangeID, foundEntry2.ChangeID)
 	assert.WithinDuration(t, createdEntry2.CreatedAt, foundEntry2.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, createdEntry2.UpdatedAt, foundEntry2.UpdatedAt, 1*time.Second)
 }

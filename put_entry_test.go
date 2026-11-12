@@ -51,7 +51,7 @@ func (s *ClientSuite) TestEntry_PutEntry() {
 	assert.True(t, createdEntry.Bookmarked)
 	assert.False(t, createdEntry.PreviewHidden)
 	assert.False(t, createdEntry.DeletedAt.IsPresent())
-	assert.Greater(t, createdEntry.Version, uint64(0))
+	assert.NotEmpty(t, createdEntry.ChangeID)
 
 	// Act: Update entry
 	updatedEntry, err := s.client.PutEntry(ctx, diary.ID, entryID, PutEntryParams{
@@ -70,7 +70,7 @@ func (s *ClientSuite) TestEntry_PutEntry() {
 	assert.True(t, updatedEntry.Archived)
 	assert.False(t, updatedEntry.Bookmarked)
 	assert.True(t, updatedEntry.PreviewHidden)
-	assert.Greater(t, updatedEntry.Version, createdEntry.Version)
+	assert.NotEqual(t, createdEntry.ChangeID, updatedEntry.ChangeID)
 }
 
 func (s *ClientSuite) TestEntry_PutEntry_WithTopic() {

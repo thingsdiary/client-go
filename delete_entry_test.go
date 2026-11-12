@@ -3,12 +3,37 @@ package client
 import (
 	"context"
 	"fmt"
+	"testing"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	v1 "github.com/thingsdiary/client-go/proto"
 )
+
+func TestNextEntryStateChange_BuildsAppendChange(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	current := &v1.EncryptedEntry{
+		Change: &v1.EncryptedChange{
+			Change:     &v1.Change{Id: "parent", Payload: []byte("payload")},
+			Encryption: &v1.Encryption{DiaryKeyId: "key"},
+		},
+	}
+
+	// act
+	change, err := nextEntryStateChange(current, "entry")
+
+	// assert
+	require.NoError(t, err)
+	require.NotEmpty(t, change.GetChange().GetId())
+	require.Equal(t, "entry", change.GetChange().GetObjectId())
+	require.Equal(t, []string{"parent"}, change.GetChange().GetParentChangeIds())
+	require.Equal(t, []byte("payload"), change.GetChange().GetPayload())
+	require.Equal(t, "key", change.GetEncryption().GetDiaryKeyId())
+}
 
 func (s *ClientSuite) TestEntry_DeleteEntry() {
 	t := s.T()

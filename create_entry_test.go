@@ -50,7 +50,7 @@ func (s *ClientSuite) TestEntry_CreateEntry() {
 	assert.False(t, createdEntry.Archived)
 	assert.True(t, createdEntry.Bookmarked)
 	assert.False(t, createdEntry.PreviewHidden)
-	assert.Greater(t, createdEntry.Version, uint64(0))
+	assert.NotEmpty(t, createdEntry.ChangeID)
 	assert.WithinDuration(t, time.Now(), createdEntry.CreatedAt, 5*time.Second)
 	assert.WithinDuration(t, time.Now(), createdEntry.UpdatedAt, 5*time.Second)
 	assert.True(t, createdEntry.DeletedAt.IsAbsent())

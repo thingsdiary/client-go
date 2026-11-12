@@ -22,7 +22,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Plaintext serialized before encrypting EncryptedEntry.details.
+// Plaintext serialized before encrypting an entry change payload.
 type EntryDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
@@ -293,15 +293,13 @@ func (x *ListEntriesResponse) GetPage() *PageInfo {
 }
 
 type PutEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	EntryId       string                 `protobuf:"bytes,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
-	Version       uint64                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	TopicId       *string                `protobuf:"bytes,4,opt,name=topic_id,json=topicId,proto3,oneof" json:"topic_id,omitempty"`
-	Encryption    *Encryption            `protobuf:"bytes,5,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details       *EncryptedData         `protobuf:"bytes,6,opt,name=details,proto3" json:"details,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EntryId         string                 `protobuf:"bytes,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	TopicId         *string                `protobuf:"bytes,3,opt,name=topic_id,json=topicId,proto3,oneof" json:"topic_id,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,4,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *PutEntryRequest) Reset() {
@@ -348,13 +346,6 @@ func (x *PutEntryRequest) GetEntryId() string {
 	return ""
 }
 
-func (x *PutEntryRequest) GetVersion() uint64 {
-	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
 func (x *PutEntryRequest) GetTopicId() string {
 	if x != nil && x.TopicId != nil {
 		return *x.TopicId
@@ -362,23 +353,17 @@ func (x *PutEntryRequest) GetTopicId() string {
 	return ""
 }
 
-func (x *PutEntryRequest) GetEncryption() *Encryption {
+func (x *PutEntryRequest) GetEncryptedChange() *EncryptedChange {
 	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-func (x *PutEntryRequest) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
+		return x.EncryptedChange
 	}
 	return nil
 }
 
 type PutEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *EncryptedEntry        `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,2,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -413,6 +398,13 @@ func (*PutEntryResponse) Descriptor() ([]byte, []int) {
 	return file_entry_proto_rawDescGZIP(), []int{6}
 }
 
+func (x *PutEntryResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
 func (x *PutEntryResponse) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
@@ -421,12 +413,13 @@ func (x *PutEntryResponse) GetEntry() *EncryptedEntry {
 }
 
 type DeleteEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	EntryId       string                 `protobuf:"bytes,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
-	Soft          *bool                  `protobuf:"varint,3,opt,name=soft,proto3,oneof" json:"soft,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EntryId         string                 `protobuf:"bytes,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	Soft            *bool                  `protobuf:"varint,3,opt,name=soft,proto3,oneof" json:"soft,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,4,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *DeleteEntryRequest) Reset() {
@@ -480,8 +473,16 @@ func (x *DeleteEntryRequest) GetSoft() bool {
 	return false
 }
 
+func (x *DeleteEntryRequest) GetEncryptedChange() *EncryptedChange {
+	if x != nil {
+		return x.EncryptedChange
+	}
+	return nil
+}
+
 type DeleteEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -516,12 +517,20 @@ func (*DeleteEntryResponse) Descriptor() ([]byte, []int) {
 	return file_entry_proto_rawDescGZIP(), []int{8}
 }
 
+func (x *DeleteEntryResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
 type RestoreEntryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	EntryId       string                 `protobuf:"bytes,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EntryId         string                 `protobuf:"bytes,2,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,3,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *RestoreEntryRequest) Reset() {
@@ -568,9 +577,17 @@ func (x *RestoreEntryRequest) GetEntryId() string {
 	return ""
 }
 
+func (x *RestoreEntryRequest) GetEncryptedChange() *EncryptedChange {
+	if x != nil {
+		return x.EncryptedChange
+	}
+	return nil
+}
+
 type RestoreEntryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         *EncryptedEntry        `protobuf:"bytes,1,opt,name=entry,proto3" json:"entry,omitempty"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
+	Entry         *EncryptedEntry        `protobuf:"bytes,2,opt,name=entry,proto3" json:"entry,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -605,6 +622,13 @@ func (*RestoreEntryResponse) Descriptor() ([]byte, []int) {
 	return file_entry_proto_rawDescGZIP(), []int{10}
 }
 
+func (x *RestoreEntryResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
 func (x *RestoreEntryResponse) GetEntry() *EncryptedEntry {
 	if x != nil {
 		return x.Entry
@@ -616,7 +640,8 @@ type EntryChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Entry         *EncryptedEntry        `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,3,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EntryId       string                 `protobuf:"bytes,4,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -665,18 +690,26 @@ func (x *EntryChanged) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EntryChanged) GetEntry() *EncryptedEntry {
+func (x *EntryChanged) GetDiaryId() string {
 	if x != nil {
-		return x.Entry
+		return x.DiaryId
 	}
-	return nil
+	return ""
+}
+
+func (x *EntryChanged) GetEntryId() string {
+	if x != nil {
+		return x.EntryId
+	}
+	return ""
 }
 
 type EntryDeleted struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Entry         *EncryptedEntry        `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,3,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EntryId       string                 `protobuf:"bytes,4,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -725,18 +758,26 @@ func (x *EntryDeleted) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EntryDeleted) GetEntry() *EncryptedEntry {
+func (x *EntryDeleted) GetDiaryId() string {
 	if x != nil {
-		return x.Entry
+		return x.DiaryId
 	}
-	return nil
+	return ""
+}
+
+func (x *EntryDeleted) GetEntryId() string {
+	if x != nil {
+		return x.EntryId
+	}
+	return ""
 }
 
 type EntryRestored struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Entry         *EncryptedEntry        `protobuf:"bytes,3,opt,name=entry,proto3" json:"entry,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,3,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	EntryId       string                 `protobuf:"bytes,4,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -785,18 +826,25 @@ func (x *EntryRestored) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EntryRestored) GetEntry() *EncryptedEntry {
+func (x *EntryRestored) GetDiaryId() string {
 	if x != nil {
-		return x.Entry
+		return x.DiaryId
 	}
-	return nil
+	return ""
+}
+
+func (x *EntryRestored) GetEntryId() string {
+	if x != nil {
+		return x.EntryId
+	}
+	return ""
 }
 
 var File_entry_proto protoreflect.FileDescriptor
 
 const file_entry_proto_rawDesc = "" +
 	"\n" +
-	"\ventry.proto\x12\x11io.thingsdiary.v1\x1a\x15encrypted_entry.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x8b\x01\n" +
+	"\ventry.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x15encrypted_entry.proto\x1a\ferrors.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"\x8b\x01\n" +
 	"\fEntryDetails\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\x12\x1a\n" +
 	"\barchived\x18\x02 \x01(\bR\barchived\x12\x1e\n" +
@@ -814,45 +862,52 @@ const file_entry_proto_rawDesc = "" +
 	"\x04page\x18\x02 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"\x83\x01\n" +
 	"\x13ListEntriesResponse\x12;\n" +
 	"\aentries\x18\x01 \x03(\v2!.io.thingsdiary.v1.EncryptedEntryR\aentries\x12/\n" +
-	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\x89\x02\n" +
+	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\xc3\x01\n" +
 	"\x0fPutEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\tR\aentryId\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x04R\aversion\x12\x1e\n" +
-	"\btopic_id\x18\x04 \x01(\tH\x00R\atopicId\x88\x01\x01\x12=\n" +
+	"\bentry_id\x18\x02 \x01(\tR\aentryId\x12\x1e\n" +
+	"\btopic_id\x18\x03 \x01(\tH\x00R\atopicId\x88\x01\x01\x12M\n" +
+	"\x10encrypted_change\x18\x04 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChangeB\v\n" +
+	"\t_topic_id\"\x88\x01\n" +
+	"\x10PutEntryResponse\x12;\n" +
 	"\n" +
-	"encryption\x18\x05 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12:\n" +
-	"\adetails\x18\x06 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetailsB\v\n" +
-	"\t_topic_id\"K\n" +
-	"\x10PutEntryResponse\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"l\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\x127\n" +
+	"\x05entry\x18\x02 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\xbb\x01\n" +
 	"\x12DeleteEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
 	"\bentry_id\x18\x02 \x01(\tR\aentryId\x12\x17\n" +
-	"\x04soft\x18\x03 \x01(\bH\x00R\x04soft\x88\x01\x01B\a\n" +
-	"\x05_soft\"\x15\n" +
-	"\x13DeleteEntryResponse\"K\n" +
+	"\x04soft\x18\x03 \x01(\bH\x00R\x04soft\x88\x01\x01\x12M\n" +
+	"\x10encrypted_change\x18\x04 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChangeB\a\n" +
+	"\x05_soft\"R\n" +
+	"\x13DeleteEntryResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\"\x9a\x01\n" +
 	"\x13RestoreEntryRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x19\n" +
-	"\bentry_id\x18\x02 \x01(\tR\aentryId\"O\n" +
-	"\x14RestoreEntryResponse\x127\n" +
-	"\x05entry\x18\x01 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\x9f\x01\n" +
+	"\bentry_id\x18\x02 \x01(\tR\aentryId\x12M\n" +
+	"\x10encrypted_change\x18\x03 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"\x8c\x01\n" +
+	"\x14RestoreEntryResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\x127\n" +
+	"\x05entry\x18\x02 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\x9c\x01\n" +
 	"\fEntryChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x127\n" +
-	"\x05entry\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\x9f\x01\n" +
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\x12\x19\n" +
+	"\bentry_id\x18\x04 \x01(\tR\aentryId\"\x9c\x01\n" +
 	"\fEntryDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x127\n" +
-	"\x05entry\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entry\"\xa0\x01\n" +
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\x12\x19\n" +
+	"\bentry_id\x18\x04 \x01(\tR\aentryId\"\x9d\x01\n" +
 	"\rEntryRestored\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x127\n" +
-	"\x05entry\x18\x03 \x01(\v2!.io.thingsdiary.v1.EncryptedEntryR\x05entryBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x03 \x01(\tR\adiaryId\x12\x19\n" +
+	"\bentry_id\x18\x04 \x01(\tR\aentryIdBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_entry_proto_rawDescOnce sync.Once
@@ -885,8 +940,8 @@ var file_entry_proto_goTypes = []any{
 	(*EncryptedEntry)(nil),        // 14: io.thingsdiary.v1.EncryptedEntry
 	(*Page)(nil),                  // 15: io.thingsdiary.v1.Page
 	(*PageInfo)(nil),              // 16: io.thingsdiary.v1.PageInfo
-	(*Encryption)(nil),            // 17: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 18: io.thingsdiary.v1.EncryptedData
+	(*EncryptedChange)(nil),       // 17: io.thingsdiary.v1.EncryptedChange
+	(ErrorCode)(0),                // 18: io.thingsdiary.v1.ErrorCode
 	(*timestamppb.Timestamp)(nil), // 19: google.protobuf.Timestamp
 }
 var file_entry_proto_depIdxs = []int32{
@@ -894,21 +949,22 @@ var file_entry_proto_depIdxs = []int32{
 	15, // 1: io.thingsdiary.v1.ListEntriesRequest.page:type_name -> io.thingsdiary.v1.Page
 	14, // 2: io.thingsdiary.v1.ListEntriesResponse.entries:type_name -> io.thingsdiary.v1.EncryptedEntry
 	16, // 3: io.thingsdiary.v1.ListEntriesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	17, // 4: io.thingsdiary.v1.PutEntryRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	18, // 5: io.thingsdiary.v1.PutEntryRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	17, // 4: io.thingsdiary.v1.PutEntryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	18, // 5: io.thingsdiary.v1.PutEntryResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
 	14, // 6: io.thingsdiary.v1.PutEntryResponse.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
-	14, // 7: io.thingsdiary.v1.RestoreEntryResponse.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
-	19, // 8: io.thingsdiary.v1.EntryChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	14, // 9: io.thingsdiary.v1.EntryChanged.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
-	19, // 10: io.thingsdiary.v1.EntryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	14, // 11: io.thingsdiary.v1.EntryDeleted.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
-	19, // 12: io.thingsdiary.v1.EntryRestored.occurred_at:type_name -> google.protobuf.Timestamp
-	14, // 13: io.thingsdiary.v1.EntryRestored.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	17, // 7: io.thingsdiary.v1.DeleteEntryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	18, // 8: io.thingsdiary.v1.DeleteEntryResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	17, // 9: io.thingsdiary.v1.RestoreEntryRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	18, // 10: io.thingsdiary.v1.RestoreEntryResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	14, // 11: io.thingsdiary.v1.RestoreEntryResponse.entry:type_name -> io.thingsdiary.v1.EncryptedEntry
+	19, // 12: io.thingsdiary.v1.EntryChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	19, // 13: io.thingsdiary.v1.EntryDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	19, // 14: io.thingsdiary.v1.EntryRestored.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_entry_proto_init() }
@@ -916,8 +972,9 @@ func file_entry_proto_init() {
 	if File_entry_proto != nil {
 		return
 	}
+	file_change_proto_init()
 	file_encrypted_entry_proto_init()
-	file_encryption_proto_init()
+	file_errors_proto_init()
 	file_pagination_proto_init()
 	file_entry_proto_msgTypes[5].OneofWrappers = []any{}
 	file_entry_proto_msgTypes[7].OneofWrappers = []any{}

@@ -52,13 +52,17 @@ func TestEntryFromProtoDecryptsTransportToDomain(t *testing.T) {
 	require.NoError(t, err)
 	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(detailsBytes, entityKey)
 	require.NoError(t, err)
+	payload, err := MarshalChangePayload(detailsNonce, encryptedDetails)
+	require.NoError(t, err)
 	entry := &v1.EncryptedEntry{
-		Id: "entry-1", DiaryId: "diary-1", Version: 42,
+		Id: "entry-1", DiaryId: "diary-1",
 		CreatedAt: timestamppb.New(created), UpdatedAt: timestamppb.New(created.Add(time.Minute)),
-		RemovedAt:  timestamppb.New(removed),
-		TopicId:    &topicID,
-		Encryption: &v1.Encryption{DiaryKeyId: "key-1", EncryptedKeyNonce: keyNonce, EncryptedKeyData: encryptedKey},
-		Details:    &v1.EncryptedData{Nonce: detailsNonce, Data: encryptedDetails},
+		RemovedAt: timestamppb.New(removed),
+		TopicId:   &topicID,
+		Change: &v1.EncryptedChange{
+			Change:     &v1.Change{Id: "change-42", ObjectId: "entry-1", Payload: payload},
+			Encryption: &v1.Encryption{DiaryKeyId: "key-1", EncryptedKeyNonce: keyNonce, EncryptedKeyData: encryptedKey},
+		},
 	}
 
 	// act
@@ -67,7 +71,7 @@ func TestEntryFromProtoDecryptsTransportToDomain(t *testing.T) {
 	// assert
 	require.NoError(t, err)
 	require.Equal(t, "entry-1", got.ID)
-	require.Equal(t, uint64(42), got.Version)
+	require.Equal(t, "change-42", got.ChangeID)
 	require.Equal(t, created, got.CreatedAt)
 	require.Equal(t, "topic-1", got.TopicID.MustGet())
 	require.Equal(t, "hello", got.Content)
@@ -156,6 +160,37 @@ func TestMapDiaryErrorCode(t *testing.T) {
 			// assert
 			if test.want == nil {
 				require.NoError(t, err)
+				return
+			}
+			require.ErrorIs(t, err, test.want)
+		})
+	}
+}
+
+func TestMapEntryErrorCode(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	tests := []struct {
+		name string
+		code v1.ErrorCode
+		want error
+	}{
+		{name: "success", code: v1.ErrorCode_ERROR_CODE_UNSPECIFIED},
+		{name: "bad data", code: v1.ErrorCode_ERROR_CODE_BAD_DATA, want: ErrBadRequest},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			// act
+			err := mapEntryErrorCode(test.code)
+
+			// assert
+			if test.want == nil {
+				require.NoError(t, err)
+
 				return
 			}
 			require.ErrorIs(t, err, test.want)
@@ -273,6 +308,13 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 			c.conn = &mockRealtimeConn{
 				state: centrifuge.StateConnected,
 				rpc: func(_ context.Context, method string, data []byte) (centrifuge.RPCResult, error) {
+					if test.method == "io.thingsdiary.v1.entry.delete" && method == "io.thingsdiary.v1.entry.get" {
+						response, err := proto.Marshal(&v1.GetEntryResponse{Entry: testEncryptedEntry()})
+						require.NoError(t, err)
+
+						return centrifuge.RPCResult{Data: response}, nil
+					}
+
 					require.Equal(t, test.method, method)
 					test.assertData(t, rpcPayload(t, method, data))
 					return centrifuge.RPCResult{}, nil
@@ -281,6 +323,21 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 
 			require.NoError(t, test.call(c))
 		})
+	}
+}
+
+func testEncryptedEntry() *v1.EncryptedEntry {
+	return &v1.EncryptedEntry{
+		Id:      "entry-1",
+		DiaryId: "diary-1",
+		Change: &v1.EncryptedChange{
+			Change: &v1.Change{
+				Id:       "change-1",
+				ObjectId: "entry-1",
+				Payload:  []byte("payload"),
+			},
+			Encryption: &v1.Encryption{DiaryKeyId: "key-1"},
+		},
 	}
 }
 
