@@ -23,8 +23,9 @@ const (
 )
 
 type EncryptedDiary struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Deprecated: Marked as deprecated in encrypted_diary.proto.
 	Version        uint64                 `protobuf:"varint,2,opt,name=version,proto3" json:"version,omitempty"`
 	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -72,6 +73,7 @@ func (x *EncryptedDiary) GetId() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in encrypted_diary.proto.
 func (x *EncryptedDiary) GetVersion() uint64 {
 	if x != nil {
 		return x.Version
@@ -118,10 +120,10 @@ var File_encrypted_diary_proto protoreflect.FileDescriptor
 
 const file_encrypted_diary_proto_rawDesc = "" +
 	"\n" +
-	"\x15encrypted_diary.proto\x12\x11io.thingsdiary.v1\x1a\x0fdiary_key.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xfb\x02\n" +
+	"\x15encrypted_diary.proto\x12\x11io.thingsdiary.v1\x1a\x0fdiary_key.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xff\x02\n" +
 	"\x0eEncryptedDiary\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x18\n" +
-	"\aversion\x18\x02 \x01(\x04R\aversion\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1c\n" +
+	"\aversion\x18\x02 \x01(\x04B\x02\x18\x01R\aversion\x129\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +

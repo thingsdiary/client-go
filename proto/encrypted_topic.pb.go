@@ -23,9 +23,10 @@ const (
 )
 
 type EncryptedTopic struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	DiaryId           string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Id      string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	DiaryId string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	// Deprecated: Marked as deprecated in encrypted_topic.proto.
 	Version           uint64                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
 	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
@@ -82,6 +83,7 @@ func (x *EncryptedTopic) GetDiaryId() string {
 	return ""
 }
 
+// Deprecated: Marked as deprecated in encrypted_topic.proto.
 func (x *EncryptedTopic) GetVersion() uint64 {
 	if x != nil {
 		return x.Version
@@ -142,11 +144,11 @@ var File_encrypted_topic_proto protoreflect.FileDescriptor
 
 const file_encrypted_topic_proto_rawDesc = "" +
 	"\n" +
-	"\x15encrypted_topic.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb1\x04\n" +
+	"\x15encrypted_topic.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb5\x04\n" +
 	"\x0eEncryptedTopic\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x04R\aversion\x129\n" +
+	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x12\x1c\n" +
+	"\aversion\x18\x03 \x01(\x04B\x02\x18\x01R\aversion\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
