@@ -31,9 +31,9 @@ type EncryptedTopic struct {
 	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	DeletedAt         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	RemovedAt         *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=removed_at,json=removedAt,proto3,oneof" json:"removed_at,omitempty"`
-	Encryption        *Encryption            `protobuf:"bytes,8,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details           *EncryptedData         `protobuf:"bytes,9,opt,name=details,proto3" json:"details,omitempty"`
-	DefaultTemplateId *string                `protobuf:"bytes,10,opt,name=default_template_id,json=defaultTemplateId,proto3,oneof" json:"default_template_id,omitempty"`
+	DefaultTemplateId *string                `protobuf:"bytes,8,opt,name=default_template_id,json=defaultTemplateId,proto3,oneof" json:"default_template_id,omitempty"`
+	Encryption        *Encryption            `protobuf:"bytes,9,opt,name=encryption,proto3" json:"encryption,omitempty"`
+	Details           *EncryptedData         `protobuf:"bytes,10,opt,name=details,proto3" json:"details,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -117,6 +117,13 @@ func (x *EncryptedTopic) GetRemovedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *EncryptedTopic) GetDefaultTemplateId() string {
+	if x != nil && x.DefaultTemplateId != nil {
+		return *x.DefaultTemplateId
+	}
+	return ""
+}
+
 func (x *EncryptedTopic) GetEncryption() *Encryption {
 	if x != nil {
 		return x.Encryption
@@ -129,13 +136,6 @@ func (x *EncryptedTopic) GetDetails() *EncryptedData {
 		return x.Details
 	}
 	return nil
-}
-
-func (x *EncryptedTopic) GetDefaultTemplateId() string {
-	if x != nil && x.DefaultTemplateId != nil {
-		return *x.DefaultTemplateId
-	}
-	return ""
 }
 
 var File_encrypted_topic_proto protoreflect.FileDescriptor
@@ -154,13 +154,13 @@ const file_encrypted_topic_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12>\n" +
 	"\n" +
-	"removed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\tremovedAt\x88\x01\x01\x12=\n" +
+	"removed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\tremovedAt\x88\x01\x01\x123\n" +
+	"\x13default_template_id\x18\b \x01(\tH\x02R\x11defaultTemplateId\x88\x01\x01\x12=\n" +
 	"\n" +
-	"encryption\x18\b \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
+	"encryption\x18\t \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
 	"encryption\x12:\n" +
-	"\adetails\x18\t \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\x123\n" +
-	"\x13default_template_id\x18\n" +
-	" \x01(\tH\x02R\x11defaultTemplateId\x88\x01\x01B\r\n" +
+	"\adetails\x18\n" +
+	" \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetailsB\r\n" +
 	"\v_deleted_atB\r\n" +
 	"\v_removed_atB\x16\n" +
 	"\x14_default_template_idBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
