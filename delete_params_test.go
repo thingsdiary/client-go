@@ -99,6 +99,12 @@ func TestClientDeleteEntityHardDeleteRPC(t *testing.T) {
 
 						return centrifuge.RPCResult{Data: response}, nil
 					}
+					if test.method == "io.thingsdiary.v1.template.delete" && method == "io.thingsdiary.v1.template.get" {
+						response, err := proto.Marshal(&v1.GetTemplateResponse{Template: testEncryptedTemplate()})
+						require.NoError(t, err)
+
+						return centrifuge.RPCResult{Data: response}, nil
+					}
 
 					require.Equal(t, test.method, method)
 					test.check(t, rpcPayload(t, method, data))

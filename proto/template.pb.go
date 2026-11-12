@@ -22,7 +22,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Plaintext serialized before encrypting EncryptedTemplate.details.
+// Plaintext serialized before encrypting a template change payload.
 type TemplateDetails struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Content       string                 `protobuf:"bytes,1,opt,name=content,proto3" json:"content,omitempty"`
@@ -269,14 +269,12 @@ func (x *ListTemplatesResponse) GetPage() *PageInfo {
 }
 
 type PutTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	TemplateId    string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Version       uint64                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
-	Encryption    *Encryption            `protobuf:"bytes,4,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details       *EncryptedData         `protobuf:"bytes,5,opt,name=details,proto3" json:"details,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	TemplateId      string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,6,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *PutTemplateRequest) Reset() {
@@ -323,30 +321,17 @@ func (x *PutTemplateRequest) GetTemplateId() string {
 	return ""
 }
 
-func (x *PutTemplateRequest) GetVersion() uint64 {
+func (x *PutTemplateRequest) GetEncryptedChange() *EncryptedChange {
 	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
-func (x *PutTemplateRequest) GetEncryption() *Encryption {
-	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-func (x *PutTemplateRequest) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
+		return x.EncryptedChange
 	}
 	return nil
 }
 
 type PutTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *EncryptedTemplate     `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
+	Template      *EncryptedTemplate     `protobuf:"bytes,2,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -381,6 +366,13 @@ func (*PutTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_template_proto_rawDescGZIP(), []int{6}
 }
 
+func (x *PutTemplateResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
 func (x *PutTemplateResponse) GetTemplate() *EncryptedTemplate {
 	if x != nil {
 		return x.Template
@@ -389,12 +381,13 @@ func (x *PutTemplateResponse) GetTemplate() *EncryptedTemplate {
 }
 
 type DeleteTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	TemplateId    string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	Soft          *bool                  `protobuf:"varint,3,opt,name=soft,proto3,oneof" json:"soft,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	TemplateId      string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	Soft            *bool                  `protobuf:"varint,3,opt,name=soft,proto3,oneof" json:"soft,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,4,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *DeleteTemplateRequest) Reset() {
@@ -448,8 +441,16 @@ func (x *DeleteTemplateRequest) GetSoft() bool {
 	return false
 }
 
+func (x *DeleteTemplateRequest) GetEncryptedChange() *EncryptedChange {
+	if x != nil {
+		return x.EncryptedChange
+	}
+	return nil
+}
+
 type DeleteTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -484,12 +485,20 @@ func (*DeleteTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_template_proto_rawDescGZIP(), []int{8}
 }
 
+func (x *DeleteTemplateResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
 type RestoreTemplateRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiaryId       string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	TemplateId    string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	DiaryId         string                 `protobuf:"bytes,1,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	TemplateId      string                 `protobuf:"bytes,2,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	EncryptedChange *EncryptedChange       `protobuf:"bytes,3,opt,name=encrypted_change,json=encryptedChange,proto3" json:"encrypted_change,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *RestoreTemplateRequest) Reset() {
@@ -536,9 +545,17 @@ func (x *RestoreTemplateRequest) GetTemplateId() string {
 	return ""
 }
 
+func (x *RestoreTemplateRequest) GetEncryptedChange() *EncryptedChange {
+	if x != nil {
+		return x.EncryptedChange
+	}
+	return nil
+}
+
 type RestoreTemplateResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Template      *EncryptedTemplate     `protobuf:"bytes,1,opt,name=template,proto3" json:"template,omitempty"`
+	ErrorCode     ErrorCode              `protobuf:"varint,1,opt,name=error_code,json=errorCode,proto3,enum=io.thingsdiary.v1.ErrorCode" json:"error_code,omitempty"`
+	Template      *EncryptedTemplate     `protobuf:"bytes,2,opt,name=template,proto3" json:"template,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -573,6 +590,13 @@ func (*RestoreTemplateResponse) Descriptor() ([]byte, []int) {
 	return file_template_proto_rawDescGZIP(), []int{10}
 }
 
+func (x *RestoreTemplateResponse) GetErrorCode() ErrorCode {
+	if x != nil {
+		return x.ErrorCode
+	}
+	return ErrorCode_ERROR_CODE_UNSPECIFIED
+}
+
 func (x *RestoreTemplateResponse) GetTemplate() *EncryptedTemplate {
 	if x != nil {
 		return x.Template
@@ -584,7 +608,8 @@ type TemplateChanged struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Template      *EncryptedTemplate     `protobuf:"bytes,3,opt,name=template,proto3" json:"template,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,4,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	TemplateId    string                 `protobuf:"bytes,5,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -633,18 +658,26 @@ func (x *TemplateChanged) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *TemplateChanged) GetTemplate() *EncryptedTemplate {
+func (x *TemplateChanged) GetDiaryId() string {
 	if x != nil {
-		return x.Template
+		return x.DiaryId
 	}
-	return nil
+	return ""
+}
+
+func (x *TemplateChanged) GetTemplateId() string {
+	if x != nil {
+		return x.TemplateId
+	}
+	return ""
 }
 
 type TemplateDeleted struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Template      *EncryptedTemplate     `protobuf:"bytes,3,opt,name=template,proto3" json:"template,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,4,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	TemplateId    string                 `protobuf:"bytes,5,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -693,18 +726,26 @@ func (x *TemplateDeleted) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *TemplateDeleted) GetTemplate() *EncryptedTemplate {
+func (x *TemplateDeleted) GetDiaryId() string {
 	if x != nil {
-		return x.Template
+		return x.DiaryId
 	}
-	return nil
+	return ""
+}
+
+func (x *TemplateDeleted) GetTemplateId() string {
+	if x != nil {
+		return x.TemplateId
+	}
+	return ""
 }
 
 type TemplateRestored struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	EventId       string                 `protobuf:"bytes,1,opt,name=event_id,json=eventId,proto3" json:"event_id,omitempty"`
 	OccurredAt    *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=occurred_at,json=occurredAt,proto3" json:"occurred_at,omitempty"`
-	Template      *EncryptedTemplate     `protobuf:"bytes,3,opt,name=template,proto3" json:"template,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,4,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
+	TemplateId    string                 `protobuf:"bytes,5,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -753,18 +794,25 @@ func (x *TemplateRestored) GetOccurredAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *TemplateRestored) GetTemplate() *EncryptedTemplate {
+func (x *TemplateRestored) GetDiaryId() string {
 	if x != nil {
-		return x.Template
+		return x.DiaryId
 	}
-	return nil
+	return ""
+}
+
+func (x *TemplateRestored) GetTemplateId() string {
+	if x != nil {
+		return x.TemplateId
+	}
+	return ""
 }
 
 var File_template_proto protoreflect.FileDescriptor
 
 const file_template_proto_rawDesc = "" +
 	"\n" +
-	"\x0etemplate.proto\x12\x11io.thingsdiary.v1\x1a\x18encrypted_template.proto\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"+\n" +
+	"\x0etemplate.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x18encrypted_template.proto\x1a\ferrors.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x10pagination.proto\"+\n" +
 	"\x0fTemplateDetails\x12\x18\n" +
 	"\acontent\x18\x01 \x01(\tR\acontent\"P\n" +
 	"\x12GetTemplateRequest\x12\x19\n" +
@@ -778,46 +826,56 @@ const file_template_proto_rawDesc = "" +
 	"\x04page\x18\x02 \x01(\v2\x17.io.thingsdiary.v1.PageR\x04page\"\x8c\x01\n" +
 	"\x15ListTemplatesResponse\x12B\n" +
 	"\ttemplates\x18\x01 \x03(\v2$.io.thingsdiary.v1.EncryptedTemplateR\ttemplates\x12/\n" +
-	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\xe5\x01\n" +
+	"\x04page\x18\x02 \x01(\v2\x1b.io.thingsdiary.v1.PageInfoR\x04page\"\x9f\x01\n" +
 	"\x12PutTemplateRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
-	"templateId\x12\x18\n" +
-	"\aversion\x18\x03 \x01(\x04R\aversion\x12=\n" +
+	"templateId\x12M\n" +
+	"\x10encrypted_change\x18\x06 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"\x94\x01\n" +
+	"\x13PutTemplateResponse\x12;\n" +
 	"\n" +
-	"encryption\x18\x04 \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12:\n" +
-	"\adetails\x18\x05 \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetails\"W\n" +
-	"\x13PutTemplateResponse\x12@\n" +
-	"\btemplate\x18\x01 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplate\"u\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\x12@\n" +
+	"\btemplate\x18\x02 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplate\"\xc4\x01\n" +
 	"\x15DeleteTemplateRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
 	"templateId\x12\x17\n" +
-	"\x04soft\x18\x03 \x01(\bH\x00R\x04soft\x88\x01\x01B\a\n" +
-	"\x05_soft\"\x18\n" +
-	"\x16DeleteTemplateResponse\"T\n" +
+	"\x04soft\x18\x03 \x01(\bH\x00R\x04soft\x88\x01\x01\x12M\n" +
+	"\x10encrypted_change\x18\x04 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChangeB\a\n" +
+	"\x05_soft\"U\n" +
+	"\x16DeleteTemplateResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\"\xa3\x01\n" +
 	"\x16RestoreTemplateRequest\x12\x19\n" +
 	"\bdiary_id\x18\x01 \x01(\tR\adiaryId\x12\x1f\n" +
 	"\vtemplate_id\x18\x02 \x01(\tR\n" +
-	"templateId\"[\n" +
-	"\x17RestoreTemplateResponse\x12@\n" +
-	"\btemplate\x18\x01 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplate\"\xab\x01\n" +
+	"templateId\x12M\n" +
+	"\x10encrypted_change\x18\x03 \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x0fencryptedChange\"\x98\x01\n" +
+	"\x17RestoreTemplateResponse\x12;\n" +
+	"\n" +
+	"error_code\x18\x01 \x01(\x0e2\x1c.io.thingsdiary.v1.ErrorCodeR\terrorCode\x12@\n" +
+	"\btemplate\x18\x02 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplate\"\xa5\x01\n" +
 	"\x0fTemplateChanged\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12@\n" +
-	"\btemplate\x18\x03 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplate\"\xab\x01\n" +
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x04 \x01(\tR\adiaryId\x12\x1f\n" +
+	"\vtemplate_id\x18\x05 \x01(\tR\n" +
+	"templateId\"\xa5\x01\n" +
 	"\x0fTemplateDeleted\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12@\n" +
-	"\btemplate\x18\x03 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplate\"\xac\x01\n" +
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x04 \x01(\tR\adiaryId\x12\x1f\n" +
+	"\vtemplate_id\x18\x05 \x01(\tR\n" +
+	"templateId\"\xa6\x01\n" +
 	"\x10TemplateRestored\x12\x19\n" +
 	"\bevent_id\x18\x01 \x01(\tR\aeventId\x12;\n" +
 	"\voccurred_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
-	"occurredAt\x12@\n" +
-	"\btemplate\x18\x03 \x01(\v2$.io.thingsdiary.v1.EncryptedTemplateR\btemplateBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
+	"occurredAt\x12\x19\n" +
+	"\bdiary_id\x18\x04 \x01(\tR\adiaryId\x12\x1f\n" +
+	"\vtemplate_id\x18\x05 \x01(\tR\n" +
+	"templateIdBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
 var (
 	file_template_proto_rawDescOnce sync.Once
@@ -850,8 +908,8 @@ var file_template_proto_goTypes = []any{
 	(*EncryptedTemplate)(nil),       // 14: io.thingsdiary.v1.EncryptedTemplate
 	(*Page)(nil),                    // 15: io.thingsdiary.v1.Page
 	(*PageInfo)(nil),                // 16: io.thingsdiary.v1.PageInfo
-	(*Encryption)(nil),              // 17: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),           // 18: io.thingsdiary.v1.EncryptedData
+	(*EncryptedChange)(nil),         // 17: io.thingsdiary.v1.EncryptedChange
+	(ErrorCode)(0),                  // 18: io.thingsdiary.v1.ErrorCode
 	(*timestamppb.Timestamp)(nil),   // 19: google.protobuf.Timestamp
 }
 var file_template_proto_depIdxs = []int32{
@@ -859,21 +917,22 @@ var file_template_proto_depIdxs = []int32{
 	15, // 1: io.thingsdiary.v1.ListTemplatesRequest.page:type_name -> io.thingsdiary.v1.Page
 	14, // 2: io.thingsdiary.v1.ListTemplatesResponse.templates:type_name -> io.thingsdiary.v1.EncryptedTemplate
 	16, // 3: io.thingsdiary.v1.ListTemplatesResponse.page:type_name -> io.thingsdiary.v1.PageInfo
-	17, // 4: io.thingsdiary.v1.PutTemplateRequest.encryption:type_name -> io.thingsdiary.v1.Encryption
-	18, // 5: io.thingsdiary.v1.PutTemplateRequest.details:type_name -> io.thingsdiary.v1.EncryptedData
+	17, // 4: io.thingsdiary.v1.PutTemplateRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	18, // 5: io.thingsdiary.v1.PutTemplateResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
 	14, // 6: io.thingsdiary.v1.PutTemplateResponse.template:type_name -> io.thingsdiary.v1.EncryptedTemplate
-	14, // 7: io.thingsdiary.v1.RestoreTemplateResponse.template:type_name -> io.thingsdiary.v1.EncryptedTemplate
-	19, // 8: io.thingsdiary.v1.TemplateChanged.occurred_at:type_name -> google.protobuf.Timestamp
-	14, // 9: io.thingsdiary.v1.TemplateChanged.template:type_name -> io.thingsdiary.v1.EncryptedTemplate
-	19, // 10: io.thingsdiary.v1.TemplateDeleted.occurred_at:type_name -> google.protobuf.Timestamp
-	14, // 11: io.thingsdiary.v1.TemplateDeleted.template:type_name -> io.thingsdiary.v1.EncryptedTemplate
-	19, // 12: io.thingsdiary.v1.TemplateRestored.occurred_at:type_name -> google.protobuf.Timestamp
-	14, // 13: io.thingsdiary.v1.TemplateRestored.template:type_name -> io.thingsdiary.v1.EncryptedTemplate
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	17, // 7: io.thingsdiary.v1.DeleteTemplateRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	18, // 8: io.thingsdiary.v1.DeleteTemplateResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	17, // 9: io.thingsdiary.v1.RestoreTemplateRequest.encrypted_change:type_name -> io.thingsdiary.v1.EncryptedChange
+	18, // 10: io.thingsdiary.v1.RestoreTemplateResponse.error_code:type_name -> io.thingsdiary.v1.ErrorCode
+	14, // 11: io.thingsdiary.v1.RestoreTemplateResponse.template:type_name -> io.thingsdiary.v1.EncryptedTemplate
+	19, // 12: io.thingsdiary.v1.TemplateChanged.occurred_at:type_name -> google.protobuf.Timestamp
+	19, // 13: io.thingsdiary.v1.TemplateDeleted.occurred_at:type_name -> google.protobuf.Timestamp
+	19, // 14: io.thingsdiary.v1.TemplateRestored.occurred_at:type_name -> google.protobuf.Timestamp
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_template_proto_init() }
@@ -881,8 +940,9 @@ func file_template_proto_init() {
 	if File_template_proto != nil {
 		return
 	}
+	file_change_proto_init()
 	file_encrypted_template_proto_init()
-	file_encryption_proto_init()
+	file_errors_proto_init()
 	file_pagination_proto_init()
 	file_template_proto_msgTypes[7].OneofWrappers = []any{}
 	type x struct{}

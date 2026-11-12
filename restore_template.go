@@ -12,22 +12,34 @@ func (c *Client) RestoreTemplate(ctx context.Context, diaryID, templateID string
 		return nil, ErrUnauthorized
 	}
 
-	keys, err := c.getDiaryKeys(ctx, diaryID)
+	current, err := c.getTemplate(ctx, diaryID, templateID)
+	if err != nil {
+		return nil, err
+	}
+	encryptedChange, err := nextTemplateStateChange(current, templateID)
 	if err != nil {
 		return nil, err
 	}
 
 	req := &v1.RestoreTemplateRequest{
-		DiaryId:    diaryID,
-		TemplateId: templateID,
+		DiaryId:         diaryID,
+		TemplateId:      templateID,
+		EncryptedChange: encryptedChange,
 	}
 
 	response := &v1.RestoreTemplateResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.template.restore", req, response); err != nil {
 		return nil, err
 	}
+	if err := mapTemplateErrorCode(response.GetErrorCode()); err != nil {
+		return nil, err
+	}
 
-	key, err := diaryKeyByID(keys, response.GetTemplate().GetEncryption().GetDiaryKeyId())
+	keys, err := c.getDiaryKeys(ctx, diaryID)
+	if err != nil {
+		return nil, err
+	}
+	key, err := diaryKeyByID(keys, response.GetTemplate().GetChange().GetEncryption().GetDiaryKeyId())
 	if err != nil {
 		return nil, err
 	}

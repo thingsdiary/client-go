@@ -41,7 +41,7 @@ func (s *ClientSuite) TestTemplate_CreateTemplate() {
 	assert.NotEmpty(t, createdTemplate.ID, "Template ID should be generated")
 	assert.Equal(t, createdDiary.ID, createdTemplate.DiaryID)
 	assert.Equal(t, "# Daily Journal Template\n\n## Today's Goals\n- \n\n## Reflections\n", createdTemplate.Content)
-	assert.Greater(t, createdTemplate.Version, uint64(0))
+	assert.NotEmpty(t, createdTemplate.ChangeID)
 	assert.WithinDuration(t, time.Now(), createdTemplate.CreatedAt, 5*time.Second)
 	assert.WithinDuration(t, time.Now(), createdTemplate.UpdatedAt, 5*time.Second)
 }

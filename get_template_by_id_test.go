@@ -100,7 +100,7 @@ func (s *ClientSuite) TestTemplate_GetByID_AfterCreation() {
 	// Assert: Template should match
 	assert.Equal(t, createdTemplate.ID, fetchedTemplate.ID)
 	assert.Equal(t, createdTemplate.Content, fetchedTemplate.Content)
-	assert.Equal(t, createdTemplate.Version, fetchedTemplate.Version)
+	assert.Equal(t, createdTemplate.ChangeID, fetchedTemplate.ChangeID)
 	assert.WithinDuration(t, createdTemplate.CreatedAt, fetchedTemplate.CreatedAt, time.Second)
 	assert.WithinDuration(t, createdTemplate.UpdatedAt, fetchedTemplate.UpdatedAt, time.Second)
 }

@@ -23,17 +23,14 @@ const (
 )
 
 type EncryptedTemplate struct {
-	state   protoimpl.MessageState `protogen:"open.v1"`
-	Id      string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	DiaryId string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
-	// Deprecated: Marked as deprecated in encrypted_template.proto.
-	Version       uint64                 `protobuf:"varint,3,opt,name=version,proto3" json:"version,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	DiaryId       string                 `protobuf:"bytes,2,opt,name=diary_id,json=diaryId,proto3" json:"diary_id,omitempty"`
 	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	RemovedAt     *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=removed_at,json=removedAt,proto3,oneof" json:"removed_at,omitempty"`
-	Encryption    *Encryption            `protobuf:"bytes,8,opt,name=encryption,proto3" json:"encryption,omitempty"`
-	Details       *EncryptedData         `protobuf:"bytes,9,opt,name=details,proto3" json:"details,omitempty"`
+	Change        *EncryptedChange       `protobuf:"bytes,10,opt,name=change,proto3" json:"change,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -82,14 +79,6 @@ func (x *EncryptedTemplate) GetDiaryId() string {
 	return ""
 }
 
-// Deprecated: Marked as deprecated in encrypted_template.proto.
-func (x *EncryptedTemplate) GetVersion() uint64 {
-	if x != nil {
-		return x.Version
-	}
-	return 0
-}
-
 func (x *EncryptedTemplate) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -118,16 +107,9 @@ func (x *EncryptedTemplate) GetRemovedAt() *timestamppb.Timestamp {
 	return nil
 }
 
-func (x *EncryptedTemplate) GetEncryption() *Encryption {
+func (x *EncryptedTemplate) GetChange() *EncryptedChange {
 	if x != nil {
-		return x.Encryption
-	}
-	return nil
-}
-
-func (x *EncryptedTemplate) GetDetails() *EncryptedData {
-	if x != nil {
-		return x.Details
+		return x.Change
 	}
 	return nil
 }
@@ -136,11 +118,10 @@ var File_encrypted_template_proto protoreflect.FileDescriptor
 
 const file_encrypted_template_proto_rawDesc = "" +
 	"\n" +
-	"\x18encrypted_template.proto\x12\x11io.thingsdiary.v1\x1a\x10encryption.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\xeb\x03\n" +
+	"\x18encrypted_template.proto\x12\x11io.thingsdiary.v1\x1a\fchange.proto\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8e\x03\n" +
 	"\x11EncryptedTemplate\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
-	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x12\x1c\n" +
-	"\aversion\x18\x03 \x01(\x04B\x02\x18\x01R\aversion\x129\n" +
+	"\bdiary_id\x18\x02 \x01(\tR\adiaryId\x129\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
@@ -148,11 +129,9 @@ const file_encrypted_template_proto_rawDesc = "" +
 	"\n" +
 	"deleted_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12>\n" +
 	"\n" +
-	"removed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\tremovedAt\x88\x01\x01\x12=\n" +
-	"\n" +
-	"encryption\x18\b \x01(\v2\x1d.io.thingsdiary.v1.EncryptionR\n" +
-	"encryption\x12:\n" +
-	"\adetails\x18\t \x01(\v2 .io.thingsdiary.v1.EncryptedDataR\adetailsB\r\n" +
+	"removed_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampH\x01R\tremovedAt\x88\x01\x01\x12:\n" +
+	"\x06change\x18\n" +
+	" \x01(\v2\".io.thingsdiary.v1.EncryptedChangeR\x06changeB\r\n" +
 	"\v_deleted_atB\r\n" +
 	"\v_removed_atBEZCgithub.com/thingsdiary/thingsd/api/asyncrpc/sdk/go/v1;thingsdiaryv1b\x06proto3"
 
@@ -172,21 +151,19 @@ var file_encrypted_template_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_encrypted_template_proto_goTypes = []any{
 	(*EncryptedTemplate)(nil),     // 0: io.thingsdiary.v1.EncryptedTemplate
 	(*timestamppb.Timestamp)(nil), // 1: google.protobuf.Timestamp
-	(*Encryption)(nil),            // 2: io.thingsdiary.v1.Encryption
-	(*EncryptedData)(nil),         // 3: io.thingsdiary.v1.EncryptedData
+	(*EncryptedChange)(nil),       // 2: io.thingsdiary.v1.EncryptedChange
 }
 var file_encrypted_template_proto_depIdxs = []int32{
 	1, // 0: io.thingsdiary.v1.EncryptedTemplate.created_at:type_name -> google.protobuf.Timestamp
 	1, // 1: io.thingsdiary.v1.EncryptedTemplate.updated_at:type_name -> google.protobuf.Timestamp
 	1, // 2: io.thingsdiary.v1.EncryptedTemplate.deleted_at:type_name -> google.protobuf.Timestamp
 	1, // 3: io.thingsdiary.v1.EncryptedTemplate.removed_at:type_name -> google.protobuf.Timestamp
-	2, // 4: io.thingsdiary.v1.EncryptedTemplate.encryption:type_name -> io.thingsdiary.v1.Encryption
-	3, // 5: io.thingsdiary.v1.EncryptedTemplate.details:type_name -> io.thingsdiary.v1.EncryptedData
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	2, // 4: io.thingsdiary.v1.EncryptedTemplate.change:type_name -> io.thingsdiary.v1.EncryptedChange
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_encrypted_template_proto_init() }
@@ -194,7 +171,7 @@ func file_encrypted_template_proto_init() {
 	if File_encrypted_template_proto != nil {
 		return
 	}
-	file_encryption_proto_init()
+	file_change_proto_init()
 	file_encrypted_template_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

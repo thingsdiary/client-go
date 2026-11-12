@@ -98,3 +98,14 @@ func mapTopicErrorCode(code v1.ErrorCode) error {
 		return fmt.Errorf("topic operation failed: %s", code)
 	}
 }
+
+func mapTemplateErrorCode(code v1.ErrorCode) error {
+	switch code {
+	case v1.ErrorCode_ERROR_CODE_UNSPECIFIED:
+		return nil
+	case v1.ErrorCode_ERROR_CODE_BAD_DATA:
+		return ErrBadRequest
+	default:
+		return fmt.Errorf("template operation failed: %s", code)
+	}
+}

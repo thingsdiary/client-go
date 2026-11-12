@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	v1 "github.com/thingsdiary/client-go/proto"
 	"google.golang.org/protobuf/proto"
@@ -62,6 +63,11 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		return nil, errors.Wrap(err, "failed to decrypt diary key")
 	}
 
+	current, err := c.getTemplate(ctx, diaryID, templateID)
+	if err != nil && !errors.Is(err, ErrTemplateNotFound) {
+		return nil, errors.Wrap(err, "failed to get current template")
+	}
+
 	// Encrypt entity key with diary key
 	keyNonce, encryptedEntityKey, err := encryptWithSymmetricKey(entityKey, decryptedDiaryKey)
 	if err != nil {
@@ -74,26 +80,38 @@ func (c *Client) PutTemplate(ctx context.Context, diaryID, templateID string, pa
 		EncryptedKeyData:  encryptedEntityKey,
 	}
 
-	details := &v1.EncryptedData{Nonce: detailsNonce, Data: encryptedDetails}
-
 	if err := validateProtoEncryption(encryption); err != nil {
 		return nil, errors.Wrap(err, "request validation failed")
 	}
 
-	if err := validateProtoEncryptedData(details, "details"); err != nil {
-		return nil, errors.Wrap(err, "request validation failed")
+	payload, err := MarshalChangePayload(detailsNonce, encryptedDetails)
+	if err != nil {
+		return nil, err
+	}
+
+	change := &v1.Change{Id: uuid.NewString(), Payload: payload}
+	if current != nil {
+		if current.GetChange().GetChange() == nil {
+			return nil, errors.New("current template change is required")
+		}
+		change.ObjectId = templateID
+		change.ParentChangeIds = []string{current.GetChange().GetChange().GetId()}
 	}
 
 	req := &v1.PutTemplateRequest{
 		DiaryId:    diaryID,
 		TemplateId: templateID,
-		Version:    NewVersion(),
-		Encryption: encryption,
-		Details:    details,
+		EncryptedChange: &v1.EncryptedChange{
+			Change:     change,
+			Encryption: encryption,
+		},
 	}
 
 	response := &v1.PutTemplateResponse{}
 	if err := c.rpc(ctx, "io.thingsdiary.v1.template.put", req, response); err != nil {
+		return nil, err
+	}
+	if err := mapTemplateErrorCode(response.GetErrorCode()); err != nil {
 		return nil, err
 	}
 

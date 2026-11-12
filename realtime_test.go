@@ -113,6 +113,38 @@ func TestTopicFromProtoDecryptsChangeToDomain(t *testing.T) {
 	require.Equal(t, "#123456", got.Color)
 }
 
+func TestTemplateFromProtoDecryptsChangeToDomain(t *testing.T) {
+	// arrange
+	created := time.Date(2026, 10, 17, 12, 30, 0, 0, time.UTC)
+	diaryKey := make([]byte, 32)
+	entityKey := make([]byte, 32)
+	detailsBytes, err := proto.Marshal(&v1.TemplateDetails{Content: "daily notes"})
+	require.NoError(t, err)
+	keyNonce, encryptedKey, err := encryptWithSymmetricKey(entityKey, diaryKey)
+	require.NoError(t, err)
+	detailsNonce, encryptedDetails, err := encryptWithSymmetricKey(detailsBytes, entityKey)
+	require.NoError(t, err)
+	payload, err := MarshalChangePayload(detailsNonce, encryptedDetails)
+	require.NoError(t, err)
+	template := &v1.EncryptedTemplate{
+		Id: "template-1", DiaryId: "diary-1",
+		CreatedAt: timestamppb.New(created), UpdatedAt: timestamppb.New(created.Add(time.Minute)),
+		Change: &v1.EncryptedChange{
+			Change:     &v1.Change{Id: "change-9", ObjectId: "template-1", Payload: payload},
+			Encryption: &v1.Encryption{DiaryKeyId: "key-1", EncryptedKeyNonce: keyNonce, EncryptedKeyData: encryptedKey},
+		},
+	}
+
+	// act
+	got, err := templateFromProto(template, diaryKey)
+
+	// assert
+	require.NoError(t, err)
+	require.Equal(t, "template-1", got.ID)
+	require.Equal(t, "change-9", got.ChangeID)
+	require.Equal(t, "daily notes", got.Content)
+}
+
 func TestRealtimeCodecPreservesOptionalString(t *testing.T) {
 	require.Nil(t, protoString(mo.None[string]()))
 	got := protoString(mo.Some("template-1"))
@@ -263,6 +295,37 @@ func TestMapTopicErrorCode(t *testing.T) {
 	}
 }
 
+func TestMapTemplateErrorCode(t *testing.T) {
+	t.Parallel()
+
+	// arrange
+	tests := []struct {
+		name string
+		code v1.ErrorCode
+		want error
+	}{
+		{name: "success", code: v1.ErrorCode_ERROR_CODE_UNSPECIFIED},
+		{name: "bad data", code: v1.ErrorCode_ERROR_CODE_BAD_DATA, want: ErrBadRequest},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
+			// act
+			err := mapTemplateErrorCode(test.code)
+
+			// assert
+			if test.want == nil {
+				require.NoError(t, err)
+
+				return
+			}
+			require.ErrorIs(t, err, test.want)
+		})
+	}
+}
+
 func TestMapRealtimeRPCFailedPreconditionToRemoved(t *testing.T) {
 	got := mapRealtimeRPCError("io.thingsdiary.v1.entry.put", &centrifuge.Error{Code: realtimeCodeFailedPrecondition, Message: "failed precondition"})
 	require.ErrorIs(t, got, ErrEntityRemoved)
@@ -385,6 +448,12 @@ func TestDeleteMethodsSendSoftDeleteMode(t *testing.T) {
 
 						return centrifuge.RPCResult{Data: response}, nil
 					}
+					if test.method == "io.thingsdiary.v1.template.delete" && method == "io.thingsdiary.v1.template.get" {
+						response, err := proto.Marshal(&v1.GetTemplateResponse{Template: testEncryptedTemplate()})
+						require.NoError(t, err)
+
+						return centrifuge.RPCResult{Data: response}, nil
+					}
 
 					require.Equal(t, test.method, method)
 					test.assertData(t, rpcPayload(t, method, data))
@@ -420,6 +489,21 @@ func testEncryptedTopic() *v1.EncryptedTopic {
 			Change: &v1.Change{
 				Id:       "change-1",
 				ObjectId: "topic-1",
+				Payload:  []byte("payload"),
+			},
+			Encryption: &v1.Encryption{DiaryKeyId: "key-1"},
+		},
+	}
+}
+
+func testEncryptedTemplate() *v1.EncryptedTemplate {
+	return &v1.EncryptedTemplate{
+		Id:      "template-1",
+		DiaryId: "diary-1",
+		Change: &v1.EncryptedChange{
+			Change: &v1.Change{
+				Id:       "change-1",
+				ObjectId: "template-1",
 				Payload:  []byte("payload"),
 			},
 			Encryption: &v1.Encryption{DiaryKeyId: "key-1"},

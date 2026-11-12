@@ -53,7 +53,7 @@ func (s *ClientSuite) TestTemplate_PutTemplate() {
 	require.NotNil(t, updatedTemplate)
 	assert.Equal(t, templateID, updatedTemplate.ID)
 	assert.Equal(t, "# Daily Journal\n\n## Goals\n- \n\n## What I learned\n\n## Gratitude\n", updatedTemplate.Content)
-	assert.Greater(t, updatedTemplate.Version, createdTemplate.Version)
+	assert.NotEqual(t, updatedTemplate.ChangeID, createdTemplate.ChangeID)
 	assert.WithinDuration(t, createdTemplate.CreatedAt, updatedTemplate.CreatedAt, time.Second)
 	assert.True(t, updatedTemplate.UpdatedAt.After(createdTemplate.UpdatedAt))
 }

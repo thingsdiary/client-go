@@ -72,7 +72,7 @@ func (s *ClientSuite) TestTemplate_GetTemplates() {
 	assert.Equal(t, templateID1, foundTemplate1.ID)
 	assert.Equal(t, diary.ID, foundTemplate1.DiaryID)
 	assert.Equal(t, "My first template content with placeholders: {{title}}, {{date}}", foundTemplate1.Content)
-	assert.Equal(t, createdTemplate1.Version, foundTemplate1.Version)
+	assert.Equal(t, createdTemplate1.ChangeID, foundTemplate1.ChangeID)
 	assert.WithinDuration(t, createdTemplate1.CreatedAt, foundTemplate1.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, createdTemplate1.UpdatedAt, foundTemplate1.UpdatedAt, 1*time.Second)
 
@@ -80,7 +80,7 @@ func (s *ClientSuite) TestTemplate_GetTemplates() {
 	assert.Equal(t, templateID2, foundTemplate2.ID)
 	assert.Equal(t, diary.ID, foundTemplate2.DiaryID)
 	assert.Equal(t, "My second template content with different structure: {{category}}, {{description}}", foundTemplate2.Content)
-	assert.Equal(t, createdTemplate2.Version, foundTemplate2.Version)
+	assert.Equal(t, createdTemplate2.ChangeID, foundTemplate2.ChangeID)
 	assert.WithinDuration(t, createdTemplate2.CreatedAt, foundTemplate2.CreatedAt, 1*time.Second)
 	assert.WithinDuration(t, createdTemplate2.UpdatedAt, foundTemplate2.UpdatedAt, 1*time.Second)
 }

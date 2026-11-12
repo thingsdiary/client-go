@@ -18,7 +18,7 @@ type Template struct {
 	UpdatedAt time.Time
 	DeletedAt mo.Option[time.Time]
 	RemovedAt mo.Option[time.Time]
-	Version   uint64
+	ChangeID  string
 }
 
 // TemplateDetails represents the plaintext content structure for template details
@@ -31,12 +31,24 @@ func templateFromProto(value *v1.EncryptedTemplate, diaryKey []byte) (*Template,
 		return nil, errors.New("template is required")
 	}
 
-	decryptedDetails, err := decryptProtoDetails(
-		value.Encryption,
-		value.Details,
+	change := value.GetChange()
+	if change == nil || change.GetChange() == nil || change.GetEncryption() == nil {
+		return nil, errors.New("template change is required")
+	}
+
+	nonce, encryptedDetails, err := UnmarshalChangePayload(change.GetChange().GetPayload())
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decode template change payload")
+	}
+	entityKey, err := decryptWithSymmetricKey(
+		change.GetEncryption().GetEncryptedKeyNonce(),
+		change.GetEncryption().GetEncryptedKeyData(),
 		diaryKey,
-		"template details",
 	)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to decrypt template entity key")
+	}
+	decryptedDetails, err := decryptWithSymmetricKey(nonce, encryptedDetails, entityKey)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +64,7 @@ func templateFromProto(value *v1.EncryptedTemplate, diaryKey []byte) (*Template,
 		Content:   details.Content,
 		CreatedAt: protoTime(value.CreatedAt),
 		UpdatedAt: protoTime(value.UpdatedAt),
-		Version:   value.Version,
+		ChangeID:  change.GetChange().GetId(),
 	}
 	if value.DeletedAt != nil {
 		template.DeletedAt = mo.Some(protoTime(value.DeletedAt))
